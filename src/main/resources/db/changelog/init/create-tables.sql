@@ -57,14 +57,16 @@ create table if not exists Units (
     id uuid,
     unit_type unit_types not null,
     location_id uuid not null,
+    lock_id uuid not null,
     is_available boolean,
     size_x int not null,
     size_y int not null,
     size_z int not null,
 
     primary key (id),
-    foreign key (location_id) references Locations(id)
-);
+    foreign key (location_id) references Locations(id),
+    foreign key (lock_id) references Locks(id)
+    );
 
 create table if not exists Users (
     id uuid,
