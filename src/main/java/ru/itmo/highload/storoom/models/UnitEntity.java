@@ -1,5 +1,7 @@
 package ru.itmo.highload.storoom.models;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -10,33 +12,43 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Entity(name="units")
+@NoArgsConstructor
+@Data
 public class UnitEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @NonNull
-    private String name;
+    @Column(name = "size_x")
+    private Integer sizeX;
     @NonNull
-    private Integer sizeX, sizeY, sizeZ;
+    @Column(name = "size_y")
+    private Integer sizeY;
+    @NonNull
+    @Column(name = "size_z")
+    private Integer sizeZ;
     @NonNull
     @Enumerated(EnumType.STRING)
+    @Column(name = "unit_type")
     private UnitType unitType;
+    @Column(name = "is_available")
     private Boolean isAvailable;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "location_id", nullable = false)
+    @JoinColumn(name = "id", nullable = false)
+    @Column(name = "location_id")
     @NonNull
     private LocationEntity location;
 
     @OneToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "lock_id", nullable = false)
+    @JoinColumn(name = "id", nullable = false)
+    @Column(name = "lock_id")
     @NonNull
     private LockEntity lock;
 
-    public UnitEntity(String name, Integer sizeX, Integer sizeY, Integer sizeZ, LocationEntity location, Boolean isAvailable, LockEntity lock) {
-        this.name = name;
+    public UnitEntity(Integer sizeX, Integer sizeY, Integer sizeZ, LocationEntity location, Boolean isAvailable, LockEntity lock) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.sizeZ = sizeZ;
@@ -47,13 +59,11 @@ public class UnitEntity implements Serializable {
     }
 
     private UnitType calculateUnitType(Integer sizeX, Integer sizeY, Integer sizeZ){
-        double volume = sizeX*sizeY*sizeZ/10E6;
+        double volume = sizeX * sizeY * sizeZ / 10E6;
         if (volume < 0.05) return UnitType.S;
         else if (volume < 0.2) return UnitType.M;
         else if (volume < 0.8) return UnitType.L;
         return UnitType.XL;
     }
 
-    public UnitEntity() {
-    }
 }
