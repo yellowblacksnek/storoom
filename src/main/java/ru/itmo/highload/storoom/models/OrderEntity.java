@@ -29,9 +29,8 @@ public class OrderEntity implements Serializable {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "unit_id", nullable = false)
     @NonNull
-    @Column(name = "unit_id")
     private UnitEntity unit;
 
     @Override

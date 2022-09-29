@@ -35,15 +35,13 @@ public class UnitEntity implements Serializable {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "id", nullable = false)
-    @Column(name = "location_id")
+    @JoinColumn(name = "location_id", nullable = false)
     @NonNull
     private LocationEntity location;
 
     @OneToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "id", nullable = false)
-    @Column(name = "lock_id")
+    @JoinColumn(name = "lock_id", nullable = false)
     @NonNull
     private LockEntity lock;
 

@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity(name="locations")
-@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
@@ -29,9 +28,11 @@ public class LocationEntity implements Serializable {
     private LocationType locationType;
 
     @ManyToMany
+    @JoinTable(
+            name = "owners_locations",
+            joinColumns = @JoinColumn(name = "location_id"),
+            inverseJoinColumns = @JoinColumn(name = "owner_id"))
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "id", nullable = false)
-    @Column(name = "owner_id")
     private List<OwnerEntity> owners;
 
     @Override

@@ -19,9 +19,8 @@ public class LockEntity implements Serializable {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "manufacturer_id", nullable = false)
     @NonNull
-    @Column(name = "manufacturer_id")
     private ManufacturerEntity manufacturer;
 
     @Override
