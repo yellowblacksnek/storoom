@@ -1,0 +1,1 @@
+insert into users(id, username, password, user_type) values ('8a6ce757-d29f-4250-b633-f3e96580e72d', 'admin', '$2y$10$B7ZYjMis4jvjdyReMZRl2e3VYnAj2aj8kIvApCKoQ4ZTV6JJXACTW','admin')
