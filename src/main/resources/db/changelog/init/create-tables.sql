@@ -1,7 +1,7 @@
 
-create type location_types as enum ('');
-create type user_types as enum ('admin', 'client');
-create type unit_types as enum ('');
+create type location_types as enum ('stand', 'warehouse', 'main_office');
+create type user_types as enum ('admin', 'superuser', 'client');
+create type unit_types as enum ('S', 'M', 'L', 'XL');
 
 create cast (varchar as user_types) with inout as implicit;
 create cast (varchar as unit_types) with inout as implicit;
