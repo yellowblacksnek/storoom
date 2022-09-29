@@ -8,5 +8,8 @@
     <changeSet id="1" author="sus">
         <sqlFile dbms="postgresql" path="db/changelog/init/create-tables.sql"/>
     </changeSet>
+    <changeSet id="2" author="sus">
+        <sqlFile dbms="postgresql" path="db/changelog/init/add-users.sql"/>
+    </changeSet>
 
 </databaseChangeLog>
