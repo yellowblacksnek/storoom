@@ -8,37 +8,37 @@ create cast (varchar as unit_types) with inout as implicit;
 create cast (varchar as location_types) with inout as implicit;
 
 create table if not exists Manufacturers (
-    id serial,
+    id uuid,
     name varchar(255) not null,
 
     primary key(id)
 );
 
 create table if not exists Locks (
-      id serial,
-      manufacturer_id int not null,
+      id uuid,
+      manufacturer_id uuid not null,
 
       primary key(id),
       foreign key(manufacturer_id) references Manufacturers(id) on delete set null
 );
 
 create table if not exists Companies (
-      id serial,
+      id uuid,
       company_name varchar(255) not null,
 
       primary key(id)
 );
 
 create table if not exists Owners (
-     id serial,
+     id uuid,
      owner_name varchar(255) not null,
-     company_id int not null,
+     company_id uuid not null,
      primary key(id),
      foreign key (company_id) references Companies(id)
 );
 
 create table if not exists Locations (
-    id serial,
+    id uuid,
     address varchar(255),
     location_type location_types,
 
@@ -46,24 +46,28 @@ create table if not exists Locations (
 );
 
 create table if not exists Owners_Locations (
-    owner_id int,
-    location_id int,
+    owner_id uuid,
+    location_id uuid,
     primary key(owner_id, location_id),
     foreign key (owner_id) references Owners(id),
     foreign key (location_id) references Locations(id)
 );
 
 create table if not exists Units (
-    id serial,
+    id uuid,
     unit_type unit_types not null,
-    location_id int not null,
+    location_id uuid not null,
+    is_available boolean,
+    size_x int not null,
+    size_y int not null,
+    size_z int not null,
 
     primary key (id),
     foreign key (location_id) references Locations(id)
 );
 
 create table if not exists Users (
-    id serial,
+    id uuid,
     username varchar(255) not null,
     password varchar(255) not null,
     user_type user_types not null,
@@ -72,11 +76,12 @@ create table if not exists Users (
 );
 
 create table if not exists Orders (
-    id serial,
-    unit_id int not null,
-    user_id int not null,
+    id uuid,
+    unit_id uuid not null,
+    user_id uuid not null,
     order_number int not null,
-    order_date timestamp not null,
+    created_time timestamp not null,
+    days int not null,
 
     primary key (id),
     foreign key (unit_id) references Units(id),
