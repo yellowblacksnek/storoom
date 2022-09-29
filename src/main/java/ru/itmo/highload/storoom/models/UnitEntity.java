@@ -1,19 +1,18 @@
 package ru.itmo.highload.storoom.models;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ru.itmo.highload.storoom.consts.UnitType;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity(name="units")
 @NoArgsConstructor
-@Data
+@Getter @Setter
 public class UnitEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -56,6 +55,19 @@ public class UnitEntity implements Serializable {
         this.isAvailable = isAvailable;
         this.unitType = calculateUnitType(sizeX, sizeY, sizeZ);
         this.lock = lock;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UnitEntity that = (UnitEntity) o;
+        return id.equals(that.id) && sizeX.equals(that.sizeX) && sizeY.equals(that.sizeY) && sizeZ.equals(that.sizeZ) && unitType == that.unitType && Objects.equals(isAvailable, that.isAvailable) && location.equals(that.location) && lock.equals(that.lock);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, sizeX, sizeY, sizeZ, unitType, isAvailable, location, lock);
     }
 
     private UnitType calculateUnitType(Integer sizeX, Integer sizeY, Integer sizeZ){

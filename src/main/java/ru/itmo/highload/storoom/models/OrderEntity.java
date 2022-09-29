@@ -1,19 +1,18 @@
 package ru.itmo.highload.storoom.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity(name="orders")
 @AllArgsConstructor
-@Data
+@Getter @Setter
 public class OrderEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,6 +33,19 @@ public class OrderEntity implements Serializable {
     @NonNull
     @Column(name = "unit_id")
     private UnitEntity unit;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderEntity that = (OrderEntity) o;
+        return id.equals(that.id) && number.equals(that.number) && createdTime.equals(that.createdTime) && days.equals(that.days) && unit.equals(that.unit);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number, createdTime, days, unit);
+    }
 
     public OrderEntity(Integer number, Integer days, UnitEntity unit) {
         this();

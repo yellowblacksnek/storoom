@@ -8,13 +8,14 @@ import ru.itmo.highload.storoom.consts.LocationType;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity(name="locations")
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter @Setter
 public class LocationEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,4 +33,17 @@ public class LocationEntity implements Serializable {
     @JoinColumn(name = "id", nullable = false)
     @Column(name = "owner_id")
     private List<OwnerEntity> owners;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LocationEntity that = (LocationEntity) o;
+        return id.equals(that.id) && Objects.equals(address, that.address) && locationType == that.locationType && Objects.equals(owners, that.owners);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, address, locationType, owners);
+    }
 }
