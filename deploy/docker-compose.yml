@@ -1,3 +1,4 @@
+version: '3.x'
 services:
   app:
     image: 'storoom:latest'
@@ -10,10 +11,15 @@ services:
       - db
 #        condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
-      - SPRING_DATASOURCE_USERNAME=compose-postgres
-      - SPRING_DATASOURCE_PASSWORD=compose-postgres
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/compose-postgres
+      SPRING_DATASOURCE_USERNAME: compose-postgres
+      SPRING_DATASOURCE_PASSWORD: compose-postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      PUBLIC_JWT_KEY_PATH: file:/keys/public.key
+      PRIVATE_JWT_KEY_PATH: file:/keys/private.key
+
+    volumes:
+      - ./:/keys/
 
   db:
     image: 'postgres:14.5'
@@ -21,8 +27,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=compose-postgres
-      - POSTGRES_PASSWORD=compose-postgres
+      POSTGRES_USER: compose-postgres
+      POSTGRES_PASSWORD: compose-postgres
 #    healthcheck:
 #      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
 #      interval: 1s

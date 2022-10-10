@@ -70,7 +70,7 @@ create table if not exists Units (
 
 create table if not exists Users (
     id uuid,
-    username varchar(255) not null,
+    username varchar(255) not null unique,
     password varchar(255) not null,
     user_type user_types not null,
 
