@@ -15,11 +15,12 @@ services:
       SPRING_DATASOURCE_USERNAME: compose-postgres
       SPRING_DATASOURCE_PASSWORD: compose-postgres
       SPRING_JPA_HIBERNATE_DDL_AUTO: none
-      PUBLIC_JWT_KEY_PATH: file:/keys/public.key
-      PRIVATE_JWT_KEY_PATH: file:/keys/private.key
+      PUBLIC_JWT_KEY_PATH: file:/run/secrets/public.key
+      PRIVATE_JWT_KEY_PATH: file:/run/secrets/private.key
 
-    volumes:
-      - ./:/keys/
+    secrets:
+      - public.key
+      - private.key
 
   db:
     image: 'postgres:14.5'
@@ -34,3 +35,9 @@ services:
 #      interval: 1s
 #      timeout: 1s
 #      retries: 5
+
+secrets:
+  private.key:
+    file: ./private.key
+  public.key:
+    file: ./public.key
