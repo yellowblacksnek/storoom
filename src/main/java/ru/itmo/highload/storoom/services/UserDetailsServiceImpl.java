@@ -41,8 +41,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         if (username.equals(adminUsername)) {
             password = encoder.encode(adminPassword);
-            authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority(UserType.admin.name()));
+            authorities = getAuthorities(UserType.admin);
         } else {
             UserEntity userEntity = userRepository.findByUsername(username);
             if (userEntity == null) {
