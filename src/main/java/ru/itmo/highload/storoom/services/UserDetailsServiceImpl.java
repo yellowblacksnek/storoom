@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itmo.highload.storoom.consts.UserType;
@@ -31,12 +32,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         String password;
         List<GrantedAuthority> authorities;
 
         if (username.equals(adminUsername)) {
-            password = "{noop}" + adminPassword;
+            password = encoder.encode(adminPassword);
             authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(UserType.admin.name()));
         } else {
@@ -44,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             if (userEntity == null) {
                 throw new UsernameNotFoundException("No user found with username: " + username);
             }
-            password = "{bcrypt}" + userEntity.getPassword();
+            password = userEntity.getPassword();
             authorities = getAuthorities(userEntity.getUserType());
         }
 
