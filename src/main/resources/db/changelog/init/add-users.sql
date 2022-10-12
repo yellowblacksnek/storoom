@@ -1,1 +1,0 @@
-insert into users(id, username, password, user_type) values ('8a6ce757-d29f-4250-b633-f3e96580e72d', 'admin', '$2a$10$aX1XpZcOUwCe/DkJmWrhbOqdD4H/UrLWI3yxl1ipeoPn413o6/C2W','admin')
