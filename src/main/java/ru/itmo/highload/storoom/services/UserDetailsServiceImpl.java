@@ -2,6 +2,7 @@ package ru.itmo.highload.storoom.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,19 +22,36 @@ import java.util.List;
 @Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    @Value("${ADMIN_USERNAME}")
+    private String adminUsername;
+
+    @Value("${ADMIN_PASSWORD}")
+    private String adminPassword;
+
     @Autowired
     private UserRepository userRepository;
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByUsername(username);
-        if (userEntity == null) {
-            throw new UsernameNotFoundException("No user found with username: " + username);
+        String password;
+        List<GrantedAuthority> authorities;
+
+        if (username.equals(adminUsername)) {
+            password = "{noop}" + adminPassword;
+            authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority(UserType.admin.name()));
+        } else {
+            UserEntity userEntity = userRepository.findByUsername(username);
+            if (userEntity == null) {
+                throw new UsernameNotFoundException("No user found with username: " + username);
+            }
+            password = "{bcrypt}" + userEntity.getPassword();
+            authorities = getAuthorities(userEntity.getUserType());
         }
 
         return org.springframework.security.core.userdetails.User
-                .withUsername(userEntity.getUsername())
-                .password(userEntity.getPassword())
-                .authorities(getAuthorities(userEntity.getUserType()))
+                .withUsername(username)
+                .password(password)
+                .authorities(authorities)
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)
