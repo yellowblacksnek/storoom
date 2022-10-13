@@ -1,9 +1,11 @@
 package ru.itmo.highload.storoom.consts;
 
+import java.util.Collection;
+
 public enum UserType {
     admin(0), superuser(1), client(2);
 
-    private Integer hierarchy;
+    private final Integer hierarchy;
 
     UserType(final Integer hierarchy) {
         this.hierarchy = hierarchy;
@@ -11,5 +13,20 @@ public enum UserType {
 
     public Integer getHierarchy() {
         return hierarchy;
+    }
+
+    public static UserType getHighestOf(Collection<UserType> types) {
+        UserType highest = null;
+
+        for(UserType cur : types) {
+            if(highest == null) {
+                highest = cur;
+                continue;
+            }
+            if(cur.getHierarchy() < highest.getHierarchy()) {
+                highest = cur;
+            }
+        }
+        return highest;
     }
 }

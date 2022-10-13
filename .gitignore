@@ -33,4 +33,7 @@ build/
 .vscode/
 
 *.key
+!src/test/resources/private.key
+!src/test/resources/public.key
+
 *.crt

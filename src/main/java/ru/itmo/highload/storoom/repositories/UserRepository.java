@@ -1,8 +1,11 @@
 package ru.itmo.highload.storoom.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import ru.itmo.highload.storoom.models.UserEntity;
 
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
+import java.util.UUID;
+
+public interface UserRepository extends PagingAndSortingRepository<UserEntity, UUID> {
     UserEntity findByUsername(String username);
+    Boolean existsByUsername(String username);
 }

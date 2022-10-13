@@ -31,6 +31,12 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
+    public UserEntity(String username, String password, UserType type) {
+        this.username = username;
+        this.password = password;
+        this.userType = type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
