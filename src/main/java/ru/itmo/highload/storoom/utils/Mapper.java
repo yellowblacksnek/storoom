@@ -1,4 +1,4 @@
-package ru.itmo.highload.storoom.services;
+package ru.itmo.highload.storoom.utils;
 
 import static ru.itmo.highload.storoom.models.DTOs.*;
 

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.itmo.highload.storoom.consts.UserType;
 import ru.itmo.highload.storoom.models.UserEntity;
 import ru.itmo.highload.storoom.repositories.UserRepository;
-import ru.itmo.highload.storoom.services.Mapper;
+import ru.itmo.highload.storoom.utils.Mapper;
 
 import java.util.stream.Collectors;
 
@@ -50,7 +50,7 @@ public class UserController {
 
             userRepo.save(Mapper.toUserEntity(req));
 
-            return ResponseEntity.ok().build();
+            return new ResponseEntity("", HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("incorrect user type");
         } catch (Exception e) {
