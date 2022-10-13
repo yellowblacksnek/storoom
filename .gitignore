@@ -37,3 +37,6 @@ build/
 !src/test/resources/public.key
 
 *.crt
+
+### mac config ###
+.DS_Store

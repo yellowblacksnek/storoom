@@ -1,10 +1,11 @@
 package ru.itmo.highload.storoom.utils;
 
-import static ru.itmo.highload.storoom.models.DTOs.*;
-
 import org.springframework.stereotype.Component;
 import ru.itmo.highload.storoom.consts.UserType;
+import ru.itmo.highload.storoom.models.CompanyEntity;
 import ru.itmo.highload.storoom.models.UserEntity;
+
+import static ru.itmo.highload.storoom.models.DTOs.*;
 
 @Component
 public class Mapper {
@@ -16,11 +17,24 @@ public class Mapper {
         return dto;
     }
 
-    public static UserEntity toUserEntity(UserFullDTO entity) {
+    public static UserEntity toUserEntity(UserFullDTO dto) {
         UserEntity user = new UserEntity();
-        user.setUsername(entity.getUsername());
-        user.setPassword(entity.getPassword());
-        user.setUserType(UserType.valueOf(entity.getUserType()));
+        user.setUsername(dto.getUsername());
+        user.setPassword(dto.getPassword());
+        user.setUserType(UserType.valueOf(dto.getUserType()));
         return user;
+    }
+
+    public static CompanyReadDTO toCompanyDTO(CompanyEntity entity) {
+        CompanyReadDTO dto = new CompanyReadDTO();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        return dto;
+    }
+
+    public static CompanyEntity toCompanyEntity(CompanyDTO dto) {
+        CompanyEntity company = new CompanyEntity();
+        company.setName(dto.getName());
+        return company;
     }
 }
