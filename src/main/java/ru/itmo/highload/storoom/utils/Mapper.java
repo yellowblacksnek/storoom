@@ -7,6 +7,8 @@ import ru.itmo.highload.storoom.models.*;
 import java.util.UUID;
 
 import static ru.itmo.highload.storoom.models.DTOs.*;
+import ru.itmo.highload.storoom.models.OrderEntity;
+import ru.itmo.highload.storoom.models.UserEntity;
 
 @Component
 public class Mapper {
@@ -67,5 +69,24 @@ public class Mapper {
                 Boolean.valueOf(dto.isAvailable),
                 lock
         );
+    }
+
+    public static OrderReadDTO toOrderDTO(OrderEntity entity) {
+        OrderReadDTO dto = new OrderReadDTO();
+        dto.setNumber(entity.getNumber());
+        dto.setDays(entity.getDays());
+        dto.setUnit(entity.getUnit());
+        dto.setUser(entity.getUser());
+        return dto;
+    }
+
+    public static OrderEntity toOrderEntity(OrderFullDTO dto) {
+        OrderEntity company = new OrderEntity();
+        company.setId(dto.getId());
+        company.setNumber(dto.getNumber());
+        company.setDays(dto.getDays());
+        company.setUnit(dto.getUnit());
+        company.setUser(dto.getUser());
+        return company;
     }
 }

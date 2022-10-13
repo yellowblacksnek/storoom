@@ -37,4 +37,22 @@ public  class DTOs {
         public String locationId;
         public String lockId;
     }
+
+    @Data
+    public static class OrderFullDTO {
+        public UUID id;
+        public Integer number;
+        public Integer days;
+        public UnitEntity unit;
+        public UserEntity user;
+
+    }
+
+    @Data
+    public static class OrderReadDTO {
+        public Integer number;
+        public Integer days;
+        public UnitEntity unit;
+        public UserEntity user;
+    }
 }
