@@ -17,6 +17,8 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: none
       PUBLIC_JWT_KEY_PATH: file:/run/secrets/public.key
       PRIVATE_JWT_KEY_PATH: file:/run/secrets/private.key
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: admin
 
     secrets:
       - public.key
