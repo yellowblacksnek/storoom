@@ -28,4 +28,13 @@ public  class DTOs {
     public static class CompanyDTO {
         public String name;
     }
+
+    @Data
+    public static class UnitDTO {
+        public String sizeX, sizeY, sizeZ;
+        public String unitType;
+        public String isAvailable;
+        public String locationId;
+        public String lockId;
+    }
 }
