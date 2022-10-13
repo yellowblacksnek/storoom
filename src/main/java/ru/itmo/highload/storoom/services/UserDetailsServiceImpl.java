@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -51,7 +52,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             authorities = getAuthorities(userEntity.getUserType());
         }
 
-        return org.springframework.security.core.userdetails.User
+        return User
                 .withUsername(username)
                 .password(password)
                 .authorities(authorities)
@@ -62,7 +63,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .build();
     }
 
-    private static List<GrantedAuthority> getAuthorities (UserType userType) {
+    public static List<GrantedAuthority> getAuthorities (UserType userType) {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         for(UserType type : UserType.values()) {
