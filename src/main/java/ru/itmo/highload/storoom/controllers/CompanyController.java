@@ -1,5 +1,6 @@
 package ru.itmo.highload.storoom.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import java.util.UUID;
 import static ru.itmo.highload.storoom.models.DTOs.CompanyDTO;
 import static ru.itmo.highload.storoom.models.DTOs.CompanyReadDTO;
 
+@Slf4j
 @RestController
 @RequestMapping("/companies")
 @PreAuthorize("hasAuthority('superuser')")
@@ -31,34 +33,34 @@ public class CompanyController {
     }
 
     @PostMapping
-    public ResponseEntity addCompany(@RequestBody CompanyDTO req) {
+    public ResponseEntity<?> addCompany(@RequestBody CompanyDTO req) {
         if (companyRepo.existsByName(req.getName())) {
             return ResponseEntity.badRequest().body("this company already exists");
         }
         req.setName(req.getName());
-        companyRepo.save(Mapper.toCompanyEntity(req));
+        CompanyEntity newCompany = companyRepo.save(Mapper.toCompanyEntity(req));
 
-        return new ResponseEntity("", HttpStatus.CREATED);
+        return new ResponseEntity<>(newCompany, HttpStatus.CREATED);
     }
 
-    @PatchMapping("companies/{id}")
-    public ResponseEntity updateCompany(@PathVariable UUID id, @RequestParam String name) {
-        if (name == null || name.isEmpty()) {
+    @PutMapping("{id}")
+    public ResponseEntity<?> updateCompany(@PathVariable String id, @RequestBody CompanyDTO dto) {
+        if (dto.getName() == null || dto.getName().isEmpty()) {
             return ResponseEntity.badRequest().body("no name provided");
         }
-        Optional<CompanyEntity> company = companyRepo.findById(id);
+        Optional<CompanyEntity> company = companyRepo.findById(UUID.fromString(id));
         if (company.isEmpty()) {
-            return ResponseEntity.badRequest().body("username not found");
+            return ResponseEntity.badRequest().body("company not found");
         }
-        company.get().setName(name);
+        company.get().setName(dto.getName());
         companyRepo.save(company.get());
 
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("companies/{id}")
-    public ResponseEntity deleteCompany(@PathVariable UUID id) {
-        Optional<CompanyEntity> company = companyRepo.findById(id);
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteCompany(@PathVariable("id") String id) {
+        Optional<CompanyEntity> company = companyRepo.findById(UUID.fromString(id));
         if (company.isEmpty()) {
             return ResponseEntity.badRequest().body("company not found");
         }

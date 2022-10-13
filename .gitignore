@@ -40,3 +40,4 @@ build/
 
 ### mac config ###
 .DS_Store
+.run/
