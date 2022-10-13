@@ -3,9 +3,14 @@ package ru.itmo.highload.storoom.utils;
 import org.springframework.stereotype.Component;
 import ru.itmo.highload.storoom.consts.UserType;
 import ru.itmo.highload.storoom.models.CompanyEntity;
+import ru.itmo.highload.storoom.models.LocationEntity;
+import ru.itmo.highload.storoom.models.LockEntity;
+import ru.itmo.highload.storoom.models.UnitEntity;
 import ru.itmo.highload.storoom.models.UserEntity;
 
 import static ru.itmo.highload.storoom.models.DTOs.*;
+
+import java.util.UUID;
 
 @Component
 public class Mapper {
@@ -36,5 +41,35 @@ public class Mapper {
         CompanyEntity company = new CompanyEntity();
         company.setName(dto.getName());
         return company;
+    }
+
+    public static UnitDTO toUnitDTO(UnitEntity entity) {
+        UnitDTO dto = new UnitDTO();
+        dto.setSizeX(entity.getSizeX().toString());
+        dto.setSizeY(entity.getSizeY().toString());
+        dto.setSizeZ(entity.getSizeZ().toString());
+        dto.setUnitType(entity.getUnitType().toString());
+        dto.setIsAvailable(entity.getIsAvailable().toString());
+        dto.setLocationId(entity.getLocation().getId().toString());
+        dto.setLockId(entity.getLock().getId().toString());
+        return dto;
+    }
+
+    public static UnitEntity toUnitEntity(UnitDTO dto) {
+
+        LocationEntity location = new LocationEntity();
+        location.setId(UUID.fromString(dto.getLocationId()));
+
+        LockEntity lock = new LockEntity();
+        lock.setId(UUID.fromString(dto.getLockId()));
+
+        return new UnitEntity(
+                Integer.valueOf(dto.getSizeX()),
+                Integer.valueOf(dto.getSizeY()),
+                Integer.valueOf(dto.getSizeZ()),
+                location,
+                Boolean.valueOf(dto.isAvailable),
+                lock
+        );
     }
 }
