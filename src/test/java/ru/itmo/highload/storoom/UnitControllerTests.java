@@ -7,7 +7,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.itmo.highload.storoom.consts.LocationType;
 import ru.itmo.highload.storoom.consts.UserType;
-import ru.itmo.highload.storoom.models.*;
+import ru.itmo.highload.storoom.models.LocationEntity;
+import ru.itmo.highload.storoom.models.LockEntity;
+import ru.itmo.highload.storoom.models.ManufacturerEntity;
+import ru.itmo.highload.storoom.models.UnitEntity;
 import ru.itmo.highload.storoom.repositories.LocationRepo;
 import ru.itmo.highload.storoom.repositories.LockRepo;
 import ru.itmo.highload.storoom.repositories.ManufacturerRepo;
@@ -19,10 +22,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.itmo.highload.storoom.models.DTOs.UnitDTO;
 import static ru.itmo.highload.storoom.services.UserDetailsServiceImpl.getAuthorities;
-import static ru.itmo.highload.storoom.models.DTOs.*;
 
 public class UnitControllerTests extends BaseTests{
 
