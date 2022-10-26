@@ -36,6 +36,12 @@ public class OrderEntity implements Serializable {
     @NonNull
     private UnitEntity unit;
 
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_id", nullable = false)
+    @NonNull
+    private UserEntity user;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
