@@ -2,15 +2,11 @@ package ru.itmo.highload.storoom.utils;
 
 import org.springframework.stereotype.Component;
 import ru.itmo.highload.storoom.consts.UserType;
-import ru.itmo.highload.storoom.models.CompanyEntity;
-import ru.itmo.highload.storoom.models.LocationEntity;
-import ru.itmo.highload.storoom.models.LockEntity;
-import ru.itmo.highload.storoom.models.UnitEntity;
-import ru.itmo.highload.storoom.models.UserEntity;
-
-import static ru.itmo.highload.storoom.models.DTOs.*;
+import ru.itmo.highload.storoom.models.*;
 
 import java.util.UUID;
+
+import static ru.itmo.highload.storoom.models.DTOs.*;
 
 @Component
 public class Mapper {

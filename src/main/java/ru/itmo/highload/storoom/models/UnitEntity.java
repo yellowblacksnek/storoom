@@ -1,6 +1,9 @@
 package ru.itmo.highload.storoom.models;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ru.itmo.highload.storoom.consts.UnitType;

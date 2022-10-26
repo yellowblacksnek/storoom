@@ -13,7 +13,7 @@ import ru.itmo.highload.storoom.utils.Mapper;
 
 import java.util.UUID;
 
-import static ru.itmo.highload.storoom.models.DTOs.*;
+import static ru.itmo.highload.storoom.models.DTOs.UnitDTO;
 
 @RestController
 @RequestMapping("/units")

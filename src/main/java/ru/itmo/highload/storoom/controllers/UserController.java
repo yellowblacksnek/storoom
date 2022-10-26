@@ -1,7 +1,5 @@
 package ru.itmo.highload.storoom.controllers;
 
-import static ru.itmo.highload.storoom.models.DTOs.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -18,6 +16,9 @@ import ru.itmo.highload.storoom.repositories.UserRepository;
 import ru.itmo.highload.storoom.utils.Mapper;
 
 import java.util.stream.Collectors;
+
+import static ru.itmo.highload.storoom.models.DTOs.UserFullDTO;
+import static ru.itmo.highload.storoom.models.DTOs.UserReadDTO;
 
 @RestController
 @RequestMapping("/users")
