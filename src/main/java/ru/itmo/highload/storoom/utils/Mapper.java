@@ -15,6 +15,7 @@ public class Mapper {
 
     public static UserReadDTO toUserReadDTO(UserEntity entity) {
         UserReadDTO dto = new UserReadDTO();
+        dto.setId(entity.getId().toString());
         dto.setUsername(entity.getUsername());
         dto.setUserType(entity.getUserType().name());
         return dto;
