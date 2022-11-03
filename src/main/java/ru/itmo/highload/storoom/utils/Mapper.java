@@ -7,6 +7,8 @@ import ru.itmo.highload.storoom.models.*;
 import static ru.itmo.highload.storoom.models.DTOs.*;
 import ru.itmo.highload.storoom.models.OrderEntity;
 import ru.itmo.highload.storoom.models.UserEntity;
+import ru.itmo.highload.storoom.repositories.CompanyRepository;
+import ru.itmo.highload.storoom.repositories.OwnerRepo;
 
 @Component
 public class Mapper {
@@ -38,6 +40,21 @@ public class Mapper {
         CompanyEntity company = new CompanyEntity();
         company.setName(dto.getName());
         return company;
+    }
+
+    public static OwnerReadDTO toOwnerDTO(OwnerEntity entity) {
+        OwnerReadDTO dto = new OwnerReadDTO();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        dto.setCompanyId(entity.getId());
+        return dto;
+    }
+
+    public static OwnerEntity toOwnerEntity(OwnerDTO dto, CompanyEntity company) {
+        OwnerEntity owner = new OwnerEntity();
+        owner.setName(dto.getName());
+        owner.setCompany(company);
+        return owner;
     }
 
     public static UnitDTO toUnitDTO(UnitEntity entity) {

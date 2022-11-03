@@ -9,6 +9,7 @@ import ru.itmo.highload.storoom.consts.UnitType;
 import ru.itmo.highload.storoom.consts.UserType;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public  class DTOs {
@@ -36,6 +37,21 @@ public  class DTOs {
     public static class CompanyDTO {
         public String name;
     }
+    @Data
+    public static class OwnerReadDTO {
+        public UUID id;
+        public String name;
+        public UUID companyId;
+        public List<UUID> locationIds;
+    }
+    @Data
+    public static class OwnerDTO {
+        public String name;
+        public UUID companyId;
+        public List<UUID> locationIds;
+    }
+
+
 
     @Data
     public static class UnitDTO {
