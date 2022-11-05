@@ -3,8 +3,11 @@ package ru.itmo.highload.storoom.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.itmo.highload.storoom.consts.UserType;
 import ru.itmo.highload.storoom.exceptions.BadRequestException;
 import ru.itmo.highload.storoom.exceptions.ResourceAlreadyExistsException;
@@ -26,7 +29,17 @@ public class UserService {
     @Value("${ADMIN_USERNAME}")
     private String adminUsername;
 
-    public UserReadDTO createUser(UserFullDTO req) {
+    public Page<UserReadDTO> getAll(Pageable pageable) {
+        Page<UserEntity> res = userRepo.findAll(pageable);
+        return res.map(Mapper::toUserReadDTO);
+    }
+
+    public Page<UserReadDTO> getAllByType(@RequestParam String userType, Pageable pageable) {
+        Page<UserEntity> res = userRepo.findAllByUserType(pageable, UserType.valueOf(userType));
+        return res.map(Mapper::toUserReadDTO);
+    }
+
+    public UserReadDTO create(UserFullDTO req) {
         if(userRepo.existsByUsername(req.getUsername()) || req.getUsername().equals(adminUsername)) {
             throw new ResourceAlreadyExistsException("username " + req.getUsername() + " already exists");
         }
@@ -38,7 +51,7 @@ public class UserService {
         return Mapper.toUserReadDTO(entity);
     }
 
-    public void changeUserPassword(String username, String password) {
+    public void updatePassword(String username, String password) {
         if (username.equals(adminUsername)) {
             throw new BadRequestException("cant mess with the admin");
         }
@@ -55,7 +68,7 @@ public class UserService {
         userRepo.save(user);
     }
 
-    public void changeUserType(String username, String userType) {
+    public void updateUserType(String username, String userType) {
         if (username.equals(adminUsername)) {
             throw new BadRequestException("cant mess with the admin");
         }
@@ -79,7 +92,7 @@ public class UserService {
         userRepo.save(user);
     }
 
-    public void deleteUser(String username, List<UserType> callerAuthorities) {
+    public void deleteByUsername(String username, List<UserType> callerAuthorities) {
         if (username.equals(adminUsername)) {
             throw new BadRequestException("cant mess with the admin");
         }
