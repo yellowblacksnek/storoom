@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.itmo.highload.storoom.consts.LocationType;
+import ru.itmo.highload.storoom.consts.UnitStatus;
 import ru.itmo.highload.storoom.consts.UserType;
 import ru.itmo.highload.storoom.models.LocationEntity;
 import ru.itmo.highload.storoom.models.LockEntity;
@@ -49,7 +50,7 @@ public class UnitControllerTests extends BaseTests{
         return new UnitEntity(
                 10,10,10,
                 locationEntity,
-                true,
+                UnitStatus.available,
                 lockEntity
         );
     }
@@ -77,6 +78,7 @@ public class UnitControllerTests extends BaseTests{
     @Test
     public void testAddUnit() throws Exception {
         UnitEntity unitEntity = createUnit();
+        unitEntity.setId(UUID.randomUUID());
         UnitDTO dto = Mapper.toUnitDTO(unitEntity);
 
         String token = getToken("user", getAuthorities(UserType.superuser));
@@ -86,6 +88,25 @@ public class UnitControllerTests extends BaseTests{
                 .content(toJson(dto)));
 
         response.andExpect(status().isCreated());
+
+        assertEquals(1, unitRepo.count());
+    }
+
+    @Test
+    public void testUpdateUnitInfo() throws Exception {
+        UnitEntity unitEntity = createUnit();
+        unitEntity = unitRepo.save(unitEntity);
+        UnitDTO dto = Mapper.toUnitDTO(unitEntity);
+        dto.setSizeX("20");
+
+        String token = getToken("user", getAuthorities(UserType.superuser));
+        ResultActions response = mockMvc.perform(put("/units/" + unitEntity.getId().toString())
+                .header("Authorization", token)
+                .contentType(APPLICATION_JSON)
+                .content(toJson(dto)));
+
+        response.andExpect(status().isOk());
+        response.andExpect(jsonPath("$.sizeX").value(20));
 
         assertEquals(1, unitRepo.count());
     }

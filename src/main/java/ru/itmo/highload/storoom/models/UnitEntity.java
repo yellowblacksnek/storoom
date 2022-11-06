@@ -4,11 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.*;
+import ru.itmo.highload.storoom.consts.UnitStatus;
 import ru.itmo.highload.storoom.consts.UnitType;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -16,6 +17,8 @@ import java.util.UUID;
 @Entity(name="units")
 @NoArgsConstructor
 @Getter @Setter
+@DynamicUpdate
+@OptimisticLocking(type = OptimisticLockType.ALL)
 public class UnitEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,8 +36,9 @@ public class UnitEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "unit_type")
     private UnitType unitType;
-    @Column(name = "is_available")
-    private Boolean isAvailable;
+
+    @Column(name = "status")
+    private UnitStatus status;
 
     @ManyToOne
     @JoinColumn(name = "location_id", nullable = false)
@@ -46,12 +50,12 @@ public class UnitEntity implements Serializable {
     @NonNull
     private LockEntity lock;
 
-    public UnitEntity(Integer sizeX, Integer sizeY, Integer sizeZ, LocationEntity location, Boolean isAvailable, LockEntity lock) {
+    public UnitEntity(Integer sizeX, Integer sizeY, Integer sizeZ, LocationEntity location, UnitStatus status, LockEntity lock) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.sizeZ = sizeZ;
         this.location = location;
-        this.isAvailable = isAvailable;
+        this.status = status;
         this.unitType = calculateUnitType(sizeX, sizeY, sizeZ);
         this.lock = lock;
     }
@@ -61,12 +65,16 @@ public class UnitEntity implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UnitEntity that = (UnitEntity) o;
-        return id.equals(that.id) && sizeX.equals(that.sizeX) && sizeY.equals(that.sizeY) && sizeZ.equals(that.sizeZ) && unitType == that.unitType && Objects.equals(isAvailable, that.isAvailable) && location.equals(that.location) && lock.equals(that.lock);
+        return id.equals(that.id) && sizeX.equals(that.sizeX) && sizeY.equals(that.sizeY) && sizeZ.equals(that.sizeZ) && unitType == that.unitType && Objects.equals(status, that.status) && location.equals(that.location) && lock.equals(that.lock);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, sizeX, sizeY, sizeZ, unitType, isAvailable, location, lock);
+        return Objects.hash(id, sizeX, sizeY, sizeZ, unitType, status, location, lock);
+    }
+
+    public void updateUnitType() {
+        setUnitType(calculateUnitType(this.getSizeX(), this.getSizeY(), this.getSizeZ()));
     }
 
     private UnitType calculateUnitType(Integer sizeX, Integer sizeY, Integer sizeZ){

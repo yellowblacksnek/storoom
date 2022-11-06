@@ -4,8 +4,10 @@
 create type location_types as enum ('stand', 'warehouse', 'main_office');
 create type user_types as enum ('admin', 'superuser', 'client');
 create type unit_types as enum ('S', 'M', 'L', 'XL');
+create type unit_status as enum ('dead', 'available', 'occupied', 'pending');
 create cast (varchar as user_types) with inout as implicit;
 create cast (varchar as unit_types) with inout as implicit;
+create cast (varchar as unit_status) with inout as implicit;
 create cast (varchar as location_types) with inout as implicit;
 
 -- changeset sus:1665582553174-1
@@ -21,14 +23,14 @@ CREATE TABLE users
 -- changeset sus:1665582553174-2
 CREATE TABLE units
 (
-    id           UUID       NOT NULL,
-    unit_type    UNIT_TYPES NOT NULL,
-    location_id  UUID       NOT NULL,
-    lock_id      UUID       NOT NULL,
-    is_available BOOLEAN,
-    size_x       INTEGER    NOT NULL,
-    size_y       INTEGER    NOT NULL,
-    size_z       INTEGER    NOT NULL,
+    id           UUID        NOT NULL,
+    unit_type    UNIT_TYPES  NOT NULL,
+    location_id  UUID        NOT NULL,
+    lock_id      UUID        NOT NULL,
+    status       UNIT_STATUS NOT NULL,
+    size_x       INTEGER     NOT NULL,
+    size_y       INTEGER     NOT NULL,
+    size_z       INTEGER     NOT NULL,
     CONSTRAINT units_pkey PRIMARY KEY (id)
 );
 

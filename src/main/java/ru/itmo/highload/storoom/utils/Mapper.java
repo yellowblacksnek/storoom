@@ -1,6 +1,7 @@
 package ru.itmo.highload.storoom.utils;
 
 import org.springframework.stereotype.Component;
+import ru.itmo.highload.storoom.consts.UnitStatus;
 import ru.itmo.highload.storoom.consts.UserType;
 import ru.itmo.highload.storoom.models.*;
 
@@ -44,11 +45,12 @@ public class Mapper {
 
     public static UnitDTO toUnitDTO(UnitEntity entity) {
         UnitDTO dto = new UnitDTO();
+        dto.setId(entity.getId().toString());
         dto.setSizeX(entity.getSizeX().toString());
         dto.setSizeY(entity.getSizeY().toString());
         dto.setSizeZ(entity.getSizeZ().toString());
         dto.setUnitType(entity.getUnitType().toString());
-        dto.setIsAvailable(entity.getIsAvailable().toString());
+        dto.setStatus(entity.getStatus().toString());
         dto.setLocationId(entity.getLocation().getId().toString());
         dto.setLockId(entity.getLock().getId().toString());
         return dto;
@@ -62,14 +64,16 @@ public class Mapper {
         LockEntity lock = new LockEntity();
         lock.setId(UUID.fromString(dto.getLockId()));
 
-        return new UnitEntity(
+        UnitEntity entity = new UnitEntity(
                 Integer.valueOf(dto.getSizeX()),
                 Integer.valueOf(dto.getSizeY()),
                 Integer.valueOf(dto.getSizeZ()),
                 location,
-                Boolean.valueOf(dto.isAvailable),
+                UnitStatus.valueOf(dto.status),
                 lock
         );
+        entity.setId(UUID.fromString(dto.getId()));
+        return entity;
     }
 
     public static OrderReadDTO toOrderDTO(OrderEntity entity) {

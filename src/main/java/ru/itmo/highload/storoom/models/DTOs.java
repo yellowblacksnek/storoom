@@ -32,9 +32,10 @@ public  class DTOs {
 
     @Data
     public static class UnitDTO {
+        public String id;
         public String sizeX, sizeY, sizeZ;
         public String unitType;
-        public String isAvailable;
+        public String status;
         public String locationId;
         public String lockId;
     }

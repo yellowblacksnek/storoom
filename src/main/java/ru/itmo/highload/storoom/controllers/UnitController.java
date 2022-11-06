@@ -4,12 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.itmo.highload.storoom.models.UnitEntity;
-import ru.itmo.highload.storoom.repositories.UnitRepo;
-import ru.itmo.highload.storoom.utils.Mapper;
+import ru.itmo.highload.storoom.services.UnitService;
 
 import java.util.UUID;
 
@@ -20,35 +17,38 @@ import static ru.itmo.highload.storoom.models.DTOs.UnitDTO;
 public class UnitController {
 
     @Autowired
-    private UnitRepo repo;
+    private UnitService service;
 
     @GetMapping
-    public Page<UnitDTO> getUnits(Pageable pageable) {
-        Page<UnitEntity> res = repo.findAll(pageable);
-        return res.map(Mapper::toUnitDTO);
+    public Page<UnitDTO> getAll(Pageable pageable) {
+        return service.getAll(pageable);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('superuser')")
-    public ResponseEntity<Object> addUnit(@RequestBody UnitDTO dto) {
-        try {
-            UnitEntity entity = repo.save(Mapper.toUnitEntity(dto));
-            return new ResponseEntity<>(Mapper.toUnitDTO(entity), HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    public UnitDTO create(@RequestBody UnitDTO dto) {
+        return service.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('superuser')")
+    @ResponseStatus(HttpStatus.OK)
+    public UnitDTO updateInfo(@PathVariable UUID id, @RequestBody UnitDTO dto) {
+        return service.updateInfo(id, dto);
+    }
+
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasAuthority('superuser')")
+    @ResponseStatus(HttpStatus.OK)
+    public UnitDTO updateStatus(@PathVariable UUID id, @RequestBody UnitDTO dto) {
+        return service.updateStatus(id, dto);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
-    public ResponseEntity<Object> deleteUnit(@PathVariable String id) {
-        try {
-            UnitEntity entity = repo.findById(UUID.fromString(id)).orElse(null);
-            if(entity == null) return ResponseEntity.badRequest().body("unit not found");
-            repo.delete(entity);
-            return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable String id) {
+        service.delete(id);
     }
 }
