@@ -23,7 +23,6 @@ public class OwnerEntity implements Serializable {
     private String name;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "company_id", nullable = false)
     @NonNull
     private CompanyEntity company;
@@ -33,7 +32,6 @@ public class OwnerEntity implements Serializable {
             name = "owners_locations",
             joinColumns = @JoinColumn(name = "owner_id"),
             inverseJoinColumns = @JoinColumn(name = "location_id"))
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<LocationEntity> locations;
 
     @Override

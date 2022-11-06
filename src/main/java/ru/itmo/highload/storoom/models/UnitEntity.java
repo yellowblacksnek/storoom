@@ -37,13 +37,11 @@ public class UnitEntity implements Serializable {
     private Boolean isAvailable;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "location_id", nullable = false)
     @NonNull
     private LocationEntity location;
 
     @OneToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "lock_id", nullable = false)
     @NonNull
     private LockEntity lock;

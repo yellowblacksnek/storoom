@@ -18,7 +18,6 @@ public class LockEntity implements Serializable {
     private UUID id;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "manufacturer_id", nullable = false)
     @NonNull
     private ManufacturerEntity manufacturer;

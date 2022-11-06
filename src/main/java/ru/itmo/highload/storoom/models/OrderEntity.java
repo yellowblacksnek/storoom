@@ -31,13 +31,11 @@ public class OrderEntity implements Serializable {
     private Integer days;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "unit_id", nullable = false)
     @NonNull
     private UnitEntity unit;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)
     @NonNull
     private UserEntity user;

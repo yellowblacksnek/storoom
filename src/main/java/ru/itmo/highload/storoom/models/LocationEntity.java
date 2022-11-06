@@ -35,7 +35,6 @@ public class LocationEntity implements Serializable {
             name = "owners_locations",
             joinColumns = @JoinColumn(name = "location_id"),
             inverseJoinColumns = @JoinColumn(name = "owner_id"))
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<OwnerEntity> owners;
 
     @Override
