@@ -14,6 +14,7 @@ public  class DTOs {
 
     @Data
     public static class UserReadDTO {
+        public String id;
         public String username;
         public String userType;
     }
