@@ -37,6 +37,8 @@ public class UnitEntity implements Serializable {
     @Column(name = "unit_type")
     private UnitType unitType;
 
+    @NonNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private UnitStatus status;
 
