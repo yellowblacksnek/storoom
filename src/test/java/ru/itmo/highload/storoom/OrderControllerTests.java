@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.itmo.highload.storoom.consts.OrderStatus;
+import ru.itmo.highload.storoom.consts.UnitStatus;
 import ru.itmo.highload.storoom.consts.UserType;
 import ru.itmo.highload.storoom.models.*;
 import ru.itmo.highload.storoom.repositories.*;
@@ -89,11 +90,30 @@ public class OrderControllerTests extends BaseTests{
                 .content(toJson(orderDTO)));
 
         response.andExpect(status().isOk());
-        System.out.println(response);
 
         OrderEntity orderEntity = orderRepo.findAll().iterator().next();
         assertEquals(orderEntity.getEndTime().withNano(0), endTimePlusDay.withNano(0));
     }
 
+    @Test
+    public void testFinishOrder() throws Exception {
+        UserEntity user = userRepo.findAll().iterator().next();
+        UnitEntity unit = unitRepo.findAll().iterator().next();
+
+        DTOs.OrderDTO orderDTO = new DTOs.OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), user.getId());
+        orderDTO = orderService.create(orderDTO);
+
+        String token = getToken("name", getAuthorities(UserType.superuser));
+        ResultActions response = mockMvc.perform(post("/orders/" + orderDTO.getId() + "/finish")
+                .header("Authorization", token)
+                .contentType(APPLICATION_JSON));
+
+        response.andExpect(status().isOk());
+
+        OrderEntity orderEntity = orderRepo.findAll().iterator().next();
+        unit = unitRepo.findAll().iterator().next();
+        assertEquals(OrderStatus.finished, orderEntity.getStatus());
+        assertEquals(UnitStatus.pending, unit.getStatus());
+    }
 
 }
