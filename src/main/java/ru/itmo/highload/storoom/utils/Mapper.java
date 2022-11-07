@@ -1,11 +1,8 @@
 package ru.itmo.highload.storoom.utils;
 
 import org.springframework.stereotype.Component;
-import ru.itmo.highload.storoom.consts.UnitStatus;
-import ru.itmo.highload.storoom.consts.UserType;
 import ru.itmo.highload.storoom.models.*;
 
-import java.util.UUID;
 
 import static ru.itmo.highload.storoom.models.DTOs.*;
 import ru.itmo.highload.storoom.models.OrderEntity;
@@ -16,9 +13,9 @@ public class Mapper {
 
     public static UserReadDTO toUserReadDTO(UserEntity entity) {
         UserReadDTO dto = new UserReadDTO();
-        dto.setId(entity.getId().toString());
+        dto.setId(entity.getId());
         dto.setUsername(entity.getUsername());
-        dto.setUserType(entity.getUserType().name());
+        dto.setUserType(entity.getUserType());
         return dto;
     }
 
@@ -26,7 +23,7 @@ public class Mapper {
         UserEntity user = new UserEntity();
         user.setUsername(dto.getUsername());
         user.setPassword(dto.getPassword());
-        user.setUserType(UserType.valueOf(dto.getUserType()));
+        user.setUserType(dto.getUserType());
         return user;
     }
 
@@ -45,53 +42,56 @@ public class Mapper {
 
     public static UnitDTO toUnitDTO(UnitEntity entity) {
         UnitDTO dto = new UnitDTO();
-        dto.setId(entity.getId().toString());
-        dto.setSizeX(entity.getSizeX().toString());
-        dto.setSizeY(entity.getSizeY().toString());
-        dto.setSizeZ(entity.getSizeZ().toString());
-        dto.setUnitType(entity.getUnitType().toString());
-        dto.setStatus(entity.getStatus().toString());
-        dto.setLocationId(entity.getLocation().getId().toString());
-        dto.setLockId(entity.getLock().getId().toString());
+        dto.setId(entity.getId());
+        dto.setSizeX(entity.getSizeX());
+        dto.setSizeY(entity.getSizeY());
+        dto.setSizeZ(entity.getSizeZ());
+        dto.setUnitType(entity.getUnitType());
+        dto.setStatus(entity.getStatus());
+        dto.setLocationId(entity.getLocation().getId());
+        dto.setLockId(entity.getLock().getId());
         return dto;
     }
 
     public static UnitEntity toUnitEntity(UnitDTO dto) {
 
         LocationEntity location = new LocationEntity();
-        location.setId(UUID.fromString(dto.getLocationId()));
+        location.setId(dto.getLocationId());
 
         LockEntity lock = new LockEntity();
-        lock.setId(UUID.fromString(dto.getLockId()));
+        lock.setId(dto.getLockId());
 
         UnitEntity entity = new UnitEntity(
-                Integer.valueOf(dto.getSizeX()),
-                Integer.valueOf(dto.getSizeY()),
-                Integer.valueOf(dto.getSizeZ()),
+                dto.getSizeX(),
+                dto.getSizeY(),
+                dto.getSizeZ(),
                 location,
-                UnitStatus.valueOf(dto.status),
+                dto.status,
                 lock
         );
-        entity.setId(UUID.fromString(dto.getId()));
+        entity.setId(dto.getId());
         return entity;
     }
 
-    public static OrderReadDTO toOrderDTO(OrderEntity entity) {
-        OrderReadDTO dto = new OrderReadDTO();
-        dto.setNumber(entity.getNumber());
-        dto.setDays(entity.getDays());
-        dto.setUnit(entity.getUnit());
-        dto.setUser(entity.getUser());
+    public static OrderDTO toOrderDTO(OrderEntity entity) {
+        OrderDTO dto = new OrderDTO();
+        dto.setId(entity.getId());
+        dto.setStartTime(entity.getStartTime());
+        dto.setEndTime(entity.getEndTime());
+        dto.setFinishedTime(entity.getFinishedTime());
+        dto.setStatus(entity.getStatus());
+        dto.setUnitId(entity.getUnit().getId());
+        dto.setUserId(entity.getUser().getId());
         return dto;
     }
 
-    public static OrderEntity toOrderEntity(OrderFullDTO dto) {
-        OrderEntity company = new OrderEntity();
-        company.setId(dto.getId());
-        company.setNumber(dto.getNumber());
-        company.setDays(dto.getDays());
-        company.setUnit(dto.getUnit());
-        company.setUser(dto.getUser());
-        return company;
+    public static OrderEntity toOrderEntity(OrderDTO dto) {
+        OrderEntity entity = new OrderEntity();
+        entity.setId(dto.getId());
+        entity.setStartTime(dto.getStartTime());
+        entity.setEndTime(dto.getEndTime());
+        entity.setFinishedTime(dto.getFinishedTime());
+        entity.setStatus(dto.getStatus());
+        return entity;
     }
 }

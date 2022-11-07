@@ -13,4 +13,6 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, U
 
     Page<UserEntity> findAllByUserType(Pageable pageable, UserType userType);
     Boolean existsByUsername(String username);
+
+    UserEntity getOne(UUID id);
 }

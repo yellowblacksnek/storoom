@@ -42,13 +42,13 @@ public class UnitController {
     @PreAuthorize("hasAuthority('superuser')")
     @ResponseStatus(HttpStatus.OK)
     public UnitDTO updateStatus(@PathVariable UUID id, @RequestBody UnitDTO dto) {
-        return service.updateStatus(id, dto);
+        return service.updateStatus(id, dto.getStatus());
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable String id) {
+    public void delete(@PathVariable UUID id) {
         service.delete(id);
     }
 }

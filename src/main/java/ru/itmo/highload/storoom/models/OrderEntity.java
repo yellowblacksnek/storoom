@@ -1,11 +1,7 @@
 package ru.itmo.highload.storoom.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import lombok.*;
+import ru.itmo.highload.storoom.consts.OrderStatus;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,19 +12,25 @@ import java.util.UUID;
 @Entity(name="orders")
 @AllArgsConstructor
 @Getter @Setter
+@NoArgsConstructor
 public class OrderEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @NonNull
-    @Column(name = "order_number")
-    private Integer number;
+    @Column(name = "start_time")
+    private LocalDateTime startTime;
     @NonNull
-    @Column(name = "created_time")
-    private LocalDateTime createdTime;
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
+
+    @Column(name = "finished_time")
+    private LocalDateTime finishedTime;
+
     @NonNull
-    @Column(name = "days")
-    private Integer days;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private OrderStatus status;
 
     @ManyToOne
     @JoinColumn(name = "unit_id", nullable = false)
@@ -45,22 +47,11 @@ public class OrderEntity implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderEntity that = (OrderEntity) o;
-        return id.equals(that.id) && number.equals(that.number) && createdTime.equals(that.createdTime) && days.equals(that.days) && unit.equals(that.unit);
+        return Objects.equals(id, that.id) && startTime.equals(that.startTime) && endTime.equals(that.endTime) && Objects.equals(finishedTime, that.finishedTime) && status == that.status && unit.equals(that.unit) && user.equals(that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number, createdTime, days, unit);
-    }
-
-    public OrderEntity(Integer number, Integer days, UnitEntity unit) {
-        this();
-        this.number = number;
-        this.days = days;
-        this.unit = unit;
-    }
-
-    public OrderEntity() {
-        this.createdTime = LocalDateTime.now();
+        return Objects.hash(id, startTime, endTime, finishedTime, status, unit, user);
     }
 }

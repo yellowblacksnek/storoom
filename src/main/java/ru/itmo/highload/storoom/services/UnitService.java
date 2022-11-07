@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.itmo.highload.storoom.consts.UnitStatus;
 import ru.itmo.highload.storoom.consts.UnitType;
 import ru.itmo.highload.storoom.exceptions.BadRequestException;
@@ -22,6 +21,14 @@ public class UnitService {
     @Autowired
     private UnitRepo repo;
 
+    public UnitEntity getRef(UUID id) {
+        return repo.getOne(id);
+    }
+
+    public UnitEntity getById(UUID id) {
+        return repo.findById(id).orElseThrow(ResourceNotFoundException::new);
+    }
+
     public Page<UnitDTO> getAll(Pageable pageable) {
         Page<UnitEntity> res = repo.findAll(pageable);
         return res.map(Mapper::toUnitDTO);
@@ -32,7 +39,6 @@ public class UnitService {
         return Mapper.toUnitDTO(entity);
     }
 
-    @Transactional
     public UnitDTO updateInfo(UUID id, UnitDTO dto) {
         UnitEntity newEntity = Mapper.toUnitEntity(dto);
         UnitEntity entity = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
@@ -44,30 +50,28 @@ public class UnitService {
         entity.setSizeX(newEntity.getSizeX());
         entity.setSizeY(newEntity.getSizeY());
         entity.setSizeZ(newEntity.getSizeZ());
+        entity.setLocation(newEntity.getLocation());
+        entity.setLock(newEntity.getLock());
 
         UnitType oldType = entity.getUnitType();
         entity.updateUnitType();
-
         if(oldType != newEntity.getUnitType() && entity.getUnitType() != newEntity.getUnitType()) {
             throw new BadRequestException("target unit type doesn't match with computed");
         }
 
-        entity.setLocation(newEntity.getLocation());
-        entity.setLock(newEntity.getLock());
-
+        entity = repo.save(entity);
         return Mapper.toUnitDTO(entity);
     }
 
-    @Transactional
-    public UnitDTO updateStatus(UUID id, UnitDTO dto) {
-        UnitStatus status = UnitStatus.valueOf(dto.getStatus());
+    public UnitDTO updateStatus(UUID id, UnitStatus status) {
         UnitEntity entity = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
         entity.setStatus(status);
+        entity = repo.save(entity);
         return Mapper.toUnitDTO(entity);
     }
 
-    public UnitDTO delete(String id) {
-        UnitEntity entity = repo.findById(UUID.fromString(id)).orElse(null);
+    public UnitDTO delete(UUID id) {
+        UnitEntity entity = repo.findById(id).orElse(null);
         if(entity == null) throw new ResourceNotFoundException("unit not found");
         repo.delete(entity);
         return Mapper.toUnitDTO(entity);

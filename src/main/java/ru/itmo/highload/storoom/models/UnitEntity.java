@@ -80,6 +80,7 @@ public class UnitEntity implements Serializable {
     }
 
     private UnitType calculateUnitType(Integer sizeX, Integer sizeY, Integer sizeZ){
+        if(sizeX == null | sizeY == null | sizeZ == null) return null;
         double volume = sizeX * sizeY * sizeZ / 10E6;
         if (volume < 0.05) return UnitType.S;
         else if (volume < 0.2) return UnitType.M;

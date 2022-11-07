@@ -3,12 +3,13 @@ package ru.itmo.highload.storoom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.itmo.highload.storoom.consts.UserType;
 import ru.itmo.highload.storoom.models.UserEntity;
 import ru.itmo.highload.storoom.repositories.UserRepository;
+
+import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,53 +29,47 @@ public class UserControllerTests extends BaseTests{
     @Autowired
     private MockMvc mockMvc;
 
-    private final BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
-
     @BeforeEach
     public void cleanUp() {
-        repo.deleteAll();
+//        repo.deleteAll();
     }
 
     @Test
     public void testGetAllUsers() throws Exception {
-        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
-        repo.save(new UserEntity("name1", bcrypt.encode("pass"), UserType.client));
-        repo.save(new UserEntity("name2", bcrypt.encode("pass"), UserType.superuser));
+        long userCount = repo.count();
 
         String token = getToken("user", getAuthorities(UserType.superuser));
         ResultActions response = mockMvc.perform(get("/users").header("Authorization", token));
 
         response.andExpect(status().isOk());
-        response.andExpect(content().string(containsString("name")));
-        response.andExpect(content().string(containsString("name1")));
-        response.andExpect(content().string(containsString("name2")));
-
-        response.andExpect(jsonPath("$.totalElements").value(3));
-        response.andExpect(jsonPath("$.content.size()").value(3));
+        response.andExpect(jsonPath("$.totalElements").value(userCount));
+        response.andExpect(jsonPath("$.content.size()").value(userCount));
     }
 
     @Test
     public void testGetClients() throws Exception {
-        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
-        repo.save(new UserEntity("name1", bcrypt.encode("pass"), UserType.client));
-        repo.save(new UserEntity("name2", bcrypt.encode("pass"), UserType.superuser));
+        int clientsCount = 0;
+        List<UserEntity> users = (List<UserEntity>) repo.findAll();
+        for(UserEntity u : users) {
+            if(u.getUserType() == UserType.client) clientsCount++;
+        }
 
         String token = getToken("user", getAuthorities(UserType.superuser));
         ResultActions response = mockMvc.perform(get("/users?userType=client").header("Authorization", token));
 
         response.andExpect(status().isOk());
-        response.andExpect(content().string(containsString("name")));
-        response.andExpect(content().string(containsString("name1")));
-        response.andExpect(jsonPath("$.totalElements").value(2));
-        response.andExpect(jsonPath("$.content.size()").value(2));
+        response.andExpect(jsonPath("$.totalElements").value(clientsCount));
+        response.andExpect(jsonPath("$.content.size()").value(clientsCount));
     }
 
     @Test
     public void testAddUser() throws Exception {
+        long userCount = repo.count();
+
         UserFullDTO req = new UserFullDTO();
         req.setUsername("test");
         req.setPassword("test");
-        req.setUserType("client");
+        req.setUserType(UserType.client);
 
         String token = getToken("user", getAuthorities(UserType.superuser));
         ResultActions response = mockMvc.perform(post("/users")
@@ -86,7 +81,7 @@ public class UserControllerTests extends BaseTests{
 
         mockMvc.perform(get("/users").header("Authorization", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.totalElements").value(userCount+1))
                 .andExpect(content().string(containsString("test")));
     }
 
@@ -95,7 +90,7 @@ public class UserControllerTests extends BaseTests{
         UserFullDTO req = new UserFullDTO();
         req.setUsername("test");
         req.setPassword("test");
-        req.setUserType("client");
+        req.setUserType(UserType.client);
 
         String token = getToken("user", getAuthorities(UserType.client));
         ResultActions response = mockMvc.perform(post("/users")
@@ -108,7 +103,7 @@ public class UserControllerTests extends BaseTests{
 
     @Test
     public void testUpdateUserPassword() throws Exception {
-        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
+//        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
 
         String username = "name";
         UserFullDTO req = new UserFullDTO();
@@ -128,7 +123,7 @@ public class UserControllerTests extends BaseTests{
 
     @Test
     public void testUpdateUserPasswordAuthorization() throws Exception {
-        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
+//        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
 
         String username = "another_name";
         UserFullDTO req = new UserFullDTO();
@@ -145,11 +140,11 @@ public class UserControllerTests extends BaseTests{
 
     @Test
     public void testUpdateUserType() throws Exception {
-        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
+//        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
 
         String username = "name";
         UserFullDTO req = new UserFullDTO();
-        req.setUserType("superuser");
+        req.setUserType(UserType.superuser);
 
         String token = getToken("admin", getAuthorities(UserType.admin));
         ResultActions response = mockMvc.perform(put("/users/"+username+"/type")
@@ -164,11 +159,11 @@ public class UserControllerTests extends BaseTests{
 
     @Test
     public void testUpdateUserTypeAuthorization() throws Exception {
-        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
+//        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
 
         String username = "name";
         UserFullDTO req = new UserFullDTO();
-        req.setUserType("superuser");
+        req.setUserType(UserType.superuser);
 
         String token = getToken("client", getAuthorities(UserType.superuser));
         ResultActions response = mockMvc.perform(put("/users/"+username+"/type")
@@ -181,7 +176,7 @@ public class UserControllerTests extends BaseTests{
 
     @Test
     public void testDeleteUser() throws Exception {
-        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
+//        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
         assertNotNull(repo.findByUsername("name"));
 
         String username = "name";
@@ -198,7 +193,7 @@ public class UserControllerTests extends BaseTests{
 
     @Test
     public void testDeleteUserAuthorization() throws Exception {
-        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
+//        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
         assertNotNull(repo.findByUsername("name"));
 
         String username = "name";
