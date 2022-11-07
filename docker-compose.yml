@@ -36,18 +36,67 @@ services:
     environment:
       SERVER_PORT: 8081
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: admin
+      APP.SECURITY.JWT.SECRET: ${JWT_SECRET}
 
-  db:
-    image: 'postgres:14.5'
-    container_name: db
+  users:
+    image: 'storoom_users:latest'
+    build:
+      context: users
+    container_name: users
+    depends_on:
+      - eureka-service
+      - users_db
+    ports:
+      - "8082:8082"
+    environment:
+      SERVER_PORT: 8082
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://users_db:5432/users_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      ADMIN_USERNAME: admin
+      APP.SECURITY.JWT.SECRET: ${JWT_SECRET} #s/4KMb61LOrMYYAn4rfaQYSgr+le5SMrsMzKw8G6bXc=
+
+
+  users_db:
+    image: 'postgres:14.5-alpine'
+    container_name: users_db
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: compose-postgres
-      POSTGRES_PASSWORD: compose-postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: users_db
 
-secrets:
-  private.key:
-    file: ./private.key
-  public.key:
-    file: ./public.key
+  locks_db:
+    image: 'postgres:14.5-alpine'
+    container_name: locks_db
+    ports:
+      - "5433:5433"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: locks_db
+
+  orders_db:
+    image: 'postgres:14.5-alpine'
+    container_name: orders_db
+    ports:
+      - "5434:5434"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orders_db
+
+  locations_db:
+    image: 'postgres:14.5-alpine'
+    container_name: locations_db
+    ports:
+      - "5435:5435"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: locations_db

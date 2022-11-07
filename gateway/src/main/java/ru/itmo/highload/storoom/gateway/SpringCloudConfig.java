@@ -13,6 +13,8 @@ public class SpringCloudConfig {
         return builder.routes()
                 .route(r -> r.path("/token/**")
                         .uri("lb://TOKEN-SERVICE"))
+                .route(r -> r.path("/users/**")
+                        .uri("lb://USERS-SERVICE"))
                 .build();
     }
 
