@@ -2,31 +2,38 @@ package ru.itmo.highload.storroom.locks;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Flux;
 import ru.itmo.highload.storroom.locks.models.ManufacturerEntity;
 import ru.itmo.highload.storroom.locks.dtos.ManufacturerDTO;
 import ru.itmo.highload.storroom.locks.repositories.ManufacturerRepo;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ManufacturerTests extends BaseTests{
     @Autowired private ManufacturerRepo repo;
+    @Autowired private WebTestClient webTestClient;
     @Autowired private MockMvc mockMvc;
 
     @Test
-    public void testGetAll() throws Exception{
+    public void testGetAll(){
         String token = clientToken();
-        ResultActions response = mockMvc.perform(get("/manufacturers").header("Authorization", token));
+        Flux<ManufacturerDTO> flux = webTestClient.get()
+                .uri("/manufacturers")
+                .header("Authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(ManufacturerDTO.class)
+                .getResponseBody();
+        List<ManufacturerDTO> res = flux.collectList().block();
 
-        response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.totalElements").value(1));
-        response.andExpect(jsonPath("$.content.size()").value(1));
-        response.andExpect(jsonPath("$.content[0].name").value("manu"));
+        assertEquals(1, res.size());
+        assertEquals("manu", res.get(0).getName());
     }
 
     @Test
@@ -35,14 +42,19 @@ public class ManufacturerTests extends BaseTests{
         dto.setName("manufacturer");
 
         String token = superuserToken();
-        ResultActions response = mockMvc.perform(post("/manufacturers")
+        ManufacturerDTO res = webTestClient.post()
+                .uri("/manufacturers")
                 .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
-                .content(toJson(dto)));
+                .body(BodyInserters.fromValue(toJson(dto)))
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(ManufacturerDTO.class)
+                .getResponseBody()
+                .blockFirst();
 
-        response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.name").value("manufacturer"));
-
+        assertEquals("manufacturer", res.getName());
         assertEquals(2, repo.count());
     }
 
@@ -52,14 +64,20 @@ public class ManufacturerTests extends BaseTests{
         entity.setName("new name");
 
         String token = superuserToken();
-        ResultActions response = mockMvc.perform(put("/manufacturers/"+entity.getId()+"/name")
+
+        ManufacturerDTO res = webTestClient.put()
+                .uri("/manufacturers/"+entity.getId()+"/name")
                 .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
-                .content(toJson(entity)));
+                .body(BodyInserters.fromValue(toJson(entity)))
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(ManufacturerDTO.class)
+                .getResponseBody()
+                .blockFirst();
 
-        response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.name").value("new name"));
-
+        assertEquals("new name", res.getName());
         entity = repo.findAll().iterator().next();
         assertEquals("new name", entity.getName());
     }
@@ -71,12 +89,17 @@ public class ManufacturerTests extends BaseTests{
         entity = repo.save(entity);
 
         String token = superuserToken();
-        ResultActions response = mockMvc.perform(delete("/manufacturers/"+entity.getId())
-                .header("Authorization", token));
+        ManufacturerDTO res = webTestClient.delete()
+                .uri("/manufacturers/"+entity.getId())
+                .header("Authorization", token)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(ManufacturerDTO.class)
+                .getResponseBody()
+                .blockFirst();
 
-        response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.name").value("manufacturer"));
-
+        assertEquals("manufacturer", res.getName());
         assertEquals(1, repo.count());
     }
 }

@@ -2,35 +2,45 @@ package ru.itmo.highload.storroom.locks;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Flux;
 import ru.itmo.highload.storroom.locks.dtos.LockDTO;
+import ru.itmo.highload.storroom.locks.dtos.LockFullDTO;
 import ru.itmo.highload.storroom.locks.models.LockEntity;
 import ru.itmo.highload.storroom.locks.models.ManufacturerEntity;
 import ru.itmo.highload.storroom.locks.repositories.LockRepo;
 import ru.itmo.highload.storroom.locks.repositories.ManufacturerRepo;
 import ru.itmo.highload.storroom.locks.utils.Mapper;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LockTests extends BaseTests{
     @Autowired private LockRepo repo;
     @Autowired private ManufacturerRepo manuRepo;
-    @Autowired private MockMvc mockMvc;
+
+    @Autowired
+    private WebTestClient webTestClient;
 
     @Test
-    public void testGetAll() throws Exception{
+    public void testGetAll(){
         String token = clientToken();
-        ResultActions response = mockMvc.perform(get("/locks").header("Authorization", token));
 
-        response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.totalElements").value(1));
-        response.andExpect(jsonPath("$.content.size()").value(1));
-        response.andExpect(jsonPath("$.content[0].name").value("lock"));
+        Flux<LockFullDTO> flux = webTestClient.get()
+                .uri("/locks")
+                .header("Authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(LockFullDTO.class)
+                .getResponseBody();
+
+        List<LockFullDTO> res = flux.collectList().block();
+
+        assertEquals(1, res.size());
+        assertEquals("lock", res.get(0).getName());
     }
 
     @Test
@@ -41,34 +51,48 @@ public class LockTests extends BaseTests{
         dto.setManufacturer(entity.getId());
 
         String token = superuserToken();
-        ResultActions response = mockMvc.perform(post("/locks")
+        LockFullDTO res = webTestClient.post()
+                .uri("/locks")
                 .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
-                .content(toJson(dto)));
+                .body(BodyInserters.fromValue(toJson(dto)))
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(LockFullDTO.class)
+                .getResponseBody()
+                .blockFirst();
 
-        response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.name").value("lock1"));
-        response.andExpect(jsonPath("$.manufacturer.name").value("manu"));
-
+        assertEquals("lock1", res.getName());
+        assertEquals("manu", res.getManufacturer().getName());
         assertEquals(2, repo.count());
     }
 
     @Test
     public void testUpdate() throws Exception{
         LockEntity entity = repo.findAll().iterator().next();
-        entity.setName("new name");
+        System.out.println(entity.getName());
         LockDTO dto = Mapper.toLockDTO(entity);
+        dto.setName("new name");
 
         String token = superuserToken();
-        ResultActions response = mockMvc.perform(put("/locks/"+dto.getId())
+
+        LockFullDTO res = webTestClient.put()
+                .uri("/locks/"+dto.getId())
                 .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
-                .content(toJson(dto)));
+                .body(BodyInserters.fromValue(toJson(dto)))
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(LockFullDTO.class)
+                .getResponseBody()
+                .blockFirst();
 
-        response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.name").value("new name"));
+        assertEquals("new name", res.getName());
 
         entity = repo.findAll().iterator().next();
+        System.out.println(entity.getName());
         assertEquals("new name", entity.getName());
     }
 
@@ -81,14 +105,18 @@ public class LockTests extends BaseTests{
         lock = repo.save(lock);
 
         String token = superuserToken();
-        ResultActions response = mockMvc.perform(delete("/locks/"+lock.getId())
-                .header("Authorization", token));
+        LockFullDTO res = webTestClient.delete()
+                .uri("/locks/"+lock.getId())
+                .header("Authorization", token)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(LockFullDTO.class)
+                .getResponseBody()
+                .blockFirst();
 
-        response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.name").value("lock1"));
-        response.andExpect(jsonPath("$.manufacturer.name").value("manu"));
-
-
+        assertEquals("lock1", res.getName());
+        assertEquals("manu", res.getManufacturer().getName());
         assertEquals(1, repo.count());
     }
 }
