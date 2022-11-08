@@ -6,4 +6,5 @@ import ru.itmo.highload.storoom.models.ManufacturerEntity;
 import java.util.UUID;
 
 public interface ManufacturerRepo extends PagingAndSortingRepository<ManufacturerEntity, UUID> {
+    ManufacturerEntity getOne(UUID id);
 }

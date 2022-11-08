@@ -1,8 +1,6 @@
 package ru.itmo.highload.storoom.models;
 
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,6 +14,10 @@ import java.util.UUID;
 public class LockEntity implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
+    @Column(name = "name")
+    @NonNull
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "manufacturer_id", nullable = false)
