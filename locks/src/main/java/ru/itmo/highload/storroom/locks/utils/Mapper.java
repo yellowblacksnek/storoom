@@ -7,6 +7,14 @@ import ru.itmo.highload.storroom.locks.models.LockEntity;
 import ru.itmo.highload.storroom.locks.models.ManufacturerEntity;
 
 public class Mapper {
+    public static LockDTO toLockDTO(LockEntity entity) {
+        LockDTO dto = new LockDTO();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        dto.setManufacturer(entity.getManufacturer().getId());
+        return dto;
+    }
+
     public static LockFullDTO toLockFullDTO(LockEntity entity) {
         LockFullDTO dto = new LockFullDTO();
         dto.setId(entity.getId());
