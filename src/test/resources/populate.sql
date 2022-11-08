@@ -1,7 +1,7 @@
 insert into manufacturers(id,name) values(gen_random_uuid(), 'manu');
 
-insert into locks (id, manufacturer_id)
-values (gen_random_uuid(), (select id from manufacturers limit 1));
+insert into locks (id, name, manufacturer_id)
+values (gen_random_uuid(), 'lock', (select id from manufacturers limit 1));
 
 insert into locations (id, address, location_type)
 values (gen_random_uuid(), 'addr', 'stand');
