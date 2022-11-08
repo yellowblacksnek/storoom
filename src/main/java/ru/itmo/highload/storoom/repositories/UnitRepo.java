@@ -6,4 +6,5 @@ import ru.itmo.highload.storoom.models.UnitEntity;
 import java.util.UUID;
 
 public interface UnitRepo extends PagingAndSortingRepository<UnitEntity, UUID> {
+    UnitEntity getOne(UUID id);
 }

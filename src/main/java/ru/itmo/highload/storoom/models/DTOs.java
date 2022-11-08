@@ -1,7 +1,14 @@
 package ru.itmo.highload.storoom.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.itmo.highload.storoom.consts.OrderStatus;
+import ru.itmo.highload.storoom.consts.UnitStatus;
+import ru.itmo.highload.storoom.consts.UnitType;
+import ru.itmo.highload.storoom.consts.UserType;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public  class DTOs {
@@ -9,14 +16,14 @@ public  class DTOs {
     public static class UserFullDTO {
         public String username;
         public String password;
-        public String userType;
+        public UserType userType;
     }
 
     @Data
     public static class UserReadDTO {
-        public String id;
+        public UUID id;
         public String username;
-        public String userType;
+        public UserType userType;
     }
 
     @Data
@@ -32,28 +39,25 @@ public  class DTOs {
 
     @Data
     public static class UnitDTO {
-        public String sizeX, sizeY, sizeZ;
-        public String unitType;
-        public String isAvailable;
-        public String locationId;
-        public String lockId;
-    }
-
-    @Data
-    public static class OrderFullDTO {
         public UUID id;
-        public Integer number;
-        public Integer days;
-        public UnitEntity unit;
-        public UserEntity user;
-
+        public Integer sizeX, sizeY, sizeZ;
+        public UnitType unitType;
+        public UnitStatus status;
+        public UUID locationId;
+        public UUID lockId;
     }
 
     @Data
-    public static class OrderReadDTO {
-        public Integer number;
-        public Integer days;
-        public UnitEntity unit;
-        public UserEntity user;
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class OrderDTO {
+        public UUID id;
+        public LocalDateTime startTime;
+        public LocalDateTime endTime;
+        public LocalDateTime finishedTime;
+        public OrderStatus status;
+        public UUID unitId;
+        public UUID userId;
+
     }
 }

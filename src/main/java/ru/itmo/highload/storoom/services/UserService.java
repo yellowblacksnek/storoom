@@ -18,6 +18,7 @@ import ru.itmo.highload.storoom.repositories.UserRepository;
 import ru.itmo.highload.storoom.utils.Mapper;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,10 @@ public class UserService {
 
     @Value("${ADMIN_USERNAME}")
     private String adminUsername;
+
+    public UserEntity getRef(UUID id) {
+        return userRepo.getOne(id);
+    }
 
     public Page<UserReadDTO> getAll(Pageable pageable) {
         Page<UserEntity> res = userRepo.findAll(pageable);
@@ -45,7 +50,7 @@ public class UserService {
         }
 
         req.setPassword(encoder.encode(req.getPassword()));
-        req.setUserType("client");
+        req.setUserType(UserType.client);
 
         UserEntity entity = userRepo.save(Mapper.toUserEntity(req));
         return Mapper.toUserReadDTO(entity);
@@ -68,20 +73,13 @@ public class UserService {
         userRepo.save(user);
     }
 
-    public void updateUserType(String username, String userType) {
+    public void updateUserType(String username, UserType type) {
         if (username.equals(adminUsername)) {
             throw new BadRequestException("cant mess with the admin");
         }
 
-        if (userType == null || userType.isEmpty()) {
+        if (type == null) {
             throw new BadRequestException("no type provided");
-        }
-
-        UserType type;
-        try {
-            type = UserType.valueOf(userType);
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("incorrect type provided");
         }
 
         UserEntity user = userRepo.findByUsername(username);
