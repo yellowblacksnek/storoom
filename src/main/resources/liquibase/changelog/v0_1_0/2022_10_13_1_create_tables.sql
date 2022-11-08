@@ -64,8 +64,9 @@ CREATE TABLE companies
 -- changeset sus:1665582553174-6
 CREATE TABLE locks
 (
-    id              UUID NOT NULL,
-    manufacturer_id UUID NOT NULL,
+    id              UUID         NOT NULL,
+    name            VARCHAR(255) NOT NULL,
+    manufacturer_id UUID         NOT NULL,
     CONSTRAINT locks_pkey PRIMARY KEY (id)
 );
 

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import static ru.itmo.highload.storoom.models.DTOs.LockDTO;
 import static ru.itmo.highload.storoom.models.DTOs.LockFullDTO;
+import static ru.itmo.highload.storoom.models.DTOs.ManufacturerDTO;
 import ru.itmo.highload.storoom.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storoom.models.LockEntity;
 import ru.itmo.highload.storoom.repositories.LockRepo;
@@ -28,12 +29,16 @@ public class LockService {
     }
 
     public LockFullDTO create(LockDTO dto) {
-        return Mapper.toLockFullDTO(repo.save(Mapper.toLockEntity(dto)));
+        ManufacturerDTO manufacturer = manufacturerService.getById(dto.getManufacturer());
+        LockEntity entity = Mapper.toLockEntity(dto);
+        entity.setManufacturer(Mapper.toManufacturerEntity(manufacturer));
+        return Mapper.toLockFullDTO(repo.save(entity));
     }
 
-    public LockFullDTO updateManufacturer(UUID id, UUID manufacturer) {
+    public LockFullDTO update(UUID id, LockDTO dto) {
         LockEntity entity = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
-        entity.setManufacturer(manufacturerService.getRef(manufacturer));
+        entity.setName(dto.getName());
+        entity.setManufacturer(Mapper.toManufacturerEntity(manufacturerService.getById(dto.getManufacturer())));
         entity = repo.save(entity);
         return Mapper.toLockFullDTO(entity);
     }

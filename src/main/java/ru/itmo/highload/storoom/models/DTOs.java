@@ -64,12 +64,14 @@ public  class DTOs {
     @Data
     public static class LockDTO {
         public UUID id;
+        public String name;
         public UUID manufacturer;
     }
 
     @Data
     public static class LockFullDTO {
         public UUID id;
+        public String name;
         public ManufacturerDTO manufacturer;
     }
 

@@ -9,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import static ru.itmo.highload.storoom.models.DTOs.LockDTO;
 import static ru.itmo.highload.storoom.models.DTOs.LockFullDTO;
-import static ru.itmo.highload.storoom.models.DTOs.ManufacturerDTO;
 import ru.itmo.highload.storoom.services.LockService;
 
 import java.util.UUID;
@@ -40,11 +39,11 @@ public class LockController {
         return service.create(dto);
     }
 
-    @PutMapping("/{id}/manufacturer")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('superuser')")
-    public LockFullDTO updateManufacturer(@PathVariable UUID id, @RequestBody ManufacturerDTO dto) {
-        return service.updateManufacturer(id, dto.getId());
+    public LockFullDTO update(@PathVariable UUID id, @RequestBody LockDTO dto) {
+        return service.update(id, dto);
     }
 
     @DeleteMapping("/{id}")

@@ -17,10 +17,6 @@ import java.util.UUID;
 public class ManufacturerService {
     private final ManufacturerRepo repo;
 
-    public ManufacturerEntity getRef(UUID id) {
-        return repo.getOne(id);
-    }
-
     public Page<ManufacturerDTO> getAll(Pageable pageable) {
         return repo.findAll(pageable).map(Mapper::toManufacturerDTO);
     }

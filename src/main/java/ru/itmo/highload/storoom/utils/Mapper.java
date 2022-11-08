@@ -98,6 +98,7 @@ public class Mapper {
     public static LockFullDTO toLockFullDTO(LockEntity entity) {
         LockFullDTO dto = new LockFullDTO();
         dto.setId(entity.getId());
+        dto.setName(entity.getName());
         dto.setManufacturer(toManufacturerDTO(entity.getManufacturer()));
         return dto;
     }
@@ -105,7 +106,8 @@ public class Mapper {
     public static LockEntity toLockEntity(LockDTO dto) {
         LockEntity entity = new LockEntity();
         ManufacturerEntity manufacturer = new ManufacturerEntity();
-        entity.setId(entity.getId());
+        entity.setId(dto.getId());
+        entity.setName(dto.getName());
         manufacturer.setId(dto.getManufacturer());
         entity.setManufacturer(manufacturer);
         return entity;
