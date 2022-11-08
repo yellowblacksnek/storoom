@@ -60,4 +60,22 @@ public  class DTOs {
         public UUID userId;
 
     }
+
+    @Data
+    public static class LockDTO {
+        public UUID id;
+        public UUID manufacturer;
+    }
+
+    @Data
+    public static class LockFullDTO {
+        public UUID id;
+        public ManufacturerDTO manufacturer;
+    }
+
+    @Data
+    public static class ManufacturerDTO {
+        public UUID id;
+        public String name;
+    }
 }
