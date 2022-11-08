@@ -17,6 +17,7 @@ import ru.itmo.highload.storroom.users.models.UserEntity;
 import ru.itmo.highload.storroom.users.repositories.UserRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,11 @@ public class UserService {
 
     @Value("${admin.username}")
     private String adminUsername;
+
+    public UserReadDTO getReadUserById(UUID id) {
+        UserEntity res = userRepo.findById(id);
+        return Mapper.toUserReadDTO(res);
+    }
 
     public UserFullDTO getUserByUsername(String username) {
         UserEntity res = userRepo.findByUsername(username);

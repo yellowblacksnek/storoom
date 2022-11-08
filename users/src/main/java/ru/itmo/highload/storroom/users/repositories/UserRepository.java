@@ -7,9 +7,12 @@ import ru.itmo.highload.storroom.users.models.UserType;
 import ru.itmo.highload.storroom.users.models.UserEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface UserRepository {
+
+    UserEntity findById(UUID id);
     UserEntity findByUsername(String username);
     List<UserEntity> findAll();
     Page<UserEntity> findAll(Pageable pageable);
