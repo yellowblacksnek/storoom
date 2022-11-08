@@ -98,6 +98,21 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://locks_db:5432/locks_db
       spring.config.import: configserver:http://config:8888
 
+  orders:
+    image: 'storoom_orders:latest'
+    build:
+      context: orders
+    container_name: orders
+    depends_on:
+      - eureka-service
+      - orders_db
+    ports:
+      - "8084:8084"
+    environment:
+      SERVER_PORT: 8084
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://orders_db:5432/orders_db
+      spring.config.import: configserver:http://config:8888
 
 
   users_db:

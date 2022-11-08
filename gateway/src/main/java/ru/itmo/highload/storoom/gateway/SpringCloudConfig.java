@@ -19,6 +19,10 @@ public class SpringCloudConfig {
                         .uri("lb://LOCKS-SERVICE"))
                 .route(r -> r.path("/manufacturers/**")
                         .uri("lb://LOCKS-SERVICE"))
+                .route(r -> r.path("/orders/**")
+                        .uri("lb://ORDERS-SERVICE"))
+                .route(r -> r.path("/units/**")
+                        .uri("lb://ORDERS-SERVICE"))
                 .build();
     }
 
