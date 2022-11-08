@@ -99,7 +99,7 @@ public class UserControllerTests extends BaseTests{
     public void testUpdateUserPassword() throws Exception {
 //        repo.save(new UserEntity("name", bcrypt.encode("pass"), UserType.client));
 
-        String username = "asd3";
+        String username = "asd";
         UserFullDTO req = new UserFullDTO();
         req.setPassword("new_pass");
 
@@ -111,7 +111,7 @@ public class UserControllerTests extends BaseTests{
 
         response.andExpect(status().isNoContent());
 
-        UserEntity user = repo.findByUsername("asd3");
+        UserEntity user = repo.findByUsername("asd");
         assertTrue(bcrypt.matches("new_pass", user.getPassword()));
     }
 
