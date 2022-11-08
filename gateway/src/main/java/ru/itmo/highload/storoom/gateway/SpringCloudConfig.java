@@ -15,6 +15,10 @@ public class SpringCloudConfig {
                         .uri("lb://TOKEN-SERVICE"))
                 .route(r -> r.path("/users/**")
                         .uri("lb://USERS-SERVICE"))
+                .route(r -> r.path("/locks/**")
+                        .uri("lb://LOCKS-SERVICE"))
+                .route(r -> r.path("/manufacturers/**")
+                        .uri("lb://LOCKS-SERVICE"))
                 .build();
     }
 
