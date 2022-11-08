@@ -17,7 +17,6 @@ import ru.itmo.highload.storroom.users.models.UserEntity;
 import ru.itmo.highload.storroom.users.repositories.UserRepository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,12 +25,8 @@ public class UserService {
     private final UserRepository userRepo;
     private final BCryptPasswordEncoder encoder;
 
-    @Value("${ADMIN_USERNAME}")
+    @Value("${admin.username}")
     private String adminUsername;
-
-    public UserEntity getRef(UUID id) {
-        return userRepo.getOne(id);
-    }
 
     public UserFullDTO getUserByUsername(String username) {
         UserEntity res = userRepo.findByUsername(username);

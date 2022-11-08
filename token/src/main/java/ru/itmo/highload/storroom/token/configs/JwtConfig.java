@@ -3,6 +3,7 @@ package ru.itmo.highload.storroom.token.configs;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -17,9 +18,8 @@ import java.util.Collection;
 
 @Configuration
 public class JwtConfig {
-//    @Value("${app.security.jwt.secret}")
-//    private String jwtSecret;
-    public static String jwtSecret = "s/4KMb61LOrMYYAn4rfaQYSgr+le5SMrsMzKw8G6bXc=";
+    @Value("${app.security.jwt.secret}")
+    private String jwtSecret;
 
     @Bean
     JwtDecoder jwtDecoder() {
@@ -30,7 +30,7 @@ public class JwtConfig {
     @Bean
     JwtEncoder jwtEncoder() {
         SecretKey secretKey = new SecretKeySpec(jwtSecret.getBytes(), "HmacSHA256");
-        JWKSource<SecurityContext> immutableSecret = new ImmutableSecret<SecurityContext>(secretKey);
+        JWKSource<SecurityContext> immutableSecret = new ImmutableSecret<>(secretKey);
         return new NimbusJwtEncoder(immutableSecret);
     }
 

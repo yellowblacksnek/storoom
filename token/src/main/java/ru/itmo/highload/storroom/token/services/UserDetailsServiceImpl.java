@@ -21,10 +21,10 @@ import java.util.List;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Value("${ADMIN_USERNAME}")
+    @Value("${admin.username}")
     private String adminUsername;
 
-    @Value("${ADMIN_PASSWORD}")
+    @Value("${admin.password}")
     private String adminPassword;
 
     @Autowired

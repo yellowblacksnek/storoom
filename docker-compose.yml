@@ -23,6 +23,23 @@ services:
       server.port: 8080
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
 
+  config:
+    image: 'storoom_config:latest'
+    build:
+      context: config
+    container_name: config
+    depends_on:
+      - eureka-service
+    ports:
+      - "8888:8888"
+    environment:
+      server.port: 8888
+      spring.profiles.active: native
+      spring.cloud.config.server.native.searchLocations: file:/config-repo
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
+    volumes:
+      - ./config-repo:/config-repo
+
 
   token:
     image: 'storoom_token:latest'
@@ -31,14 +48,18 @@ services:
     container_name: token
     depends_on:
       - eureka-service
+      - config
+      - users
     ports:
       - "8081:8081"
     environment:
       SERVER_PORT: 8081
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
-      ADMIN_USERNAME: admin
-      ADMIN_PASSWORD: admin
-      APP.SECURITY.JWT.SECRET: ${JWT_SECRET}
+      spring.config.import: configserver:http://config:8888
+#      admin.username: admin
+#      admin.password: admin
+#      app.security.jwt.secret: s/4KMb61LOrMYYAn4rfaQYSgr+le5SMrsMzKw8G6bXc=
+
 
   users:
     image: 'storoom_users:latest'
@@ -54,11 +75,13 @@ services:
       SERVER_PORT: 8082
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
       SPRING_DATASOURCE_URL: jdbc:postgresql://users_db:5432/users_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_JPA_HIBERNATE_DDL_AUTO: none
-      ADMIN_USERNAME: admin
-      APP.SECURITY.JWT.SECRET: ${JWT_SECRET} #s/4KMb61LOrMYYAn4rfaQYSgr+le5SMrsMzKw8G6bXc=
+      spring.config.import: configserver:http://config:8888
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: postgres
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+#      admin.username: admin
+#      app.security.jwt.secret: s/4KMb61LOrMYYAn4rfaQYSgr+le5SMrsMzKw8G6bXc=
+
 
 
   users_db:
