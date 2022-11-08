@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import static ru.itmo.highload.storoom.models.DTOs.LockDTO;
 import static ru.itmo.highload.storoom.models.DTOs.LockFullDTO;
@@ -34,18 +35,21 @@ public class LockController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('superuser')")
     public LockFullDTO create(@RequestBody LockDTO dto) {
         return service.create(dto);
     }
 
     @PutMapping("/{id}/manufacturer")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('superuser')")
     public LockFullDTO updateManufacturer(@PathVariable UUID id, @RequestBody ManufacturerDTO dto) {
         return service.updateManufacturer(id, dto.getId());
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('superuser')")
     public LockFullDTO deleteById(@PathVariable UUID id) {
         return service.deleteById(id);
     }
