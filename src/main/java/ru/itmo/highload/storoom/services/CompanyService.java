@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.itmo.highload.storoom.exceptions.BadRequestException;
 import ru.itmo.highload.storoom.exceptions.ResourceAlreadyExistsException;
 import ru.itmo.highload.storoom.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storoom.models.CompanyEntity;
@@ -35,7 +34,7 @@ public class CompanyService {
 
     public CompanyEntity update(UUID id, CompanyDTO dto) {
         if (dto.getName() == null || dto.getName().isEmpty()) {
-            throw new BadRequestException("no name provided");
+            throw new IllegalArgumentException("no name provided");
         }
         CompanyEntity companyEntity = companyRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("company " + id + " not found"));
         companyEntity.setName(dto.getName());
