@@ -7,6 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import ru.itmo.highload.storroom.locks.dtos.ManufacturerDTO;
+import ru.itmo.highload.storroom.locks.exceptions.BadRequestException;
 import ru.itmo.highload.storroom.locks.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.locks.repositories.ManufacturerRepo;
 import ru.itmo.highload.storroom.locks.utils.Mapper;
@@ -23,15 +24,22 @@ public class ManufacturerService {
     }
 
     public Mono<ManufacturerDTO> getById(UUID id) {
-        return Mono.just(Mapper.toManufacturerDTO(repo.findById(id).orElseThrow(ResourceNotFoundException::new)));
+        return Mono.fromCallable(() -> Mapper.toManufacturerDTO(
+                    repo.findById(id).orElseThrow(() ->
+                            new ResourceNotFoundException("manufacturer " + id + " not found"))))
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     public Mono<ManufacturerDTO> create(ManufacturerDTO dto) {
-        return Mono.just(Mapper.toManufacturerDTO(repo.save(Mapper.toManufacturerEntity(dto))));
+        if (dto.getName() == null || dto.getName().isEmpty()) throw new BadRequestException("name is empty");
+        return Mono.fromCallable(() ->Mapper.toManufacturerDTO(repo.save(Mapper.toManufacturerEntity(dto))))
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     public Mono<ManufacturerDTO> updateName(UUID id, String name) {
-        return Mono.just(repo.findById(id).orElseThrow(ResourceNotFoundException::new))
+        if (name == null || name.isEmpty()) throw new BadRequestException("name is empty");
+        return Mono.fromCallable(() -> repo.findById(id).orElseThrow(() ->
+                        new ResourceNotFoundException("manufacturer " + id + " not found")))
                 .publishOn(Schedulers.boundedElastic())
                 .map(entity -> {
                     entity.setName(name);
@@ -46,7 +54,8 @@ public class ManufacturerService {
     }
 
     public Mono<ManufacturerDTO> deleteById(UUID id) {
-        return Mono.just(repo.findById(id).orElseThrow(ResourceNotFoundException::new))
+        return Mono.fromCallable(() -> repo.findById(id).orElseThrow(() ->
+                        new ResourceNotFoundException("manufacturer " + id + " not found")))
                 .publishOn(Schedulers.boundedElastic())
                 .map(entity -> {
                     repo.delete(entity);
