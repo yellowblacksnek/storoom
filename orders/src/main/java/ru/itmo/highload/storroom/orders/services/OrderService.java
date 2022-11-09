@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itmo.highload.storroom.orders.dtos.OrderDTO;
-import ru.itmo.highload.storroom.orders.exceptions.BadRequestException;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.models.OrderEntity;
 import ru.itmo.highload.storroom.orders.models.OrderStatus;
@@ -55,7 +54,7 @@ public class OrderService {
         OrderEntity order = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
 
         if(order.getStatus() != dto.getStatus()) {
-            throw new BadRequestException("status updates via info updates not supported");
+            throw new IllegalArgumentException("status updates via info updates not supported");
         }
 
         order.setUserId(dto.getUserId());

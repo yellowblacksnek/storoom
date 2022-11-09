@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.itmo.highload.storroom.orders.dtos.UnitDTO;
-import ru.itmo.highload.storroom.orders.exceptions.BadRequestException;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.models.UnitEntity;
 import ru.itmo.highload.storroom.orders.models.UnitStatus;
@@ -44,7 +43,7 @@ public class UnitService {
         UnitEntity entity = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
 
         if(entity.getStatus() != newEntity.getStatus()) {
-            throw new BadRequestException("status updates via info updates not supported");
+            throw new IllegalArgumentException("status updates via info updates not supported");
         }
 
         entity.setSizeX(newEntity.getSizeX());
@@ -56,7 +55,7 @@ public class UnitService {
         UnitType oldType = entity.getUnitType();
         entity.updateUnitType();
         if(oldType != newEntity.getUnitType() && entity.getUnitType() != newEntity.getUnitType()) {
-            throw new BadRequestException("target unit type doesn't match with computed");
+            throw new IllegalArgumentException("target unit type doesn't match with computed");
         }
 
         entity = repo.save(entity);

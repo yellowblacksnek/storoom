@@ -7,7 +7,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import ru.itmo.highload.storroom.locks.dtos.ManufacturerDTO;
-import ru.itmo.highload.storroom.locks.exceptions.BadRequestException;
 import ru.itmo.highload.storroom.locks.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.locks.repositories.ManufacturerRepo;
 import ru.itmo.highload.storroom.locks.utils.Mapper;
@@ -31,13 +30,13 @@ public class ManufacturerService {
     }
 
     public Mono<ManufacturerDTO> create(ManufacturerDTO dto) {
-        if (dto.getName() == null || dto.getName().isEmpty()) throw new BadRequestException("name is empty");
+        if (dto.getName() == null || dto.getName().isEmpty()) throw new IllegalArgumentException("name is empty");
         return Mono.fromCallable(() ->Mapper.toManufacturerDTO(repo.save(Mapper.toManufacturerEntity(dto))))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
     public Mono<ManufacturerDTO> updateName(UUID id, String name) {
-        if (name == null || name.isEmpty()) throw new BadRequestException("name is empty");
+        if (name == null || name.isEmpty()) throw new IllegalArgumentException("name is empty");
         return Mono.fromCallable(() -> repo.findById(id).orElseThrow(() ->
                         new ResourceNotFoundException("manufacturer " + id + " not found")))
                 .publishOn(Schedulers.boundedElastic())

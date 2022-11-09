@@ -11,7 +11,6 @@ import ru.itmo.highload.storroom.users.utils.Mapper;
 import ru.itmo.highload.storroom.users.models.UserType;
 import ru.itmo.highload.storroom.users.dtos.UserFullDTO;
 import ru.itmo.highload.storroom.users.dtos.UserReadDTO;
-import ru.itmo.highload.storroom.users.exceptions.BadRequestException;
 import ru.itmo.highload.storroom.users.exceptions.ResourceAlreadyExistsException;
 import ru.itmo.highload.storroom.users.models.UserEntity;
 import ru.itmo.highload.storroom.users.repositories.UserRepository;
@@ -63,16 +62,16 @@ public class UserService {
 
     public void updatePassword(String username, String password) {
         if (username.equals(adminUsername)) {
-            throw new BadRequestException("cant mess with the admin");
+            throw new IllegalArgumentException("cant mess with the admin");
         }
 
         if (password == null || password.isEmpty()) {
-            throw new BadRequestException("no password provided");
+            throw new IllegalArgumentException("no password provided");
         }
 
         UserEntity user = userRepo.findByUsername(username);
         if (user == null) {
-            throw new BadRequestException("username not found");
+            throw new IllegalArgumentException("username not found");
         }
         user.setPassword(encoder.encode(password));
         userRepo.save(user);
@@ -80,16 +79,16 @@ public class UserService {
 
     public void updateUserType(String username, UserType type) {
         if (username.equals(adminUsername)) {
-            throw new BadRequestException("cant mess with the admin");
+            throw new IllegalArgumentException("cant mess with the admin");
         }
 
         if (type == null) {
-            throw new BadRequestException("no type provided");
+            throw new IllegalArgumentException("no type provided");
         }
 
         UserEntity user = userRepo.findByUsername(username);
         if (user == null) {
-            throw new BadRequestException("username not found");
+            throw new IllegalArgumentException("username not found");
         }
         user.setUserType(type);
         userRepo.save(user);
@@ -97,18 +96,18 @@ public class UserService {
 
     public void deleteByUsername(String username, List<UserType> callerAuthorities) {
         if (username.equals(adminUsername)) {
-            throw new BadRequestException("cant mess with the admin");
+            throw new IllegalArgumentException("cant mess with the admin");
         }
 
         UserEntity user = userRepo.findByUsername(username);
         if (user == null) {
-            throw new BadRequestException("username not found");
+            throw new IllegalArgumentException("username not found");
         }
 
         UserType highestType = UserType.getHighestOf(callerAuthorities);
 
         if(highestType.getHierarchy() >= user.getUserType().getHierarchy()) {
-            throw new BadRequestException("cant delete a more privileged user");
+            throw new IllegalArgumentException("cant delete a more privileged user");
         }
 
         userRepo.delete(user);

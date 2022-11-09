@@ -9,7 +9,6 @@ import reactor.core.scheduler.Schedulers;
 import ru.itmo.highload.storroom.locks.dtos.LockDTO;
 import ru.itmo.highload.storroom.locks.dtos.LockFullDTO;
 import ru.itmo.highload.storroom.locks.dtos.ManufacturerDTO;
-import ru.itmo.highload.storroom.locks.exceptions.BadRequestException;
 import ru.itmo.highload.storroom.locks.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.locks.models.LockEntity;
 import ru.itmo.highload.storroom.locks.repositories.LockRepo;
@@ -28,7 +27,7 @@ public class LockService {
     }
 
     public Mono<LockFullDTO> getById(UUID id) {
-        if (id == null) throw new BadRequestException("id is empty");
+        if (id == null) throw new IllegalArgumentException("id is empty");
         return Mono.fromCallable(() ->
                 Mapper.toLockFullDTO(repo.findById(id).orElseThrow(() ->
                         new ResourceNotFoundException("lock " + id + " not found"))))
@@ -36,8 +35,8 @@ public class LockService {
     }
 
     public Mono<LockFullDTO> create(LockDTO dto) {
-        if (dto.getName() == null || dto.getName().isEmpty()) throw new BadRequestException("name is empty");
-        if (dto.getManufacturer() == null) throw new BadRequestException("manufacturer is empty");
+        if (dto.getName() == null || dto.getName().isEmpty()) throw new IllegalArgumentException("name is empty");
+        if (dto.getManufacturer() == null) throw new IllegalArgumentException("manufacturer is empty");
 
         return Mono.fromCallable(() -> manufacturerService.getById(dto.getManufacturer()))
                 .map(manufacturer -> {
@@ -55,8 +54,8 @@ public class LockService {
     }
 
     public Mono<LockFullDTO> update(UUID id, LockDTO dto) {
-        if (dto.getName() == null || dto.getName().isEmpty()) throw new BadRequestException("name is empty");
-        if (dto.getManufacturer() == null) throw new BadRequestException("manufacturer is empty");
+        if (dto.getName() == null || dto.getName().isEmpty()) throw new IllegalArgumentException("name is empty");
+        if (dto.getManufacturer() == null) throw new IllegalArgumentException("manufacturer is empty");
         return
                 Mono.fromCallable(() -> repo.findById(id).orElseThrow(() ->
                                 new ResourceNotFoundException("lock " + id + " not found")))
