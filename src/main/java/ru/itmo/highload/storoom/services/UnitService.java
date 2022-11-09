@@ -8,6 +8,9 @@ import ru.itmo.highload.storoom.consts.UnitStatus;
 import ru.itmo.highload.storoom.consts.UnitType;
 import ru.itmo.highload.storoom.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storoom.models.DTOs.UnitDTO;
+import ru.itmo.highload.storoom.models.DTOs.UnitFullDTO;
+import ru.itmo.highload.storoom.models.LocationEntity;
+import ru.itmo.highload.storoom.models.LockEntity;
 import ru.itmo.highload.storoom.models.UnitEntity;
 import ru.itmo.highload.storoom.repositories.UnitRepo;
 import ru.itmo.highload.storoom.utils.Mapper;
@@ -20,60 +23,61 @@ public class UnitService {
     @Autowired
     private UnitRepo repo;
 
-    public UnitEntity getRef(UUID id) {
-        return repo.getOne(id);
-    }
+    @Autowired private LockService lockService;
 
-    public UnitEntity getById(UUID id) {
+    public UnitEntity getEntityById(UUID id) {
         return repo.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
-    public Page<UnitDTO> getAll(Pageable pageable) {
+    public Page<UnitFullDTO> getAll(Pageable pageable) {
         Page<UnitEntity> res = repo.findAll(pageable);
-        return res.map(Mapper::toUnitDTO);
+        return res.map(Mapper::toUnitFullDTO);
     }
 
-    public UnitDTO create(UnitDTO dto) {
+    public UnitFullDTO create(UnitDTO dto) {
         UnitEntity entity = repo.save(Mapper.toUnitEntity(dto));
-        return Mapper.toUnitDTO(entity);
+        return Mapper.toUnitFullDTO(entity);
     }
 
-    public UnitDTO updateInfo(UUID id, UnitDTO dto) {
-        UnitEntity newEntity = Mapper.toUnitEntity(dto);
+    public UnitFullDTO updateInfo(UUID id, UnitDTO dto) {
+//        UnitEntity newEntity = Mapper.toUnitEntity(dto);
         UnitEntity entity = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
 
-        if(entity.getStatus() != newEntity.getStatus()) {
+        if(entity.getStatus() != dto.getStatus()) {
             throw new IllegalArgumentException("status updates via info updates not supported");
         }
 
-        entity.setSizeX(newEntity.getSizeX());
-        entity.setSizeY(newEntity.getSizeY());
-        entity.setSizeZ(newEntity.getSizeZ());
-        entity.setLocation(newEntity.getLocation());
-        entity.setLock(newEntity.getLock());
+        LocationEntity location = new LocationEntity();
+        location.setId(dto.getLocationId());
+        LockEntity lockEntity = lockService.getEntityById(dto.getLockId());
+
+        entity.setSizeX(dto.getSizeX());
+        entity.setSizeY(dto.getSizeY());
+        entity.setSizeZ(dto.getSizeZ());
+        entity.setLocation(location);
+        entity.setLock(lockEntity);
 
         UnitType oldType = entity.getUnitType();
         entity.updateUnitType();
-        if(oldType != newEntity.getUnitType() && entity.getUnitType() != newEntity.getUnitType()) {
+        if(oldType != dto.getUnitType() && entity.getUnitType() != dto.getUnitType()) {
             throw new IllegalArgumentException("target unit type doesn't match with computed");
         }
 
         entity = repo.save(entity);
-        return Mapper.toUnitDTO(entity);
+        return Mapper.toUnitFullDTO(entity);
     }
 
-    public UnitDTO updateStatus(UUID id, UnitStatus status) {
+    public UnitFullDTO updateStatus(UUID id, UnitStatus status) {
         UnitEntity entity = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
         entity.setStatus(status);
         entity = repo.save(entity);
-        return Mapper.toUnitDTO(entity);
+        return Mapper.toUnitFullDTO(entity);
     }
 
-    public UnitDTO delete(UUID id) {
+    public UnitFullDTO delete(UUID id) {
         UnitEntity entity = repo.findById(id).orElse(null);
         if(entity == null) throw new ResourceNotFoundException("unit not found");
         repo.delete(entity);
-        return Mapper.toUnitDTO(entity);
+        return Mapper.toUnitFullDTO(entity);
     }
-
 }

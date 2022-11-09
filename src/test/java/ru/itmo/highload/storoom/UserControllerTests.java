@@ -115,7 +115,7 @@ public class UserControllerTests extends BaseTests{
                 .contentType(APPLICATION_JSON)
                 .content(toJson(req)));
 
-        response.andExpect(status().isNoContent());
+        response.andExpect(status().isOk());
 
         UserEntity user = repo.findByUsername("name");
         assertTrue(bcrypt.matches("new_pass", user.getPassword()));
@@ -152,7 +152,7 @@ public class UserControllerTests extends BaseTests{
                 .contentType(APPLICATION_JSON)
                 .content(toJson(req)));
 
-        response.andExpect(status().isNoContent());
+        response.andExpect(status().isOk());
         UserEntity user = repo.findByUsername("name");
         assertEquals(UserType.superuser, user.getUserType());
     }
@@ -186,7 +186,7 @@ public class UserControllerTests extends BaseTests{
                 .header("Authorization", token)
                 .contentType(APPLICATION_JSON));
 
-        response.andExpect(status().isNoContent());
+        response.andExpect(status().isOk());
 
         assertNull(repo.findByUsername("name"));
     }

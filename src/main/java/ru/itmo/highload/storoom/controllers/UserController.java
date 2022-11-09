@@ -36,32 +36,32 @@ public class UserController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('superuser')")
-    public ResponseEntity<Object> create(@RequestBody UserFullDTO req) {
+    public ResponseEntity<UserReadDTO> create(@RequestBody UserFullDTO req) {
         UserReadDTO res = userService.create(req);
         return ResponseEntity.ok(res);
     }
 
     @PutMapping("/{username}/password")
     @PreAuthorize("#username == authentication.name")
-    public ResponseEntity<Object> updatePassword(@PathVariable String username, @RequestBody UserFullDTO req) {
-        userService.updatePassword(username, req.getPassword());
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<UserReadDTO> updatePassword(@PathVariable String username, @RequestBody UserFullDTO req) {
+        UserReadDTO res = userService.updatePassword(username, req.getPassword());
+        return ResponseEntity.ok(res);
     }
 
     @PutMapping("/{username}/type")
     @PreAuthorize("hasAuthority('admin') and #username != authentication.name")
-    public ResponseEntity<Object> updateUserType(@PathVariable String username, @RequestBody UserFullDTO req) {
-        userService.updateUserType(username, req.getUserType());
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<UserReadDTO> updateUserType(@PathVariable String username, @RequestBody UserFullDTO req) {
+        UserReadDTO res = userService.updateUserType(username, req.getUserType());
+        return ResponseEntity.ok(res);
     }
 
     @DeleteMapping("/{username}")
     @PreAuthorize("hasAuthority('superuser')")
-    public ResponseEntity<Object> deleteByUsername(Authentication auth, @PathVariable String username) {
+    public ResponseEntity<UserReadDTO> deleteByUsername(Authentication auth, @PathVariable String username) {
         List<UserType> authorities = auth.getAuthorities().stream()
                 .map(i -> UserType.valueOf(i.toString()))
                 .collect(Collectors.toList());
-        userService.deleteByUsername(username, authorities);
-        return ResponseEntity.noContent().build();
+        UserReadDTO res = userService.deleteByUsername(username, authorities);
+        return ResponseEntity.ok(res);
     }
 }

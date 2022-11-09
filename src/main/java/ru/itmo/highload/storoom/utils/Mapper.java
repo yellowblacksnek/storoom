@@ -53,6 +53,19 @@ public class Mapper {
         return dto;
     }
 
+    public static UnitFullDTO toUnitFullDTO(UnitEntity entity) {
+        UnitFullDTO dto = new UnitFullDTO();
+        dto.setId(entity.getId());
+        dto.setSizeX(entity.getSizeX());
+        dto.setSizeY(entity.getSizeY());
+        dto.setSizeZ(entity.getSizeZ());
+        dto.setUnitType(entity.getUnitType());
+        dto.setStatus(entity.getStatus());
+        dto.setLocationId(entity.getLocation().getId());
+        dto.setLock(toLockFullDTO(entity.getLock()));
+        return dto;
+    }
+
     public static UnitEntity toUnitEntity(UnitDTO dto) {
 
         LocationEntity location = new LocationEntity();
@@ -82,6 +95,18 @@ public class Mapper {
         dto.setStatus(entity.getStatus());
         dto.setUnitId(entity.getUnit().getId());
         dto.setUserId(entity.getUser().getId());
+        return dto;
+    }
+
+    public static OrderFullDTO toOrderFullDTO(OrderEntity entity) {
+        OrderFullDTO dto = new OrderFullDTO();
+        dto.setId(entity.getId());
+        dto.setStartTime(entity.getStartTime());
+        dto.setEndTime(entity.getEndTime());
+        dto.setFinishedTime(entity.getFinishedTime());
+        dto.setStatus(entity.getStatus());
+        dto.setUnit(toUnitFullDTO(entity.getUnit()));
+        dto.setUser(toUserReadDTO(entity.getUser()));
         return dto;
     }
 

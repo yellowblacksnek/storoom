@@ -11,6 +11,7 @@ import ru.itmo.highload.storoom.services.UnitService;
 import java.util.UUID;
 
 import static ru.itmo.highload.storoom.models.DTOs.UnitDTO;
+import static ru.itmo.highload.storoom.models.DTOs.UnitFullDTO;
 
 @RestController
 @RequestMapping("/units")
@@ -20,35 +21,35 @@ public class UnitController {
     private UnitService service;
 
     @GetMapping
-    public Page<UnitDTO> getAll(Pageable pageable) {
+    public Page<UnitFullDTO> getAll(Pageable pageable) {
         return service.getAll(pageable);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('superuser')")
     @ResponseStatus(HttpStatus.CREATED)
-    public UnitDTO create(@RequestBody UnitDTO dto) {
+    public UnitFullDTO create(@RequestBody UnitDTO dto) {
         return service.create(dto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
     @ResponseStatus(HttpStatus.OK)
-    public UnitDTO updateInfo(@PathVariable UUID id, @RequestBody UnitDTO dto) {
+    public UnitFullDTO updateInfo(@PathVariable UUID id, @RequestBody UnitDTO dto) {
         return service.updateInfo(id, dto);
     }
 
     @PutMapping("/{id}/status")
     @PreAuthorize("hasAuthority('superuser')")
     @ResponseStatus(HttpStatus.OK)
-    public UnitDTO updateStatus(@PathVariable UUID id, @RequestBody UnitDTO dto) {
+    public UnitFullDTO updateStatus(@PathVariable UUID id, @RequestBody UnitDTO dto) {
         return service.updateStatus(id, dto.getStatus());
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
-        service.delete(id);
+    @ResponseStatus(HttpStatus.OK)
+    public UnitFullDTO delete(@PathVariable UUID id) {
+        return service.delete(id);
     }
 }
