@@ -57,7 +57,7 @@ public class OrderService {
     }
 
     public OrderFullDTO updateOrderInfo(UUID id, OrderDTO dto) {
-        OrderEntity order = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("order " + id + " not found"));
+        OrderEntity order = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("order", id.toString()));
         if(order.getStatus() != dto.getStatus()) {
             throw new IllegalArgumentException("status updates via info updates not supported");
         }
@@ -78,7 +78,7 @@ public class OrderService {
 
     @Transactional
     public OrderFullDTO finishOrder(UUID id) {
-        OrderEntity order = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("order " + id + " not found"));
+        OrderEntity order = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("order", id.toString()));
 
         if(order.getStatus() == OrderStatus.finished) {
             throw new IllegalStateException("order is already finished");

@@ -27,7 +27,7 @@ public class LockTests extends BaseTests{
 
     @Test
     public void testGetAll(){
-        String token = clientToken();
+        String token = superuserToken();
 
         Flux<LockFullDTO> flux = webTestClient.get()
                 .uri("/locks")

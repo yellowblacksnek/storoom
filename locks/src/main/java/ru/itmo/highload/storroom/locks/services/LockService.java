@@ -30,7 +30,7 @@ public class LockService {
         if (id == null) throw new IllegalArgumentException("id is empty");
         return Mono.fromCallable(() ->
                 Mapper.toLockFullDTO(repo.findById(id).orElseThrow(() ->
-                        new ResourceNotFoundException("lock " + id + " not found"))))
+                        new ResourceNotFoundException("lock", id.toString()))))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
@@ -42,7 +42,7 @@ public class LockService {
                 .map(manufacturer -> {
                     LockEntity entity = Mapper.toLockEntity(dto);
                     ManufacturerDTO manuDto = manufacturerService.getById(dto.getManufacturer()).block();
-                    if(manuDto == null) throw new ResourceNotFoundException("manufacturer " + dto.getManufacturer() + " not found");
+                    if(manuDto == null) throw new ResourceNotFoundException("manufacturer", dto.getManufacturer().toString());
                     entity.setManufacturer(Mapper.toManufacturerEntity(manuDto));
                     return Mapper.toLockFullDTO(repo.save(entity));
                 }).subscribeOn(Schedulers.boundedElastic());
@@ -58,12 +58,12 @@ public class LockService {
         if (dto.getManufacturer() == null) throw new IllegalArgumentException("manufacturer is empty");
         return
                 Mono.fromCallable(() -> repo.findById(id).orElseThrow(() ->
-                                new ResourceNotFoundException("lock " + id + " not found")))
+                                new ResourceNotFoundException("lock", id.toString())))
                         .publishOn(Schedulers.boundedElastic())
                 .map(entity -> {
                     entity.setName(dto.getName());
                     ManufacturerDTO manuDto = manufacturerService.getById(dto.getManufacturer()).block();
-                    if(manuDto == null) throw new ResourceNotFoundException("manufacturer " + dto.getManufacturer() + " not found");
+                    if(manuDto == null) throw new ResourceNotFoundException("manufacturer", dto.getManufacturer().toString());
                     entity.setManufacturer(Mapper.toManufacturerEntity(manuDto));
                     return Mapper.toLockFullDTO(repo.save(entity));
                 });
@@ -77,7 +77,7 @@ public class LockService {
 
     public Mono<LockFullDTO> deleteById(UUID id) {
         return Mono.fromCallable(() -> repo.findById(id).orElseThrow(() ->
-                        new ResourceNotFoundException("lock " + id + " not found")))
+                        new ResourceNotFoundException("lock", id.toString())))
                 .publishOn(Schedulers.boundedElastic())
                 .map(entity -> {
                     repo.delete(entity);

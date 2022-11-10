@@ -26,7 +26,7 @@ public class LockService {
             lock = lockClient.getLock(request.getHeader("Authorization"), id);
         } catch (FeignException e) {
             if(e.status() == 409) {
-                throw new ResourceNotFoundException("lock " + id + " not found");
+                throw new ResourceNotFoundException("lock", id.toString());
             } else {
                 throw new UnavailableException();
             }

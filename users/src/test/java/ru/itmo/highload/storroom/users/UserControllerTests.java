@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import ru.itmo.highload.storroom.users.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.users.models.UserType;
 import ru.itmo.highload.storroom.users.models.UserEntity;
 
@@ -182,7 +183,7 @@ public class UserControllerTests extends BaseTests{
 
         response.andExpect(status().isNoContent());
 
-        assertNull(repo.findByUsername("name"));
+        assertThrows(ResourceNotFoundException.class, () -> repo.findByUsername("name"));
     }
 
     @Test

@@ -25,7 +25,7 @@ public class LocationService {
             location = locationClient.getLocation(request.getHeader("Authorization"), id);
         } catch (FeignException e) {
             if(e.status() == 409) {
-                throw new ResourceNotFoundException("lock " + id + " not found");
+                throw new ResourceNotFoundException("location", id.toString());
             } else {
                 throw new UnavailableException();
             }

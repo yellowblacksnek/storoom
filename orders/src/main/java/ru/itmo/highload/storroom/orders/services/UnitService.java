@@ -28,7 +28,7 @@ public class UnitService {
 
 
     public UnitEntity getById(UUID id) {
-        return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit " + id + " not found"));
+        return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit", id.toString()));
     }
 
     public Page<UnitDTO> getAll(Pageable pageable) {
@@ -44,7 +44,7 @@ public class UnitService {
     }
 
     public UnitFullDTO updateInfo(UUID id, UnitDTO dto) {
-        UnitEntity entity = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit " + id + " not found"));
+        UnitEntity entity = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit", id.toString()));
 
         if(entity.getStatus() != dto.getStatus()) {
             throw new IllegalArgumentException("status updates via info updates not supported");
@@ -70,7 +70,7 @@ public class UnitService {
     }
 
     public UnitFullDTO updateStatus(UUID id, UnitStatus status) {
-        UnitEntity entity = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit " + id + " not found"));
+        UnitEntity entity = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit", id.toString()));
         entity.setStatus(status);
         entity = repo.save(entity);
         LockDTO lock = lockService.getLockAlways(entity.getLockId());
@@ -79,7 +79,7 @@ public class UnitService {
     }
 
     public UnitFullDTO delete(UUID id) {
-        UnitEntity entity = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit " + id + " not found"));
+        UnitEntity entity = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit", id.toString()));
         repo.delete(entity);
         LockDTO lock = lockService.getLockAlways(entity.getLockId());
         LocationDTO location = locationService.getLocationAlways(entity.getLocationId());

@@ -27,7 +27,7 @@ public class UserService {
             user = client.getUser(id);
         } catch (FeignException e) {
             if(e.status() == 409) {
-                throw new ResourceNotFoundException("lock " + id + " not found");
+                throw new ResourceNotFoundException("user", id.toString());
             } else {
                 throw new UnavailableException();
             }

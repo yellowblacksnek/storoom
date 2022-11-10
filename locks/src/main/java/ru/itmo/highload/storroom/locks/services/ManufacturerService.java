@@ -25,7 +25,7 @@ public class ManufacturerService {
     public Mono<ManufacturerDTO> getById(UUID id) {
         return Mono.fromCallable(() -> Mapper.toManufacturerDTO(
                     repo.findById(id).orElseThrow(() ->
-                            new ResourceNotFoundException("manufacturer " + id + " not found"))))
+                            new ResourceNotFoundException("manufacturer", id.toString()))))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
@@ -38,7 +38,7 @@ public class ManufacturerService {
     public Mono<ManufacturerDTO> updateName(UUID id, String name) {
         if (name == null || name.isEmpty()) throw new IllegalArgumentException("name is empty");
         return Mono.fromCallable(() -> repo.findById(id).orElseThrow(() ->
-                        new ResourceNotFoundException("manufacturer " + id + " not found")))
+                        new ResourceNotFoundException("manufacturer", id.toString())))
                 .publishOn(Schedulers.boundedElastic())
                 .map(entity -> {
                     entity.setName(name);
@@ -54,7 +54,7 @@ public class ManufacturerService {
 
     public Mono<ManufacturerDTO> deleteById(UUID id) {
         return Mono.fromCallable(() -> repo.findById(id).orElseThrow(() ->
-                        new ResourceNotFoundException("manufacturer " + id + " not found")))
+                        new ResourceNotFoundException("manufacturer", id.toString())))
                 .publishOn(Schedulers.boundedElastic())
                 .map(entity -> {
                     repo.delete(entity);

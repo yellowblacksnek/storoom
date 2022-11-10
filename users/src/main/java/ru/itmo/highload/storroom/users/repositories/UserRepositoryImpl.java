@@ -37,7 +37,7 @@ public class UserRepositoryImpl implements UserRepository{
     public UserEntity findById(UUID id) {
         String query = "SELECT * FROM USERS WHERE id = ?";
         List<UserEntity> res = jdbcTemplate.query(query, new UserRowMapper(), id);
-        if (res.isEmpty()) throw new ResourceNotFoundException();
+        if (res.isEmpty()) throw new ResourceNotFoundException("user", id.toString());
         return res.get(0);
     }
 
@@ -45,7 +45,7 @@ public class UserRepositoryImpl implements UserRepository{
     public UserEntity findByUsername(String username) {
         String query = "SELECT * FROM USERS WHERE username = ?";
         List<UserEntity> res = jdbcTemplate.query(query, new UserRowMapper(), username);
-        if (res.isEmpty()) return null;
+        if (res.isEmpty()) throw new ResourceNotFoundException("user", username);
         return res.get(0);
     }
 
