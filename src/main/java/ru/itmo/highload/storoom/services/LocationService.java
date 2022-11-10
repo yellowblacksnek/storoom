@@ -25,7 +25,7 @@ public class LocationService {
     private final OwnerRepo ownerRepo;
 
     public LocationEntity getEntityById(UUID id) {
-        return locationRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("lcoation " + id + " not found"));
+        return locationRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Location", id));
     }
 
     public Page<DTOs.LocationReadDTO> getAll(Pageable pageable) {
@@ -45,7 +45,7 @@ public class LocationService {
         if (dto.getAddress() == null || dto.getAddress().isEmpty()) {
             throw new IllegalStateException("no name provided");
         }
-        LocationEntity locationEntity = locationRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("location " + id + " not found"));
+        LocationEntity locationEntity = getEntityById(id);
         locationEntity.setAddress(dto.getAddress());
         locationEntity.setLocationType(dto.getLocationType());
         List<OwnerEntity> owners = getOwnersEntities(dto.getOwnerIds());
@@ -54,7 +54,7 @@ public class LocationService {
     }
 
     public void delete(UUID id) {
-        LocationEntity locationEntity = locationRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("location " + id + " not found"));
+        LocationEntity locationEntity = getEntityById(id);
         locationRepo.delete(locationEntity);
     }
 

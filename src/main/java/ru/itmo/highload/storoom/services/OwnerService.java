@@ -35,7 +35,7 @@ public class OwnerService {
         if (ownerRepo.existsByName(dto.getName())) {
             throw new ResourceAlreadyExistsException();
         }
-        CompanyEntity company = companyRepo.findById(dto.getCompanyId()).orElseThrow(() -> new ResourceNotFoundException("company " + dto.getCompanyId() + " not found"));
+        CompanyEntity company = companyRepo.findById(dto.getCompanyId()).orElseThrow(() -> new ResourceNotFoundException("Company", dto.getCompanyId()));
         List<LocationEntity> locations = locationRepo.findByIdIn(dto.getLocationIds());
         return Mapper.toOwnerDTO(ownerRepo.save(Mapper.toOwnerEntity(dto, company, locations)));
     }
@@ -44,9 +44,9 @@ public class OwnerService {
         if (dto.getName() == null || dto.getName().isEmpty()) {
             throw new IllegalStateException("no name provided");
         }
-        OwnerEntity ownerEntity = ownerRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("owner " + id + " not found"));
+        OwnerEntity ownerEntity = ownerRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Owner", id));
         ownerEntity.setName(dto.getName());
-        CompanyEntity company = companyRepo.findById(dto.getCompanyId()).orElseThrow(() -> new ResourceNotFoundException("company " + dto.getCompanyId() + " not found"));
+        CompanyEntity company = companyRepo.findById(dto.getCompanyId()).orElseThrow(() -> new ResourceNotFoundException("Company", dto.getCompanyId()));
         ownerEntity.setCompany(company);
         List<LocationEntity> locations = locationRepo.findByIdIn(dto.getLocationIds());
         ownerEntity.setLocations(locations);
@@ -54,7 +54,7 @@ public class OwnerService {
     }
 
     public void delete(UUID id) {
-        OwnerEntity ownerEntity = ownerRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("owner " + id + " not found"));
+        OwnerEntity ownerEntity = ownerRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Owner", id));
         ownerRepo.delete(ownerEntity);
     }
 }

@@ -41,8 +41,10 @@ public class OrderService {
         if (unitEntity.getStatus() != UnitStatus.available) {
             throw new IllegalStateException("unit is not available");
         }
-
         OrderEntity orderEntity = Mapper.toOrderEntity(dto);
+        if (orderEntity.getStartTime().isAfter(orderEntity.getEndTime())) {
+            throw new IllegalStateException("Start date should be before end date");
+        }
         orderEntity.setUser(userService.getEntityById(dto.getUserId()));
         orderEntity.setUnit(unitEntity);
         orderEntity = repo.save(orderEntity);

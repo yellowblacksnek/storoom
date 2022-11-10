@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.itmo.highload.storoom.exceptions.ResourceAlreadyExistsException;
 import ru.itmo.highload.storoom.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storoom.models.ManufacturerEntity;
 import ru.itmo.highload.storoom.repositories.ManufacturerRepo;
@@ -23,14 +24,20 @@ public class ManufacturerService {
     }
 
     public ManufacturerDTO getById(UUID id) {
-        return Mapper.toManufacturerDTO(repo.findById(id).orElseThrow(ResourceNotFoundException::new));
+        return Mapper.toManufacturerDTO(repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Manufacturer", id)));
     }
 
     public ManufacturerDTO create(ManufacturerDTO dto) {
+        if (repo.existsByName(dto.getName())) {
+            throw new ResourceAlreadyExistsException();
+        }
         return Mapper.toManufacturerDTO(repo.save(Mapper.toManufacturerEntity(dto)));
     }
 
     public ManufacturerDTO updateName(UUID id, String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("no name provided");
+        }
         ManufacturerEntity entity = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
         entity.setName(name);
         entity = repo.save(entity);

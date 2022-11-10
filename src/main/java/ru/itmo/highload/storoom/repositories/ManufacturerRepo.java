@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface ManufacturerRepo extends PagingAndSortingRepository<ManufacturerEntity, UUID> {
     ManufacturerEntity getOne(UUID id);
+    Boolean existsByName(String name);
 }
