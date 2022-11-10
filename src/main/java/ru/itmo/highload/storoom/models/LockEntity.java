@@ -7,12 +7,14 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name="locks")
+@Entity(name = "locks")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public class LockEntity implements Serializable {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(name = "name")

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public  class DTOs {
+public class DTOs {
     @Data
     public static class UserFullDTO {
         public String username;
@@ -34,6 +34,7 @@ public  class DTOs {
     public static class CompanyDTO {
         public String name;
     }
+
     @Data
     public static class OwnerReadDTO {
         public UUID id;
@@ -41,12 +42,14 @@ public  class DTOs {
         public UUID companyId;
         public List<UUID> locationIds;
     }
+
     @Data
     public static class OwnerDTO {
         public String name;
         public UUID companyId;
         public List<UUID> locationIds;
     }
+
     @Data
     public static class LocationReadDTO {
         public UUID id;
@@ -54,6 +57,7 @@ public  class DTOs {
         public LocationType locationType;
         public List<UUID> ownerIds;
     }
+
     @Data
     public static class LocationDTO {
         public String address;

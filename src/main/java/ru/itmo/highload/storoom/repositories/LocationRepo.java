@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface LocationRepo extends PagingAndSortingRepository<LocationEntity, UUID> {
     LocationEntity findByAddress(String address);
+
     Boolean existsByAddress(String address);
+
     List<LocationEntity> findByIdIn(List<UUID> ids);
 }

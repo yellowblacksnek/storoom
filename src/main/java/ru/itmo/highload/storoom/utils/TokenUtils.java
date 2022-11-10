@@ -1,6 +1,6 @@
 package ru.itmo.highload.storoom.utils;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -12,9 +12,9 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TokenUtils {
-    @Autowired
-    private JwtEncoder encoder;
+    private final JwtEncoder encoder;
 
     public String generateToken(String username, Collection<? extends GrantedAuthority> authoritiesList, Long expireSeconds) {
 

@@ -45,7 +45,7 @@ public class UserService {
     }
 
     public UserReadDTO create(UserFullDTO req) {
-        if(userRepo.existsByUsername(req.getUsername()) || req.getUsername().equals(adminUsername)) {
+        if (userRepo.existsByUsername(req.getUsername()) || req.getUsername().equals(adminUsername)) {
             throw new ResourceAlreadyExistsException("username " + req.getUsername() + " already exists");
         }
 
@@ -104,7 +104,7 @@ public class UserService {
 
         UserType highestType = UserType.getHighestOf(callerAuthorities);
 
-        if(highestType.getHierarchy() >= user.getUserType().getHierarchy()) {
+        if (highestType.getHierarchy() >= user.getUserType().getHierarchy()) {
             throw new IllegalArgumentException("cant delete a more privileged user");
         }
 

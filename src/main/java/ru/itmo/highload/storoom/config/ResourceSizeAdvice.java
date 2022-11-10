@@ -26,7 +26,7 @@ public class ResourceSizeAdvice implements ResponseBodyAdvice<Page<?>> {
                                    @Nullable ServerHttpRequest serverHttpRequest,
                                    @Nullable ServerHttpResponse serverHttpResponse) {
         if (page != null && serverHttpResponse != null) {
-            serverHttpResponse.getHeaders().add("X-Total-Count",String.valueOf(page.getTotalElements()));
+            serverHttpResponse.getHeaders().add("X-Total-Count", String.valueOf(page.getTotalElements()));
         }
         return page;
     }

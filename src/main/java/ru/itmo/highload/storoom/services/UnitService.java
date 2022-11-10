@@ -1,6 +1,6 @@
 package ru.itmo.highload.storoom.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,13 +18,12 @@ import ru.itmo.highload.storoom.utils.Mapper;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UnitService {
 
-    @Autowired
-    private UnitRepo repo;
-
-    @Autowired private LockService lockService;
-    @Autowired private LocationService locationService;
+    private final UnitRepo repo;
+    private final LocationService locationService;
+    private final LockService lockService;
 
     public UnitEntity getEntityById(UUID id) {
         return repo.findById(id).orElseThrow(ResourceNotFoundException::new);
@@ -44,7 +43,7 @@ public class UnitService {
 //        UnitEntity newEntity = Mapper.toUnitEntity(dto);
         UnitEntity entity = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
 
-        if(entity.getStatus() != dto.getStatus()) {
+        if (entity.getStatus() != dto.getStatus()) {
             throw new IllegalArgumentException("status updates via info updates not supported");
         }
 
@@ -59,7 +58,7 @@ public class UnitService {
 
         UnitType oldType = entity.getUnitType();
         entity.updateUnitType();
-        if(oldType != dto.getUnitType() && entity.getUnitType() != dto.getUnitType()) {
+        if (oldType != dto.getUnitType() && entity.getUnitType() != dto.getUnitType()) {
             throw new IllegalArgumentException("target unit type doesn't match with computed");
         }
 
@@ -76,7 +75,7 @@ public class UnitService {
 
     public UnitFullDTO delete(UUID id) {
         UnitEntity entity = repo.findById(id).orElse(null);
-        if(entity == null) throw new ResourceNotFoundException("unit not found");
+        if (entity == null) throw new ResourceNotFoundException("unit not found");
         repo.delete(entity);
         return Mapper.toUnitFullDTO(entity);
     }

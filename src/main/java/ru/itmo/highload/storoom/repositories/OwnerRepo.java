@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface OwnerRepo extends PagingAndSortingRepository<OwnerEntity, UUID> {
     OwnerEntity findByName(String name);
+
     Boolean existsByName(String name);
+
     List<OwnerEntity> findByIdIn(List<UUID> ids);
 }

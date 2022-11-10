@@ -32,7 +32,7 @@ import java.util.Collection;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled=true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig { //
 
     @Value("${jwt.public.key}")

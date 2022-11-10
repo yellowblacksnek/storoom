@@ -10,10 +10,11 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name="manufacturers")
+@Entity(name = "manufacturers")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public class ManufacturerEntity implements Serializable {
     @Override
     public boolean equals(Object o) {

@@ -37,11 +37,7 @@ public class LocationService {
         if (locationRepo.existsByAddress(dto.getAddress())) {
             throw new ResourceAlreadyExistsException();
         }
-        List<OwnerEntity> owners = ownerRepo.findByIdIn(dto.getOwnerIds())
-                .stream()
-                .map(OwnerEntity -> Optional.of(OwnerEntity))
-                .map(OwnerEntity -> OwnerEntity.orElseThrow(() -> new ResourceNotFoundException("owner " + OwnerEntity.get().getId() + " not found")))
-                .collect(Collectors.toList());
+        List<OwnerEntity> owners = getOwnersEntities(dto.getOwnerIds());
         return Mapper.toLocationDTO(locationRepo.save(Mapper.toLocationEntity(dto, owners)));
     }
 
@@ -52,11 +48,7 @@ public class LocationService {
         LocationEntity locationEntity = locationRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("location " + id + " not found"));
         locationEntity.setAddress(dto.getAddress());
         locationEntity.setLocationType(dto.getLocationType());
-        List<OwnerEntity> owners = ownerRepo.findByIdIn(dto.getOwnerIds())
-                .stream()
-                .map(OwnerEntity -> Optional.of(OwnerEntity))
-                .map(OwnerEntity -> OwnerEntity.orElseThrow(() -> new ResourceNotFoundException("owner " + id + " not found")))
-                .collect(Collectors.toList());
+        List<OwnerEntity> owners = getOwnersEntities(dto.getOwnerIds());
         locationEntity.setOwners(owners);
         return Mapper.toLocationDTO(locationRepo.save(locationEntity));
     }
@@ -64,5 +56,13 @@ public class LocationService {
     public void delete(UUID id) {
         LocationEntity locationEntity = locationRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("location " + id + " not found"));
         locationRepo.delete(locationEntity);
+    }
+
+    private List<OwnerEntity> getOwnersEntities(List<UUID> ids) {
+        return ownerRepo.findByIdIn(ids)
+                .stream()
+                .map(Optional::of)
+                .map(ownerEntity -> ownerEntity.orElseThrow(() -> new ResourceNotFoundException("owner " + ownerEntity.get().getId() + " not found")))
+                .collect(Collectors.toList());
     }
 }

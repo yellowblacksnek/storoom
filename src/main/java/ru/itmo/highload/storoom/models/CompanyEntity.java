@@ -7,10 +7,11 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name="companies")
+@Entity(name = "companies")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public class CompanyEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

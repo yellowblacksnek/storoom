@@ -9,9 +9,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name="orders")
+@Entity(name = "orders")
 @AllArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 public class OrderEntity implements Serializable {
     @Id

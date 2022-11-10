@@ -15,9 +15,10 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name="units")
+@Entity(name = "units")
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @DynamicUpdate
 @OptimisticLocking(type = OptimisticLockType.ALL)
 public class UnitEntity implements Serializable {
@@ -80,8 +81,8 @@ public class UnitEntity implements Serializable {
         setUnitType(calculateUnitType(this.getSizeX(), this.getSizeY(), this.getSizeZ()));
     }
 
-    private UnitType calculateUnitType(Integer sizeX, Integer sizeY, Integer sizeZ){
-        if(sizeX == null | sizeY == null | sizeZ == null) return null;
+    private UnitType calculateUnitType(Integer sizeX, Integer sizeY, Integer sizeZ) {
+        if (sizeX == null | sizeY == null | sizeZ == null) return null;
         double volume = sizeX * sizeY * sizeZ / 10E6;
         if (volume < 0.05) return UnitType.S;
         else if (volume < 0.2) return UnitType.M;

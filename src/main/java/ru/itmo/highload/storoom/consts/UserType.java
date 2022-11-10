@@ -18,12 +18,12 @@ public enum UserType {
     public static UserType getHighestOf(Collection<UserType> types) {
         UserType highest = null;
 
-        for(UserType cur : types) {
-            if(highest == null) {
+        for (UserType cur : types) {
+            if (highest == null) {
                 highest = cur;
                 continue;
             }
-            if(cur.getHierarchy() < highest.getHierarchy()) {
+            if (cur.getHierarchy() < highest.getHierarchy()) {
                 highest = cur;
             }
         }
