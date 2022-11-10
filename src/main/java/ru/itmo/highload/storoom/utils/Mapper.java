@@ -60,6 +60,7 @@ public class Mapper {
         LocationReadDTO dto = new LocationReadDTO();
         dto.setId(entity.getId());
         dto.setAddress(entity.getAddress());
+        dto.setLocationType(entity.getLocationType());
         dto.setOwnerIds(entity.getOwners().stream().map(OwnerEntity::getId).collect(Collectors.toList()));
         return dto;
     }
@@ -92,7 +93,7 @@ public class Mapper {
         dto.setSizeZ(entity.getSizeZ());
         dto.setUnitType(entity.getUnitType());
         dto.setStatus(entity.getStatus());
-        dto.setLocationId(entity.getLocation().getId());
+        dto.setLocation(toLocationDTO(entity.getLocation()));
         dto.setLock(toLockFullDTO(entity.getLock()));
         return dto;
     }

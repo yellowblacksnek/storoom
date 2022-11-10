@@ -24,6 +24,7 @@ public class UnitService {
     private UnitRepo repo;
 
     @Autowired private LockService lockService;
+    @Autowired private LocationService locationService;
 
     public UnitEntity getEntityById(UUID id) {
         return repo.findById(id).orElseThrow(ResourceNotFoundException::new);
@@ -47,8 +48,7 @@ public class UnitService {
             throw new IllegalArgumentException("status updates via info updates not supported");
         }
 
-        LocationEntity location = new LocationEntity();
-        location.setId(dto.getLocationId());
+        LocationEntity location = locationService.getEntityById(dto.getLocationId());
         LockEntity lockEntity = lockService.getEntityById(dto.getLockId());
 
         entity.setSizeX(dto.getSizeX());
