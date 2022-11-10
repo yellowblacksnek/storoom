@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.highload.storroom.orders.dtos.UnitDTO;
+import ru.itmo.highload.storroom.orders.dtos.UnitFullDTO;
 import ru.itmo.highload.storroom.orders.services.UnitService;
 
 import java.util.UUID;
@@ -27,28 +28,28 @@ public class UnitController {
     @PostMapping
     @PreAuthorize("hasAuthority('superuser')")
     @ResponseStatus(HttpStatus.CREATED)
-    public UnitDTO create(@RequestBody UnitDTO dto) {
+    public UnitFullDTO create(@RequestBody UnitDTO dto) {
         return service.create(dto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
     @ResponseStatus(HttpStatus.OK)
-    public UnitDTO updateInfo(@PathVariable UUID id, @RequestBody UnitDTO dto) {
+    public UnitFullDTO updateInfo(@PathVariable UUID id, @RequestBody UnitDTO dto) {
         return service.updateInfo(id, dto);
     }
 
     @PutMapping("/{id}/status")
     @PreAuthorize("hasAuthority('superuser')")
     @ResponseStatus(HttpStatus.OK)
-    public UnitDTO updateStatus(@PathVariable UUID id, @RequestBody UnitDTO dto) {
+    public UnitFullDTO updateStatus(@PathVariable UUID id, @RequestBody UnitDTO dto) {
         return service.updateStatus(id, dto.getStatus());
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
-        service.delete(id);
+    public UnitFullDTO delete(@PathVariable UUID id) {
+        return service.delete(id);
     }
 }

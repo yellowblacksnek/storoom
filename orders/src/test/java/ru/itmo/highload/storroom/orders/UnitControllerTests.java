@@ -1,10 +1,20 @@
 package ru.itmo.highload.storroom.orders;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import ru.itmo.highload.storroom.orders.dtos.LockDTO;
+import ru.itmo.highload.storroom.orders.dtos.ManufacturerDTO;
 import ru.itmo.highload.storroom.orders.dtos.UnitDTO;
 import ru.itmo.highload.storroom.orders.models.UnitEntity;
 import ru.itmo.highload.storroom.orders.models.UnitStatus;
@@ -20,6 +30,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UnitControllerTests extends BaseTests{
+
+    @TestConfiguration
+    public static class TestConfig {
+        @Bean
+        public ServiceInstanceListSupplier serviceInstanceListSupplier() {
+            return new TestServiceInstanceListSupplier("random_text_why_not", 7568);
+        }
+    }
+
+    @RegisterExtension
+    static WireMockExtension LOCKS_SERVICE = WireMockExtension.newInstance()
+            .options(WireMockConfiguration.wireMockConfig().port(7568))
+            .build();
+
+    private final static String LOCK_ID = "527af30f-a4cc-43b5-a2fc-745722aee05c";
+
     @Autowired private UnitRepo unitRepo;
 
     @Autowired
@@ -30,16 +56,16 @@ public class UnitControllerTests extends BaseTests{
                 10,10,10,
                 UUID.randomUUID(),
                 UnitStatus.available,
-                UUID.randomUUID()
+                UUID.fromString(LOCK_ID)
         );
     }
 
     @BeforeEach
-    public void cleanUp() {
-//        unitRepo.deleteAll();
-//        locationRepo.deleteAll();
-//        lockRepo.deleteAll();
-//        manufacturerRepo.deleteAll();
+    public void setup() throws JsonProcessingException {
+        LockDTO lock = new LockDTO();
+        lock.setManufacturer(new ManufacturerDTO());
+        LOCKS_SERVICE.stubFor(WireMock.get("/internal/lock/" + LOCK_ID)
+                .willReturn(WireMock.okJson(toJson(lock))));
     }
 
     @Test

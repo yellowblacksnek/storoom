@@ -1,14 +1,19 @@
 package ru.itmo.highload.storroom.orders;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import ru.itmo.highload.storroom.orders.clients.UserClient;
-import ru.itmo.highload.storroom.orders.dtos.OrderDTO;
+import ru.itmo.highload.storroom.orders.dtos.*;
 import ru.itmo.highload.storroom.orders.models.OrderEntity;
 import ru.itmo.highload.storroom.orders.models.OrderStatus;
 import ru.itmo.highload.storroom.orders.models.UnitEntity;
@@ -28,18 +33,38 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class OrderControllerTests extends BaseTests{
 
-//    @RegisterExtension
-//    static WireMockExtension USERS_SERVICE = WireMockExtension.newInstance()
-//            .options(WireMockConfiguration.wireMockConfig().port(9876))
-//            .build();
+    @TestConfiguration
+    public static class TestConfig {
+        @Bean
+        public ServiceInstanceListSupplier serviceInstanceListSupplier() {
+            return new TestServiceInstanceListSupplier("random_text_why_not", 7567);
+        }
+    }
+
+    @RegisterExtension
+    static WireMockExtension USERS_SERVICE = WireMockExtension.newInstance()
+            .options(WireMockConfiguration.wireMockConfig().port(7567))
+            .build();
+
+    private final static UUID USER_ID = UUID.fromString("527af30f-a4cc-43b5-a2fc-745722aee05c");
+
+    @BeforeEach
+    public void setup() throws JsonProcessingException {
+        UserDTO user = new UserDTO();
+        LockDTO lock = new LockDTO();
+        lock.setManufacturer(new ManufacturerDTO());
+        USERS_SERVICE.stubFor(WireMock.get("/internal/users/" + USER_ID)
+                .willReturn(WireMock.okJson(toJson(user))));
+        USERS_SERVICE.stubFor(WireMock.get("/internal/lock/" + USER_ID)
+                .willReturn(WireMock.okJson(toJson(lock))));
+    }
+
+
 
     @Autowired private UnitRepo unitRepo;
 
     @Autowired private OrderRepository orderRepo;
     @Autowired private OrderService orderService;
-
-    @Autowired private UserClient userClient;
-
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,7 +73,7 @@ public class OrderControllerTests extends BaseTests{
     public void testGetAll() throws Exception {
         UnitEntity unit = unitRepo.findAll().iterator().next();
 
-        OrderDTO orderDTO = new OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), UUID.randomUUID());
+        OrderDTO orderDTO = new OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), USER_ID);
         orderService.create(orderDTO);
 
         String token = superuserToken();
@@ -65,7 +90,7 @@ public class OrderControllerTests extends BaseTests{
     public void testCreateOrder() throws Exception {
         UnitEntity unit = unitRepo.findAll().iterator().next();
 
-        OrderDTO orderDTO = new OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), UUID.randomUUID());
+        OrderDTO orderDTO = new OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), USER_ID);
 
         String token = clientToken();
         ResultActions response = mockMvc.perform(post("/orders")
@@ -86,9 +111,10 @@ public class OrderControllerTests extends BaseTests{
         LocalDateTime endTime = LocalDateTime.now().plusDays(1L);
         LocalDateTime endTimePlusDay = endTime.plusDays(1L);
 
-        OrderDTO orderDTO = new OrderDTO(null, startTime, endTime, null, OrderStatus.active, unit.getId(), UUID.randomUUID());
-        orderDTO = orderService.create(orderDTO);
+        OrderDTO orderDTO = new OrderDTO(null, startTime, endTime, null, OrderStatus.active, unit.getId(), USER_ID);
+        OrderFullDTO orderFullDTO = orderService.create(orderDTO);
 
+        orderDTO.setId(orderFullDTO.getId());
         orderDTO.setEndTime(endTimePlusDay);
 
         String token = superuserToken();
@@ -107,8 +133,10 @@ public class OrderControllerTests extends BaseTests{
     public void testFinishOrder() throws Exception {
         UnitEntity unit = unitRepo.findAll().iterator().next();
 
-        OrderDTO orderDTO = new OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), UUID.randomUUID());
-        orderDTO = orderService.create(orderDTO);
+        OrderDTO orderDTO = new OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), USER_ID);
+        OrderFullDTO orderFullDTO = orderService.create(orderDTO);
+
+        orderDTO.setId(orderFullDTO.getId());
 
         String token = superuserToken();
         ResultActions response = mockMvc.perform(post("/orders/" + orderDTO.getId() + "/finish")

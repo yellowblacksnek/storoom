@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.itmo.highload.storroom.orders.dtos.LockDTO;
 import ru.itmo.highload.storroom.orders.dtos.UnitDTO;
+import ru.itmo.highload.storroom.orders.dtos.UnitFullDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.models.UnitEntity;
 import ru.itmo.highload.storroom.orders.models.UnitStatus;
@@ -20,12 +22,10 @@ public class UnitService {
     @Autowired
     private UnitRepo repo;
 
-    public UnitEntity getRef(UUID id) {
-        return repo.getOne(id);
-    }
+    @Autowired private LockService lockService;
 
     public UnitEntity getById(UUID id) {
-        return repo.findById(id).orElseThrow(ResourceNotFoundException::new);
+        return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit " + id + " not found"));
     }
 
     public Page<UnitDTO> getAll(Pageable pageable) {
@@ -33,47 +33,52 @@ public class UnitService {
         return res.map(Mapper::toUnitDTO);
     }
 
-    public UnitDTO create(UnitDTO dto) {
+    public UnitFullDTO create(UnitDTO dto) {
+        LockDTO lock = lockService.getLock(dto.getLockId());
         UnitEntity entity = repo.save(Mapper.toUnitEntity(dto));
-        return Mapper.toUnitDTO(entity);
+        return Mapper.toUnitFullDTO(entity, lock);
     }
 
-    public UnitDTO updateInfo(UUID id, UnitDTO dto) {
-        UnitEntity newEntity = Mapper.toUnitEntity(dto);
-        UnitEntity entity = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
+    public UnitFullDTO updateInfo(UUID id, UnitDTO dto) {
+        UnitEntity entity = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit " + id + " not found"));
 
-        if(entity.getStatus() != newEntity.getStatus()) {
+        if(entity.getStatus() != dto.getStatus()) {
             throw new IllegalArgumentException("status updates via info updates not supported");
         }
+        LockDTO lock = lockService.getLock(dto.getLockId());
 
-        entity.setSizeX(newEntity.getSizeX());
-        entity.setSizeY(newEntity.getSizeY());
-        entity.setSizeZ(newEntity.getSizeZ());
-        entity.setLocationId(newEntity.getLocationId());
-        entity.setLockId(newEntity.getLockId());
+
+        entity.setSizeX(dto.getSizeX());
+        entity.setSizeY(dto.getSizeY());
+        entity.setSizeZ(dto.getSizeZ());
+        entity.setLocationId(dto.getLocationId());
+        entity.setLockId(dto.getLockId());
 
         UnitType oldType = entity.getUnitType();
         entity.updateUnitType();
-        if(oldType != newEntity.getUnitType() && entity.getUnitType() != newEntity.getUnitType()) {
+        if(oldType != dto.getUnitType() && entity.getUnitType() != dto.getUnitType()) {
             throw new IllegalArgumentException("target unit type doesn't match with computed");
         }
 
         entity = repo.save(entity);
-        return Mapper.toUnitDTO(entity);
+        return Mapper.toUnitFullDTO(entity, lock);
     }
 
-    public UnitDTO updateStatus(UUID id, UnitStatus status) {
-        UnitEntity entity = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
+    public UnitFullDTO updateStatus(UUID id, UnitStatus status) {
+        UnitEntity entity = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit " + id + " not found"));
         entity.setStatus(status);
         entity = repo.save(entity);
-        return Mapper.toUnitDTO(entity);
+        LockDTO lock = lockService.getLockAlways(entity.getLockId());
+        return Mapper.toUnitFullDTO(entity, lock);
     }
 
-    public UnitDTO delete(UUID id) {
-        UnitEntity entity = repo.findById(id).orElse(null);
-        if(entity == null) throw new ResourceNotFoundException("unit not found");
+    public UnitFullDTO delete(UUID id) {
+        UnitEntity entity = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit " + id + " not found"));
         repo.delete(entity);
-        return Mapper.toUnitDTO(entity);
+        LockDTO lock = lockService.getLockAlways(entity.getLockId());
+        return Mapper.toUnitFullDTO(entity, lock);
     }
+
+
 
 }

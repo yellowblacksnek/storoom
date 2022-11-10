@@ -71,7 +71,6 @@ public class LockTests extends BaseTests{
     @Test
     public void testUpdate() throws Exception{
         LockEntity entity = repo.findAll().iterator().next();
-        System.out.println(entity.getName());
         LockDTO dto = Mapper.toLockDTO(entity);
         dto.setName("new name");
 
@@ -92,12 +91,11 @@ public class LockTests extends BaseTests{
         assertEquals("new name", res.getName());
 
         entity = repo.findAll().iterator().next();
-        System.out.println(entity.getName());
         assertEquals("new name", entity.getName());
     }
 
     @Test
-    public void testDelete() throws Exception{
+    public void testDelete(){
         ManufacturerEntity manufacturer = manuRepo.findAll().iterator().next();
         LockEntity lock = new LockEntity();
         lock.setName("lock1");

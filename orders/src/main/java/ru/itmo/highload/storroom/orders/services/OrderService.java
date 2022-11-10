@@ -5,7 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.itmo.highload.storroom.orders.dtos.LockDTO;
 import ru.itmo.highload.storroom.orders.dtos.OrderDTO;
+import ru.itmo.highload.storroom.orders.dtos.OrderFullDTO;
+import ru.itmo.highload.storroom.orders.dtos.UserDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.models.OrderEntity;
 import ru.itmo.highload.storroom.orders.models.OrderStatus;
@@ -24,6 +27,9 @@ public class OrderService {
     OrderRepository repo;
     @Autowired UnitService unitService;
 
+    @Autowired private LockService lockService;
+    @Autowired private UserService userService;
+
     public Page<OrderDTO> getAll(Pageable pageable) {
         Page<OrderEntity> res = repo.findAll(pageable);
         return res.map(Mapper::toOrderDTO);
@@ -35,45 +41,50 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDTO create(OrderDTO dto) {
+    public OrderFullDTO create(OrderDTO dto) {
         UnitEntity unitEntity = unitService.getById(dto.getUnitId());
         if(unitEntity.getStatus() != UnitStatus.available) {
             throw new IllegalStateException("unit is not available");
         }
+        UserDTO user = userService.getUser(dto.getUserId());
+        LockDTO lock = lockService.getLock(unitEntity.getLockId());
 
         OrderEntity orderEntity = Mapper.toOrderEntity(dto);
-        orderEntity.setUserId(dto.getUserId());
         orderEntity.setUnit(unitEntity);
         orderEntity = repo.save(orderEntity);
         unitService.updateStatus(unitEntity.getId(), UnitStatus.occupied);
 
-        return Mapper.toOrderDTO(orderEntity);
+        return Mapper.toOrderFullDTO(orderEntity, user,  lock);
     }
 
-    public OrderDTO updateOrderInfo(UUID id, OrderDTO dto) {
-        OrderEntity order = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
+    public OrderFullDTO updateOrderInfo(UUID id, OrderDTO dto) {
+        OrderEntity order = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("order " + id + " not found"));
 
         if(order.getStatus() != dto.getStatus()) {
             throw new IllegalArgumentException("status updates via info updates not supported");
         }
+        UserDTO user = userService.getUser(dto.getUserId());
 
         order.setUserId(dto.getUserId());
-        order.setUnit(unitService.getRef(dto.getUnitId()));
+        order.setUnit(unitService.getById(dto.getUnitId()));
         order.setStartTime(dto.getStartTime());
         order.setEndTime(dto.getEndTime());
         order.setFinishedTime(dto.getFinishedTime());
         order = repo.save(order);
 
-        return Mapper.toOrderDTO(order);
+        LockDTO lock = lockService.getLockAlways(order.getUnit().getLockId());
+        return Mapper.toOrderFullDTO(order, user,  lock);
     }
 
     @Transactional
-    public OrderDTO finishOrder(UUID id) {
-        OrderEntity order = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
+    public OrderFullDTO finishOrder(UUID id) {
+        OrderEntity order = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("order " + id + " not found"));
 
         if(order.getStatus() == OrderStatus.finished) {
             throw new IllegalStateException("order is already finished");
         }
+        UserDTO user = userService.getUserAlways(order.getUserId());
+        LockDTO lock = lockService.getLockAlways(order.getUnit().getLockId());
 
         order.setFinishedTime(LocalDateTime.now());
         order.setStatus(OrderStatus.finished);
@@ -81,6 +92,6 @@ public class OrderService {
 
         unitService.updateStatus(order.getUnit().getId(), UnitStatus.pending);
 
-        return Mapper.toOrderDTO(order);
+        return Mapper.toOrderFullDTO(order, user,  lock);
     }
 }

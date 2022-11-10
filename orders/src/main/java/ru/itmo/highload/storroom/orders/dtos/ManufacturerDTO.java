@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class UserDTO {
+public class ManufacturerDTO {
     public UUID id;
-    public String username;
+    public String name;
 }
