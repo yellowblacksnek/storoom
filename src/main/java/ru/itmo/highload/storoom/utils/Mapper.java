@@ -45,6 +45,10 @@ public class Mapper {
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setCompanyId(entity.getCompany().getId());
+        dto.setLocationIds(entity.getLocations()
+                .stream()
+                .map(LocationEntity::getId)
+                .collect(Collectors.toList()));
         return dto;
     }
 
@@ -61,7 +65,10 @@ public class Mapper {
         dto.setId(entity.getId());
         dto.setAddress(entity.getAddress());
         dto.setLocationType(entity.getLocationType());
-        dto.setOwnerIds(entity.getOwners().stream().map(OwnerEntity::getId).collect(Collectors.toList()));
+        dto.setOwnerIds(entity.getOwners()
+                .stream()
+                .map(OwnerEntity::getId)
+                .collect(Collectors.toList()));
         return dto;
     }
 

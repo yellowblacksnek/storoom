@@ -28,7 +28,7 @@ public class LocationEntity implements Serializable {
     @Column(name = "location_type")
     private LocationType locationType;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH})
     @JoinTable(
             name = "owners_locations",
             joinColumns = @JoinColumn(name = "location_id"),

@@ -1,6 +1,5 @@
 package ru.itmo.highload.storoom;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,10 +22,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.itmo.highload.storoom.services.UserDetailsServiceImpl.getAuthorities;
 
-public class OwnerControllerTests extends BaseTests{
-    @Autowired private OwnerRepo repo;
+public class LocationControllerTests extends BaseTests{
+    @Autowired private LocationRepo repo;
+
+    @Autowired private OwnerRepo ownerRepo;
     @Autowired private CompanyRepository companyRepo;
-    @Autowired private LocationRepo locationRepo;
     @Autowired private MockMvc mockMvc;
 
     @Test
@@ -35,49 +35,46 @@ public class OwnerControllerTests extends BaseTests{
         company.setName("company1");
         companyRepo.save(company);
 
-        LocationEntity location = new LocationEntity();
-        location.setAddress("location1");
-        location.setLocationType(LocationType.stand);
-        List<LocationEntity> locations = new ArrayList<>();
-        locations.add(location);
-        locationRepo.save(location);
-
         OwnerEntity owner = new OwnerEntity();
         owner.setName("owner1");
         owner.setCompany(company);
-        owner.setLocations(locations);
-        repo.save(owner);
+        ownerRepo.save(owner);
+        List<OwnerEntity> owners = new ArrayList<>();
+        owners.add(owner);
+
+        LocationEntity location = new LocationEntity();
+        location.setAddress("address1");
+        location.setLocationType(LocationType.stand);
+        location.setOwners(owners);
+        repo.save(location);
 
         String token = getToken("user", getAuthorities(UserType.superuser));
-        ResultActions response = mockMvc.perform(get("/owners").header("Authorization", token));
+        ResultActions response = mockMvc.perform(get("/locations").header("Authorization", token));
 
         response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.totalElements").value(1));
-        response.andExpect(jsonPath("$.content.size()").value(1));
-        response.andExpect(jsonPath("$.content[0].name").value("owner1"));
+        response.andExpect(jsonPath("$.totalElements").value(2));
+        response.andExpect(jsonPath("$.content.size()").value(2));
+        response.andExpect(jsonPath("$.content[1].address").value("address1"));
     }
 
     @Test
     public void testAdd() throws Exception{
-        CompanyEntity company = new CompanyEntity();
-        company.setName("company1");
-        companyRepo.save(company);
 
-        DTOs.OwnerDTO dto = new DTOs.OwnerDTO();
-        dto.setName("owner1");
-        dto.setCompanyId(company.getId());
-        dto.setLocationIds(new ArrayList<>());
+        DTOs.LocationDTO dto = new DTOs.LocationDTO();
+        dto.setAddress("address1");
+        dto.setLocationType(LocationType.stand);
+        dto.setOwnerIds(new ArrayList<>());
 
         String token = getToken("user", getAuthorities(UserType.superuser));
-        ResultActions response = mockMvc.perform(post("/owners")
+        ResultActions response = mockMvc.perform(post("/locations")
                 .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
                 .content(toJson(dto)));
 
         response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.data.name").value("owner1"));
+        response.andExpect(jsonPath("$.data.address").value("address1"));
 
-        assertEquals(1, repo.count());
+        assertEquals(2, repo.count());
     }
 
     @Test
@@ -86,35 +83,29 @@ public class OwnerControllerTests extends BaseTests{
         company.setName("company1");
         companyRepo.save(company);
 
-        LocationEntity location = new LocationEntity();
-        location.setAddress("location1");
-        location.setLocationType(LocationType.stand);
-        List<LocationEntity> locations = new ArrayList<>();
-        locations.add(location);
-        locationRepo.save(location);
-
         OwnerEntity owner = new OwnerEntity();
         owner.setName("owner1");
         owner.setCompany(company);
-        owner.setLocations(locations);
-        repo.save(owner);
+        ownerRepo.save(owner);
+        List<OwnerEntity> owners = new ArrayList<>();
+        owners.add(owner);
 
-        OwnerEntity entity = repo.findAll().iterator().next();
-        entity.setName("new name");
-        entity.setLocations(locations);
-        DTOs.OwnerReadDTO dto = Mapper.toOwnerDTO(entity);
+        LocationEntity entity = repo.findAll().iterator().next();
+        entity.setAddress("new address");
+        entity.setOwners(owners);
+        DTOs.LocationReadDTO dto = Mapper.toLocationDTO(entity);
 
         String token = getToken("user", getAuthorities(UserType.superuser));
-        ResultActions response = mockMvc.perform(put("/owners/"+dto.getId())
+        ResultActions response = mockMvc.perform(put("/locations/"+dto.getId())
                 .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
                 .content(toJson(dto)));
 
         response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.data.name").value("new name"));
+        response.andExpect(jsonPath("$.data.address").value("new address"));
 
         entity = repo.findAll().iterator().next();
-        assertEquals("new name", entity.getName());
+        assertEquals("new address", entity.getAddress());
     }
 
     @Test
@@ -123,27 +114,27 @@ public class OwnerControllerTests extends BaseTests{
         company.setName("company1");
         companyRepo.save(company);
 
-        LocationEntity location = new LocationEntity();
-        location.setAddress("location1");
-        location.setLocationType(LocationType.stand);
-        List<LocationEntity> locations = new ArrayList<>();
-        locations.add(location);
-        locationRepo.save(location);
-
         OwnerEntity owner = new OwnerEntity();
         owner.setName("owner1");
         owner.setCompany(company);
-        owner.setLocations(locations);
-        repo.save(owner);
+        ownerRepo.save(owner);
+        List<OwnerEntity> owners = new ArrayList<>();
+        owners.add(owner);
+
+        LocationEntity location = new LocationEntity();
+        location.setAddress("address1");
+        location.setLocationType(LocationType.stand);
+        repo.save(location);
+        location.setOwners(owners);
 
         String token = getToken("user", getAuthorities(UserType.superuser));
-        ResultActions response = mockMvc.perform(delete("/owners/"+owner.getId())
+        ResultActions response = mockMvc.perform(delete("/locations/"+location.getId())
                 .header("Authorization", token));
 
         response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.message").value("Successfully deleted owner! " + owner.getId()));
+        response.andExpect(jsonPath("$.message").value("Successfully deleted location! " + location.getId()));
 
 
-        assertEquals(0, repo.count());
+        assertEquals(1, repo.count());
     }
 }
