@@ -24,6 +24,10 @@ public class LocationService {
     private final LocationRepo locationRepo;
     private final OwnerRepo ownerRepo;
 
+    public LocationEntity getEntityById(UUID id) {
+        return locationRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("lcoation " + id + " not found"));
+    }
+
     public Page<DTOs.LocationReadDTO> getAll(Pageable pageable) {
         Page<LocationEntity> res = locationRepo.findAll(pageable);
         return res.map(Mapper::toLocationDTO);
