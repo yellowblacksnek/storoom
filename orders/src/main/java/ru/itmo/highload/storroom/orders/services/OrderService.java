@@ -5,10 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.itmo.highload.storroom.orders.dtos.LockDTO;
-import ru.itmo.highload.storroom.orders.dtos.OrderDTO;
-import ru.itmo.highload.storroom.orders.dtos.OrderFullDTO;
-import ru.itmo.highload.storroom.orders.dtos.UserDTO;
+import ru.itmo.highload.storroom.orders.dtos.*;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.models.OrderEntity;
 import ru.itmo.highload.storroom.orders.models.OrderStatus;
@@ -28,6 +25,7 @@ public class OrderService {
     @Autowired UnitService unitService;
 
     @Autowired private LockService lockService;
+    @Autowired private LocationService locationService;
     @Autowired private UserService userService;
 
     public Page<OrderDTO> getAll(Pageable pageable) {
@@ -48,32 +46,34 @@ public class OrderService {
         }
         UserDTO user = userService.getUser(dto.getUserId());
         LockDTO lock = lockService.getLock(unitEntity.getLockId());
+        LocationDTO location = locationService.getLocationAlways(unitEntity.getLocationId());
 
         OrderEntity orderEntity = Mapper.toOrderEntity(dto);
         orderEntity.setUnit(unitEntity);
         orderEntity = repo.save(orderEntity);
         unitService.updateStatus(unitEntity.getId(), UnitStatus.occupied);
 
-        return Mapper.toOrderFullDTO(orderEntity, user,  lock);
+        return Mapper.toOrderFullDTO(orderEntity, user,  lock, location);
     }
 
     public OrderFullDTO updateOrderInfo(UUID id, OrderDTO dto) {
         OrderEntity order = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("order " + id + " not found"));
-
         if(order.getStatus() != dto.getStatus()) {
             throw new IllegalArgumentException("status updates via info updates not supported");
         }
+        UnitEntity unitEntity = unitService.getById(dto.getUnitId());
         UserDTO user = userService.getUser(dto.getUserId());
+        LocationDTO location = locationService.getLocationAlways(unitEntity.getLocationId());
 
         order.setUserId(dto.getUserId());
-        order.setUnit(unitService.getById(dto.getUnitId()));
+        order.setUnit(unitEntity);
         order.setStartTime(dto.getStartTime());
         order.setEndTime(dto.getEndTime());
         order.setFinishedTime(dto.getFinishedTime());
         order = repo.save(order);
 
         LockDTO lock = lockService.getLockAlways(order.getUnit().getLockId());
-        return Mapper.toOrderFullDTO(order, user,  lock);
+        return Mapper.toOrderFullDTO(order, user,  lock, location);
     }
 
     @Transactional
@@ -85,6 +85,7 @@ public class OrderService {
         }
         UserDTO user = userService.getUserAlways(order.getUserId());
         LockDTO lock = lockService.getLockAlways(order.getUnit().getLockId());
+        LocationDTO location = locationService.getLocationAlways(order.getUnit().getLocationId());
 
         order.setFinishedTime(LocalDateTime.now());
         order.setStatus(OrderStatus.finished);
@@ -92,6 +93,6 @@ public class OrderService {
 
         unitService.updateStatus(order.getUnit().getId(), UnitStatus.pending);
 
-        return Mapper.toOrderFullDTO(order, user,  lock);
+        return Mapper.toOrderFullDTO(order, user,  lock, location);
     }
 }

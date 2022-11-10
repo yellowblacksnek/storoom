@@ -5,14 +5,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
-import ru.itmo.highload.storroom.orders.dtos.LockDTO;
+import ru.itmo.highload.storroom.orders.dtos.LocationDTO;
 
 import java.util.UUID;
 
-@FeignClient(name = "LOCKS-SERVICE")
+@FeignClient(value = "LOCATIONS-SERVICE", fallback = LocationClientFallback.class)
 @Primary
-public interface LockClient {
-    @GetMapping(value = "/locks/{id}")
-    LockDTO getLock(@RequestHeader(value = "Authorization") String authorizationHeader,
-                    @PathVariable(value="id") UUID id);
+public interface LocationClient {
+    @GetMapping(value = "/locations/{id}")
+    LocationDTO getLocation(@RequestHeader(value = "Authorization") String authorizationHeader,
+                            @PathVariable(value="id") UUID id);
 }

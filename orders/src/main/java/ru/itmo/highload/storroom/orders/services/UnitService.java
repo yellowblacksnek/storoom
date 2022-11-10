@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.itmo.highload.storroom.orders.dtos.LocationDTO;
 import ru.itmo.highload.storroom.orders.dtos.LockDTO;
 import ru.itmo.highload.storroom.orders.dtos.UnitDTO;
 import ru.itmo.highload.storroom.orders.dtos.UnitFullDTO;
@@ -23,6 +24,8 @@ public class UnitService {
     private UnitRepo repo;
 
     @Autowired private LockService lockService;
+    @Autowired private LocationService locationService;
+
 
     public UnitEntity getById(UUID id) {
         return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit " + id + " not found"));
@@ -35,8 +38,9 @@ public class UnitService {
 
     public UnitFullDTO create(UnitDTO dto) {
         LockDTO lock = lockService.getLock(dto.getLockId());
+        LocationDTO location = locationService.getLocation(dto.getLocationId());
         UnitEntity entity = repo.save(Mapper.toUnitEntity(dto));
-        return Mapper.toUnitFullDTO(entity, lock);
+        return Mapper.toUnitFullDTO(entity, lock, location);
     }
 
     public UnitFullDTO updateInfo(UUID id, UnitDTO dto) {
@@ -46,6 +50,7 @@ public class UnitService {
             throw new IllegalArgumentException("status updates via info updates not supported");
         }
         LockDTO lock = lockService.getLock(dto.getLockId());
+        LocationDTO location = locationService.getLocation(dto.getLocationId());
 
 
         entity.setSizeX(dto.getSizeX());
@@ -61,7 +66,7 @@ public class UnitService {
         }
 
         entity = repo.save(entity);
-        return Mapper.toUnitFullDTO(entity, lock);
+        return Mapper.toUnitFullDTO(entity, lock, location);
     }
 
     public UnitFullDTO updateStatus(UUID id, UnitStatus status) {
@@ -69,14 +74,16 @@ public class UnitService {
         entity.setStatus(status);
         entity = repo.save(entity);
         LockDTO lock = lockService.getLockAlways(entity.getLockId());
-        return Mapper.toUnitFullDTO(entity, lock);
+        LocationDTO location = locationService.getLocationAlways(entity.getLocationId());
+        return Mapper.toUnitFullDTO(entity, lock, location);
     }
 
     public UnitFullDTO delete(UUID id) {
         UnitEntity entity = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit " + id + " not found"));
         repo.delete(entity);
         LockDTO lock = lockService.getLockAlways(entity.getLockId());
-        return Mapper.toUnitFullDTO(entity, lock);
+        LocationDTO location = locationService.getLocationAlways(entity.getLocationId());
+        return Mapper.toUnitFullDTO(entity, lock, location);
     }
 
 

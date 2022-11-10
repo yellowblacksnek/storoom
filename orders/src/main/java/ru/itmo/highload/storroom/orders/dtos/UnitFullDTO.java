@@ -12,6 +12,6 @@ public class UnitFullDTO {
     public Integer sizeX, sizeY, sizeZ;
     public UnitType unitType;
     public UnitStatus status;
-    public UUID locationId;
+    public LocationDTO location;
     public LockDTO lock;
 }

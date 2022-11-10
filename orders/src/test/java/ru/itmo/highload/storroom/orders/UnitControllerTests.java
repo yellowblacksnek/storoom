@@ -13,6 +13,7 @@ import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import ru.itmo.highload.storroom.orders.dtos.LocationDTO;
 import ru.itmo.highload.storroom.orders.dtos.LockDTO;
 import ru.itmo.highload.storroom.orders.dtos.ManufacturerDTO;
 import ru.itmo.highload.storroom.orders.dtos.UnitDTO;
@@ -21,6 +22,7 @@ import ru.itmo.highload.storroom.orders.models.UnitStatus;
 import ru.itmo.highload.storroom.orders.repositories.UnitRepo;
 import ru.itmo.highload.storroom.orders.utils.Mapper;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +46,7 @@ public class UnitControllerTests extends BaseTests{
             .options(WireMockConfiguration.wireMockConfig().port(7568))
             .build();
 
-    private final static String LOCK_ID = "527af30f-a4cc-43b5-a2fc-745722aee05c";
+    private final static String UUID_ID = "527af30f-a4cc-43b5-a2fc-745722aee05c";
 
     @Autowired private UnitRepo unitRepo;
 
@@ -54,9 +56,9 @@ public class UnitControllerTests extends BaseTests{
     private UnitEntity createUnit() {
         return new UnitEntity(
                 10,10,10,
-                UUID.randomUUID(),
+                UUID.fromString(UUID_ID),
                 UnitStatus.available,
-                UUID.fromString(LOCK_ID)
+                UUID.fromString(UUID_ID)
         );
     }
 
@@ -64,7 +66,11 @@ public class UnitControllerTests extends BaseTests{
     public void setup() throws JsonProcessingException {
         LockDTO lock = new LockDTO();
         lock.setManufacturer(new ManufacturerDTO());
-        LOCKS_SERVICE.stubFor(WireMock.get("/internal/lock/" + LOCK_ID)
+        LocationDTO location = new LocationDTO();
+        location.owners = new ArrayList<>();
+        LOCKS_SERVICE.stubFor(WireMock.get("/locks/" + UUID_ID)
+                .willReturn(WireMock.okJson(toJson(lock))));
+        LOCKS_SERVICE.stubFor(WireMock.get("/locations/" + UUID_ID)
                 .willReturn(WireMock.okJson(toJson(lock))));
     }
 

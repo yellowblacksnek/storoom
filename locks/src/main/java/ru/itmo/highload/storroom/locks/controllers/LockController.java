@@ -23,12 +23,14 @@ public class LockController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('superuser')")
     public Mono<LockFullDTO> getById(@PathVariable UUID id) {
         return service.getById(id);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('superuser')")
     public Flux<LockFullDTO> getAll(Pageable pageable) {
         return service.getAll(pageable);
     }

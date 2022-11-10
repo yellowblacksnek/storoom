@@ -1,10 +1,7 @@
 package ru.itmo.highload.storroom.users.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.highload.storroom.users.dtos.UserReadDTO;
 import ru.itmo.highload.storroom.users.services.UserService;
@@ -26,7 +23,7 @@ public class InternalUserController {
 
     @GetMapping(value = "/users/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserReadDTO getReadUserById(@PathVariable UUID id) {
+    public UserReadDTO getReadUserById(@PathVariable UUID id){
         return service.getReadUserById(id);
     }
 }

@@ -18,7 +18,7 @@ public class Mapper {
         return dto;
     }
 
-    public static UnitFullDTO toUnitFullDTO(UnitEntity entity, LockDTO lock) {
+    public static UnitFullDTO toUnitFullDTO(UnitEntity entity, LockDTO lock, LocationDTO location) {
         UnitFullDTO dto = new UnitFullDTO();
         dto.setId(entity.getId());
         dto.setSizeX(entity.getSizeX());
@@ -26,7 +26,7 @@ public class Mapper {
         dto.setSizeZ(entity.getSizeZ());
         dto.setUnitType(entity.getUnitType());
         dto.setStatus(entity.getStatus());
-        dto.setLocationId(entity.getLocationId());
+        dto.setLocation(location);
         dto.setLock(lock);
         return dto;
     }
@@ -56,14 +56,14 @@ public class Mapper {
         return dto;
     }
 
-    public static OrderFullDTO toOrderFullDTO(OrderEntity entity, UserDTO user, LockDTO lock) {
+    public static OrderFullDTO toOrderFullDTO(OrderEntity entity, UserDTO user, LockDTO lock, LocationDTO location) {
         OrderFullDTO dto = new OrderFullDTO();
         dto.setId(entity.getId());
         dto.setStartTime(entity.getStartTime());
         dto.setEndTime(entity.getEndTime());
         dto.setFinishedTime(entity.getFinishedTime());
         dto.setStatus(entity.getStatus());
-        dto.setUnit(toUnitFullDTO(entity.getUnit(), lock));
+        dto.setUnit(toUnitFullDTO(entity.getUnit(), lock, location));
         dto.setUser(user);
         return dto;
     }

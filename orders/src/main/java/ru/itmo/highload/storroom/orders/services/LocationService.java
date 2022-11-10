@@ -3,27 +3,26 @@ package ru.itmo.highload.storroom.orders.services;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.itmo.highload.storroom.orders.clients.LockClient;
-import ru.itmo.highload.storroom.orders.dtos.LockDTO;
-import ru.itmo.highload.storroom.orders.dtos.ManufacturerDTO;
+import ru.itmo.highload.storroom.orders.clients.LocationClient;
+import ru.itmo.highload.storroom.orders.dtos.LocationDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.exceptions.UnavailableException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
-public class LockService {
+public class LocationService {
     @Autowired
-    private LockClient lockClient;
+    private LocationClient locationClient;
 
     @Autowired private HttpServletRequest request;
 
-    public LockDTO getLock(UUID id) {
-        LockDTO lock;
+    public LocationDTO getLocation(UUID id) {
+        LocationDTO location;
         try {
-
-            lock = lockClient.getLock(request.getHeader("Authorization"), id);
+            location = locationClient.getLocation(request.getHeader("Authorization"), id);
         } catch (FeignException e) {
             if(e.status() == 409) {
                 throw new ResourceNotFoundException("lock " + id + " not found");
@@ -31,18 +30,18 @@ public class LockService {
                 throw new UnavailableException();
             }
         }
-        return lock;
+        return location;
     }
 
-    public LockDTO getLockAlways(UUID id) {
-        LockDTO lock;
+    public LocationDTO getLocationAlways(UUID id) {
+        LocationDTO location;
         try {
-            lock = lockClient.getLock(request.getHeader("Authorization"), id);
+            location = locationClient.getLocation(request.getHeader("Authorization"), id);
         } catch (FeignException e) {
-            lock = new LockDTO();
-            lock.setId(id);
-            lock.manufacturer = new ManufacturerDTO();
+            location = new LocationDTO();
+            location.setId(id);
+            location.setOwners(new ArrayList<>());
         }
-        return lock;
+        return location;
     }
 }
