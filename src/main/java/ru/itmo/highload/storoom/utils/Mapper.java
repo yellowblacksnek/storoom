@@ -67,7 +67,7 @@ public class Mapper {
     public static LocationEntity toLocationEntity(LocationDTO dto, List<OwnerEntity> owners) {
         LocationEntity location = new LocationEntity();
         location.setAddress(dto.getAddress());
-        location.setLocationType(dto.getLocationType());
+        location.setLocationType(dto.locationType);
         location.setOwners(owners);
         return location;
     }

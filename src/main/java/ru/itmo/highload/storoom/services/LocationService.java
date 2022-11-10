@@ -14,7 +14,9 @@ import ru.itmo.highload.storoom.repositories.OwnerRepo;
 import ru.itmo.highload.storoom.utils.Mapper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +33,11 @@ public class LocationService {
         if (locationRepo.existsByAddress(dto.getAddress())) {
             throw new ResourceAlreadyExistsException();
         }
-        List<OwnerEntity> owners = ownerRepo.findByIdIn(dto.getOwnerIds());
+        List<OwnerEntity> owners = ownerRepo.findByIdIn(dto.getOwnerIds())
+                .stream()
+                .map(OwnerEntity -> Optional.of(OwnerEntity))
+                .map(OwnerEntity -> OwnerEntity.orElseThrow(() -> new ResourceNotFoundException("owner " + OwnerEntity.get().getId() + " not found")))
+                .collect(Collectors.toList());
         return Mapper.toLocationDTO(locationRepo.save(Mapper.toLocationEntity(dto, owners)));
     }
 
@@ -42,7 +48,11 @@ public class LocationService {
         LocationEntity locationEntity = locationRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("location " + id + " not found"));
         locationEntity.setAddress(dto.getAddress());
         locationEntity.setLocationType(dto.getLocationType());
-        List<OwnerEntity> owners = ownerRepo.findByIdIn(dto.getOwnerIds());
+        List<OwnerEntity> owners = ownerRepo.findByIdIn(dto.getOwnerIds())
+                .stream()
+                .map(OwnerEntity -> Optional.of(OwnerEntity))
+                .map(OwnerEntity -> OwnerEntity.orElseThrow(() -> new ResourceNotFoundException("owner " + id + " not found")))
+                .collect(Collectors.toList());
         locationEntity.setOwners(owners);
         return Mapper.toLocationDTO(locationRepo.save(locationEntity));
     }
