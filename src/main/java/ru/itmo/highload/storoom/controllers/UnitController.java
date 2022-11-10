@@ -1,6 +1,6 @@
 package ru.itmo.highload.storoom.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -15,10 +15,10 @@ import static ru.itmo.highload.storoom.models.DTOs.UnitFullDTO;
 
 @RestController
 @RequestMapping("/units")
+@RequiredArgsConstructor
 public class UnitController {
 
-    @Autowired
-    private UnitService service;
+    private final UnitService service;
 
     @GetMapping
     public Page<UnitFullDTO> getAll(Pageable pageable) {

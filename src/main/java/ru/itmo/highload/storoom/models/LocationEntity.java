@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name="locations")
+@Entity(name = "locations")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public class LocationEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

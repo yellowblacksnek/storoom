@@ -79,6 +79,7 @@ public class Mapper {
         location.setOwners(owners);
         return location;
     }
+
     public static UnitDTO toUnitDTO(UnitEntity entity) {
         UnitDTO dto = new UnitDTO();
         dto.setId(entity.getId());

@@ -63,10 +63,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .build();
     }
 
-    public static List<GrantedAuthority> getAuthorities (UserType userType) {
+    public static List<GrantedAuthority> getAuthorities(UserType userType) {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        for(UserType type : UserType.values()) {
+        for (UserType type : UserType.values()) {
             if (userType.getHierarchy() <= type.getHierarchy()) {
                 authorities.add(new SimpleGrantedAuthority(type.name()));
             }

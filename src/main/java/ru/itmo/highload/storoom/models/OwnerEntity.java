@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name="owners")
+@Entity(name = "owners")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public class OwnerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

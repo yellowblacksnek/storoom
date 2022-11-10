@@ -1,6 +1,6 @@
 package ru.itmo.highload.storoom.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -15,10 +15,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/orders")
+@RequiredArgsConstructor
 public class OrderController {
-    @Autowired
-    private OrderService service;
 
+    private final OrderService service;
 
     @PreAuthorize("hasAuthority('superuser')")
     @GetMapping

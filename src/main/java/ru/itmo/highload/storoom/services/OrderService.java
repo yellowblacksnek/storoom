@@ -1,6 +1,6 @@
 package ru.itmo.highload.storoom.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
-
-    @Autowired OrderRepository repo;
-    @Autowired UnitService unitService;
-    @Autowired UserService userService;
+    private final OrderRepository repo;
+    private final UnitService unitService;
+    private final UserService userService;
 
     public Page<OrderFullDTO> getAll(Pageable pageable) {
         Page<OrderEntity> res = repo.findAll(pageable);
@@ -38,11 +38,13 @@ public class OrderService {
     @Transactional
     public OrderFullDTO create(OrderDTO dto) {
         UnitEntity unitEntity = unitService.getEntityById(dto.getUnitId());
-        if(unitEntity.getStatus() != UnitStatus.available) {
+        if (unitEntity.getStatus() != UnitStatus.available) {
             throw new IllegalStateException("unit is not available");
         }
-
         OrderEntity orderEntity = Mapper.toOrderEntity(dto);
+        if (orderEntity.getStartTime().isAfter(orderEntity.getEndTime())) {
+            throw new IllegalStateException("Start date should be before end date");
+        }
         orderEntity.setUser(userService.getEntityById(dto.getUserId()));
         orderEntity.setUnit(unitEntity);
         orderEntity = repo.save(orderEntity);
@@ -54,7 +56,7 @@ public class OrderService {
     public OrderFullDTO updateOrderInfo(UUID id, OrderDTO dto) {
         OrderEntity order = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
 
-        if(order.getStatus() != dto.getStatus()) {
+        if (order.getStatus() != dto.getStatus()) {
             throw new IllegalArgumentException("status updates via info updates not supported");
         }
 
@@ -72,7 +74,7 @@ public class OrderService {
     public OrderFullDTO finishOrder(UUID id) {
         OrderEntity order = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
 
-        if(order.getStatus() == OrderStatus.finished) {
+        if (order.getStatus() == OrderStatus.finished) {
             throw new IllegalStateException("order is already finished");
         }
 

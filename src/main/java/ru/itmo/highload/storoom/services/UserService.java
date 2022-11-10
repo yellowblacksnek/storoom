@@ -31,7 +31,7 @@ public class UserService {
     private String adminUsername;
 
     public UserEntity getEntityById(UUID id) {
-        return userRepo.findById(id).orElseThrow(ResourceNotFoundException::new);
+        return userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("user " + id + " not found"));
     }
 
     public Page<UserReadDTO> getAll(Pageable pageable) {
@@ -45,7 +45,7 @@ public class UserService {
     }
 
     public UserReadDTO create(UserFullDTO req) {
-        if(userRepo.existsByUsername(req.getUsername()) || req.getUsername().equals(adminUsername)) {
+        if (userRepo.existsByUsername(req.getUsername()) || req.getUsername().equals(adminUsername)) {
             throw new ResourceAlreadyExistsException("username " + req.getUsername() + " already exists");
         }
 
@@ -67,7 +67,7 @@ public class UserService {
 
         UserEntity user = userRepo.findByUsername(username);
         if (user == null) {
-            throw new IllegalArgumentException("username not found");
+            throw new ResourceNotFoundException("username not found");
         }
         user.setPassword(encoder.encode(password));
         user = userRepo.save(user);
@@ -85,7 +85,7 @@ public class UserService {
 
         UserEntity user = userRepo.findByUsername(username);
         if (user == null) {
-            throw new IllegalArgumentException("username not found");
+            throw new ResourceNotFoundException("username not found");
         }
         user.setUserType(type);
         user = userRepo.save(user);
@@ -104,7 +104,7 @@ public class UserService {
 
         UserType highestType = UserType.getHighestOf(callerAuthorities);
 
-        if(highestType.getHierarchy() >= user.getUserType().getHierarchy()) {
+        if (highestType.getHierarchy() >= user.getUserType().getHierarchy()) {
             throw new IllegalArgumentException("cant delete a more privileged user");
         }
 

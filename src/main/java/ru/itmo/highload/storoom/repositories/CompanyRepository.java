@@ -7,5 +7,6 @@ import java.util.UUID;
 
 public interface CompanyRepository extends PagingAndSortingRepository<CompanyEntity, UUID> {
     CompanyEntity findByName(String name);
+
     Boolean existsByName(String name);
 }
