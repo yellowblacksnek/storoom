@@ -3,10 +3,10 @@ package ru.itmo.highload.storoom.utils;
 import org.springframework.stereotype.Component;
 import ru.itmo.highload.storoom.models.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.itmo.highload.storoom.models.DTOs.*;
-import ru.itmo.highload.storoom.models.OrderEntity;
-import ru.itmo.highload.storoom.models.UserEntity;
 
 @Component
 public class Mapper {
@@ -40,6 +40,37 @@ public class Mapper {
         return company;
     }
 
+    public static OwnerReadDTO toOwnerDTO(OwnerEntity entity) {
+        OwnerReadDTO dto = new OwnerReadDTO();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        dto.setCompanyId(entity.getCompany().getId());
+        return dto;
+    }
+
+    public static OwnerEntity toOwnerEntity(OwnerDTO dto, CompanyEntity company, List<LocationEntity> locations) {
+        OwnerEntity owner = new OwnerEntity();
+        owner.setName(dto.getName());
+        owner.setCompany(company);
+        owner.setLocations(locations);
+        return owner;
+    }
+
+    public static LocationReadDTO toLocationDTO(LocationEntity entity) {
+        LocationReadDTO dto = new LocationReadDTO();
+        dto.setId(entity.getId());
+        dto.setAddress(entity.getAddress());
+        dto.setOwnerIds(entity.getOwners().stream().map(OwnerEntity::getId).collect(Collectors.toList()));
+        return dto;
+    }
+
+    public static LocationEntity toLocationEntity(LocationDTO dto, List<OwnerEntity> owners) {
+        LocationEntity location = new LocationEntity();
+        location.setAddress(dto.getAddress());
+        location.setLocationType(dto.locationType);
+        location.setOwners(owners);
+        return location;
+    }
     public static UnitDTO toUnitDTO(UnitEntity entity) {
         UnitDTO dto = new UnitDTO();
         dto.setId(entity.getId());

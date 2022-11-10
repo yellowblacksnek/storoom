@@ -4,13 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import static ru.itmo.highload.storoom.models.DTOs.ManufacturerDTO;
 import ru.itmo.highload.storoom.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storoom.models.ManufacturerEntity;
 import ru.itmo.highload.storoom.repositories.ManufacturerRepo;
 import ru.itmo.highload.storoom.utils.Mapper;
 
 import java.util.UUID;
+
+import static ru.itmo.highload.storoom.models.DTOs.ManufacturerDTO;
 
 @Service
 @RequiredArgsConstructor

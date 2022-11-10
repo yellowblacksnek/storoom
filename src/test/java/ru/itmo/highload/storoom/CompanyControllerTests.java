@@ -5,11 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.itmo.highload.storoom.consts.UserType;
-import ru.itmo.highload.storoom.models.DTOs;
-import ru.itmo.highload.storoom.models.LockEntity;
-import ru.itmo.highload.storoom.models.ManufacturerEntity;
-import ru.itmo.highload.storoom.repositories.LockRepo;
-import ru.itmo.highload.storoom.repositories.ManufacturerRepo;
+import ru.itmo.highload.storoom.models.*;
+import ru.itmo.highload.storoom.repositories.CompanyRepository;
+import ru.itmo.highload.storoom.repositories.OwnerRepo;
 import ru.itmo.highload.storoom.utils.Mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,56 +17,60 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.itmo.highload.storoom.services.UserDetailsServiceImpl.getAuthorities;
 
-public class LockTests extends BaseTests{
-    @Autowired private LockRepo repo;
-    @Autowired private ManufacturerRepo manuRepo;
+public class CompanyControllerTests extends BaseTests{
+    @Autowired private CompanyRepository repo;
     @Autowired private MockMvc mockMvc;
 
     @Test
     public void testGetAll() throws Exception{
+        CompanyEntity company = new CompanyEntity();
+        company.setName("company");
+        repo.save(company);
+
         String token = getToken("user", getAuthorities(UserType.superuser));
-        ResultActions response = mockMvc.perform(get("/locks").header("Authorization", token));
+        ResultActions response = mockMvc.perform(get("/companies").header("Authorization", token));
 
         response.andExpect(status().isOk());
         response.andExpect(jsonPath("$.totalElements").value(1));
         response.andExpect(jsonPath("$.content.size()").value(1));
-        response.andExpect(jsonPath("$.content[0].name").value("lock"));
+        response.andExpect(jsonPath("$.content[0].name").value("company"));
     }
 
     @Test
     public void testAdd() throws Exception{
-        ManufacturerEntity entity = manuRepo.findAll().iterator().next();
-        DTOs.LockDTO dto = new DTOs.LockDTO();
-        dto.setName("lock1");
-        dto.setManufacturer(entity.getId());
+        DTOs.CompanyDTO dto = new DTOs.CompanyDTO();
+        dto.setName("company1");
 
         String token = getToken("user", getAuthorities(UserType.superuser));
-        ResultActions response = mockMvc.perform(post("/locks")
+        ResultActions response = mockMvc.perform(post("/companies")
                 .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
                 .content(toJson(dto)));
 
         response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.name").value("lock1"));
-        response.andExpect(jsonPath("$.manufacturer.name").value("manu"));
+        response.andExpect(jsonPath("$.data.name").value("company1"));
 
-        assertEquals(2, repo.count());
+        assertEquals(1, repo.count());
     }
 
     @Test
     public void testUpdate() throws Exception{
-        LockEntity entity = repo.findAll().iterator().next();
+        CompanyEntity company = new CompanyEntity();
+        company.setName("company");
+        repo.save(company);
+
+        CompanyEntity entity = repo.findAll().iterator().next();
         entity.setName("new name");
-        DTOs.LockDTO dto = Mapper.toLockDTO(entity);
+        DTOs.CompanyReadDTO dto = Mapper.toCompanyDTO(entity);
 
         String token = getToken("user", getAuthorities(UserType.superuser));
-        ResultActions response = mockMvc.perform(put("/locks/"+dto.getId())
+        ResultActions response = mockMvc.perform(put("/companies/"+dto.getId())
                 .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
                 .content(toJson(dto)));
 
         response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.name").value("new name"));
+        response.andExpect(jsonPath("$.data.name").value("new name"));
 
         entity = repo.findAll().iterator().next();
         assertEquals("new name", entity.getName());
@@ -76,21 +78,18 @@ public class LockTests extends BaseTests{
 
     @Test
     public void testDelete() throws Exception{
-        ManufacturerEntity manufacturer = manuRepo.findAll().iterator().next();
-        LockEntity lock = new LockEntity();
-        lock.setName("lock1");
-        lock.setManufacturer(manufacturer);
-        lock = repo.save(lock);
+        CompanyEntity company = new CompanyEntity();
+        company.setName("company1");
+        company = repo.save(company);
 
         String token = getToken("user", getAuthorities(UserType.superuser));
-        ResultActions response = mockMvc.perform(delete("/locks/"+lock.getId())
+        ResultActions response = mockMvc.perform(delete("/companies/"+company.getId())
                 .header("Authorization", token));
 
         response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.name").value("lock1"));
-        response.andExpect(jsonPath("$.manufacturer.name").value("manu"));
+        response.andExpect(jsonPath("$.message").value("Successfully deleted company!" + company.getId()));
 
 
-        assertEquals(1, repo.count());
+        assertEquals(0, repo.count());
     }
 }

@@ -7,11 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import static ru.itmo.highload.storoom.models.DTOs.LockDTO;
-import static ru.itmo.highload.storoom.models.DTOs.LockFullDTO;
 import ru.itmo.highload.storoom.services.LockService;
 
 import java.util.UUID;
+
+import static ru.itmo.highload.storoom.models.DTOs.LockDTO;
+import static ru.itmo.highload.storoom.models.DTOs.LockFullDTO;
 
 @Slf4j
 @RestController

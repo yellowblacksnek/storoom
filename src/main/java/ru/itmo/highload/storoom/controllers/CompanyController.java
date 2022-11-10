@@ -45,6 +45,6 @@ public class CompanyController {
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteCompany(@PathVariable("id") String id) {
         companyService.delete(UUID.fromString(id));
-        return ResponseHandler.generateResponse("Successfully deleted company!", HttpStatus.OK, null);
+        return ResponseHandler.generateResponse("Successfully deleted company!" + id, HttpStatus.OK, null);
     }
 }

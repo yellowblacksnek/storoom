@@ -4,12 +4,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
 import ru.itmo.highload.storoom.consts.UnitStatus;
 import ru.itmo.highload.storoom.consts.UnitType;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
