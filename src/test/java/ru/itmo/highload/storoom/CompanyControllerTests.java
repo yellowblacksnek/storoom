@@ -19,7 +19,6 @@ import static ru.itmo.highload.storoom.services.UserDetailsServiceImpl.getAuthor
 
 public class CompanyControllerTests extends BaseTests{
     @Autowired private CompanyRepository repo;
-    @Autowired private OwnerRepo ownerRepo;
     @Autowired private MockMvc mockMvc;
 
     @Test
