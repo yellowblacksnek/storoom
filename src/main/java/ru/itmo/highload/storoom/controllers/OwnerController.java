@@ -43,6 +43,6 @@ public class OwnerController {
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteOwner(@PathVariable("id") String id) {
         ownerService.delete(UUID.fromString(id));
-        return ResponseHandler.generateResponse("Successfully deleted owner!", HttpStatus.OK, null);
+        return ResponseHandler.generateResponse("Successfully deleted owner! "  + id, HttpStatus.OK, null);
     }
 }

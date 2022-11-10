@@ -25,7 +25,7 @@ public class OwnerEntity implements Serializable {
     @NonNull
     private CompanyEntity company;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH})
     @JoinTable(
             name = "owners_locations",
             joinColumns = @JoinColumn(name = "owner_id"),

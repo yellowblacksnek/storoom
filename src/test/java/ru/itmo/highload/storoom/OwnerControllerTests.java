@@ -15,7 +15,6 @@ import ru.itmo.highload.storoom.utils.Mapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -55,7 +54,7 @@ public class OwnerControllerTests extends BaseTests{
         response.andExpect(status().isOk());
         response.andExpect(jsonPath("$.totalElements").value(1));
         response.andExpect(jsonPath("$.content.size()").value(1));
-        response.andExpect(jsonPath("$.content[0].name").value("owner"));
+        response.andExpect(jsonPath("$.content[0].name").value("owner1"));
     }
 
     @Test
@@ -82,7 +81,6 @@ public class OwnerControllerTests extends BaseTests{
     }
 
     @Test
-    @Disabled
     public void testUpdate() throws Exception{
         CompanyEntity company = new CompanyEntity();
         company.setName("company1");
@@ -103,7 +101,7 @@ public class OwnerControllerTests extends BaseTests{
 
         OwnerEntity entity = repo.findAll().iterator().next();
         entity.setName("new name");
-        entity.setLocations(new ArrayList<>());
+        entity.setLocations(locations);
         DTOs.OwnerReadDTO dto = Mapper.toOwnerDTO(entity);
 
         String token = getToken("user", getAuthorities(UserType.superuser));
@@ -139,11 +137,11 @@ public class OwnerControllerTests extends BaseTests{
         repo.save(owner);
 
         String token = getToken("user", getAuthorities(UserType.superuser));
-        ResultActions response = mockMvc.perform(delete("/owners/"+company.getId())
+        ResultActions response = mockMvc.perform(delete("/owners/"+owner.getId())
                 .header("Authorization", token));
 
         response.andExpect(status().isOk());
-        response.andExpect(jsonPath("$.message").value("Successfully deleted company!" + owner.getId()));
+        response.andExpect(jsonPath("$.message").value("Successfully deleted owner! " + owner.getId()));
 
 
         assertEquals(0, repo.count());
