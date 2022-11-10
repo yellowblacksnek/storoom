@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.itmo.highload.storoom.consts.UserType;
 import ru.itmo.highload.storoom.exceptions.ResourceAlreadyExistsException;
+import ru.itmo.highload.storoom.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storoom.models.DTOs.UserFullDTO;
 import ru.itmo.highload.storoom.models.DTOs.UserReadDTO;
 import ru.itmo.highload.storoom.models.UserEntity;
@@ -29,8 +30,8 @@ public class UserService {
     @Value("${ADMIN_USERNAME}")
     private String adminUsername;
 
-    public UserEntity getRef(UUID id) {
-        return userRepo.getOne(id);
+    public UserEntity getEntityById(UUID id) {
+        return userRepo.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
     public Page<UserReadDTO> getAll(Pageable pageable) {
@@ -55,7 +56,7 @@ public class UserService {
         return Mapper.toUserReadDTO(entity);
     }
 
-    public void updatePassword(String username, String password) {
+    public UserReadDTO updatePassword(String username, String password) {
         if (username.equals(adminUsername)) {
             throw new IllegalArgumentException("cant mess with the admin");
         }
@@ -69,10 +70,11 @@ public class UserService {
             throw new IllegalArgumentException("username not found");
         }
         user.setPassword(encoder.encode(password));
-        userRepo.save(user);
+        user = userRepo.save(user);
+        return Mapper.toUserReadDTO(user);
     }
 
-    public void updateUserType(String username, UserType type) {
+    public UserReadDTO updateUserType(String username, UserType type) {
         if (username.equals(adminUsername)) {
             throw new IllegalArgumentException("cant mess with the admin");
         }
@@ -86,10 +88,11 @@ public class UserService {
             throw new IllegalArgumentException("username not found");
         }
         user.setUserType(type);
-        userRepo.save(user);
+        user = userRepo.save(user);
+        return Mapper.toUserReadDTO(user);
     }
 
-    public void deleteByUsername(String username, List<UserType> callerAuthorities) {
+    public UserReadDTO deleteByUsername(String username, List<UserType> callerAuthorities) {
         if (username.equals(adminUsername)) {
             throw new IllegalArgumentException("cant mess with the admin");
         }
@@ -106,5 +109,6 @@ public class UserService {
         }
 
         userRepo.delete(user);
+        return Mapper.toUserReadDTO(user);
     }
 }

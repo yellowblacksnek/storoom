@@ -48,6 +48,16 @@ public  class DTOs {
     }
 
     @Data
+    public static class UnitFullDTO {
+        public UUID id;
+        public Integer sizeX, sizeY, sizeZ;
+        public UnitType unitType;
+        public UnitStatus status;
+        public UUID locationId;
+        public LockFullDTO lock;
+    }
+
+    @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class OrderDTO {
@@ -58,7 +68,17 @@ public  class DTOs {
         public OrderStatus status;
         public UUID unitId;
         public UUID userId;
+    }
 
+    @Data
+    public static class OrderFullDTO {
+        public UUID id;
+        public LocalDateTime startTime;
+        public LocalDateTime endTime;
+        public LocalDateTime finishedTime;
+        public OrderStatus status;
+        public UnitFullDTO unit;
+        public UserReadDTO user;
     }
 
     @Data

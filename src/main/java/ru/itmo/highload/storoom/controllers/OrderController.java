@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.highload.storoom.models.DTOs.OrderDTO;
+import ru.itmo.highload.storoom.models.DTOs.OrderFullDTO;
 import ru.itmo.highload.storoom.services.OrderService;
 
 import java.util.UUID;
@@ -21,13 +22,13 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('superuser')")
     @GetMapping
-    public Page<OrderDTO> getAllOrders(Pageable pageable) {
+    public Page<OrderFullDTO> getAllOrders(Pageable pageable) {
         return service.getAll(pageable);
     }
 
     @PreAuthorize("(hasAuthority('client') && #username == auth.name) || hasAuthority('superuser')")
     @GetMapping("?user={username}")
-    public Page<OrderDTO> getAllByUsername(@PathVariable String username, Authentication auth, Pageable pageable) {
+    public Page<OrderFullDTO> getAllByUsername(@PathVariable String username, Authentication auth, Pageable pageable) {
         return service.getAllByUsername(username, pageable);
     }
 
@@ -35,21 +36,21 @@ public class OrderController {
     @PreAuthorize("hasAuthority('client')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDTO addOrder(@RequestBody OrderDTO dto) {
+    public OrderFullDTO addOrder(@RequestBody OrderDTO dto) {
         return service.create(dto);
     }
 
     @PreAuthorize("hasAuthority('superuser')")
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public OrderDTO updateOrder(@PathVariable UUID id, @RequestBody OrderDTO dto) {
+    public OrderFullDTO updateOrder(@PathVariable UUID id, @RequestBody OrderDTO dto) {
         return service.updateOrderInfo(id, dto);
     }
 
     @PreAuthorize("hasAuthority('client')")
     @PostMapping("/{id}/finish")
     @ResponseStatus(HttpStatus.OK)
-    public OrderDTO finishOrder(@PathVariable UUID id) {
+    public OrderFullDTO finishOrder(@PathVariable UUID id) {
         return service.finishOrder(id);
     }
 }

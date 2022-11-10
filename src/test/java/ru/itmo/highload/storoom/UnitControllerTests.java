@@ -109,7 +109,7 @@ public class UnitControllerTests extends BaseTests{
         ResultActions response = mockMvc.perform(delete("/units/" + unitEntity.getId().toString())
                 .header("Authorization", token));
 
-        response.andExpect(status().isNoContent());
+        response.andExpect(status().isOk());
         assertEquals(1, unitRepo.count());
     }
 

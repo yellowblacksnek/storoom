@@ -9,6 +9,7 @@ import ru.itmo.highload.storoom.consts.OrderStatus;
 import ru.itmo.highload.storoom.consts.UnitStatus;
 import ru.itmo.highload.storoom.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storoom.models.DTOs.OrderDTO;
+import ru.itmo.highload.storoom.models.DTOs.OrderFullDTO;
 import ru.itmo.highload.storoom.models.OrderEntity;
 import ru.itmo.highload.storoom.models.UnitEntity;
 import ru.itmo.highload.storoom.repositories.OrderRepository;
@@ -24,51 +25,51 @@ public class OrderService {
     @Autowired UnitService unitService;
     @Autowired UserService userService;
 
-    public Page<OrderDTO> getAll(Pageable pageable) {
+    public Page<OrderFullDTO> getAll(Pageable pageable) {
         Page<OrderEntity> res = repo.findAll(pageable);
-        return res.map(Mapper::toOrderDTO);
+        return res.map(Mapper::toOrderFullDTO);
     }
 
-    public Page<OrderDTO> getAllByUsername(String username, Pageable pageable) {
+    public Page<OrderFullDTO> getAllByUsername(String username, Pageable pageable) {
         Page<OrderEntity> res = repo.findAllByUser(pageable, username);
-        return res.map(Mapper::toOrderDTO);
+        return res.map(Mapper::toOrderFullDTO);
     }
 
     @Transactional
-    public OrderDTO create(OrderDTO dto) {
-        UnitEntity unitEntity = unitService.getById(dto.getUnitId());
+    public OrderFullDTO create(OrderDTO dto) {
+        UnitEntity unitEntity = unitService.getEntityById(dto.getUnitId());
         if(unitEntity.getStatus() != UnitStatus.available) {
             throw new IllegalStateException("unit is not available");
         }
 
         OrderEntity orderEntity = Mapper.toOrderEntity(dto);
-        orderEntity.setUser(userService.getRef(dto.getUserId()));
+        orderEntity.setUser(userService.getEntityById(dto.getUserId()));
         orderEntity.setUnit(unitEntity);
         orderEntity = repo.save(orderEntity);
         unitService.updateStatus(unitEntity.getId(), UnitStatus.occupied);
 
-        return Mapper.toOrderDTO(orderEntity);
+        return Mapper.toOrderFullDTO(orderEntity);
     }
 
-    public OrderDTO updateOrderInfo(UUID id, OrderDTO dto) {
+    public OrderFullDTO updateOrderInfo(UUID id, OrderDTO dto) {
         OrderEntity order = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
 
         if(order.getStatus() != dto.getStatus()) {
             throw new IllegalArgumentException("status updates via info updates not supported");
         }
 
-        order.setUser(userService.getRef(dto.getUserId()));
-        order.setUnit(unitService.getRef(dto.getUnitId()));
+        order.setUser(userService.getEntityById(dto.getUserId()));
+        order.setUnit(unitService.getEntityById(dto.getUnitId()));
         order.setStartTime(dto.getStartTime());
         order.setEndTime(dto.getEndTime());
         order.setFinishedTime(dto.getFinishedTime());
         order = repo.save(order);
 
-        return Mapper.toOrderDTO(order);
+        return Mapper.toOrderFullDTO(order);
     }
 
     @Transactional
-    public OrderDTO finishOrder(UUID id) {
+    public OrderFullDTO finishOrder(UUID id) {
         OrderEntity order = repo.findById(id).orElseThrow(ResourceNotFoundException::new);
 
         if(order.getStatus() == OrderStatus.finished) {
@@ -81,6 +82,6 @@ public class OrderService {
 
         unitService.updateStatus(order.getUnit().getId(), UnitStatus.pending);
 
-        return Mapper.toOrderDTO(order);
+        return Mapper.toOrderFullDTO(order);
     }
 }

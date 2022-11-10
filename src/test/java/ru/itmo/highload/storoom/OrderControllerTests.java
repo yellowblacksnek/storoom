@@ -79,8 +79,9 @@ public class OrderControllerTests extends BaseTests{
         LocalDateTime endTimePlusDay = endTime.plusDays(1L);
 
         DTOs.OrderDTO orderDTO = new DTOs.OrderDTO(null, startTime, endTime, null, OrderStatus.active, unit.getId(), user.getId());
-        orderDTO = orderService.create(orderDTO);
+        DTOs.OrderFullDTO orderFullDTO = orderService.create(orderDTO);
 
+        orderDTO.setId(orderFullDTO.getId());
         orderDTO.setEndTime(endTimePlusDay);
 
         String token = getToken("name", getAuthorities(UserType.superuser));
@@ -101,7 +102,9 @@ public class OrderControllerTests extends BaseTests{
         UnitEntity unit = unitRepo.findAll().iterator().next();
 
         DTOs.OrderDTO orderDTO = new DTOs.OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), user.getId());
-        orderDTO = orderService.create(orderDTO);
+        DTOs.OrderFullDTO orderFullDTO = orderService.create(orderDTO);
+        orderDTO.setId(orderFullDTO.getId());
+
 
         String token = getToken("name", getAuthorities(UserType.superuser));
         ResultActions response = mockMvc.perform(post("/orders/" + orderDTO.getId() + "/finish")

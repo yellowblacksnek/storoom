@@ -24,8 +24,12 @@ public class LockService {
         return repo.findAll(pageable).map(Mapper::toLockFullDTO);
     }
 
+    public LockEntity getEntityById(UUID id) {
+        return repo.findById(id).orElseThrow(ResourceNotFoundException::new);
+    }
+
     public LockFullDTO getById(UUID id) {
-        return Mapper.toLockFullDTO(repo.findById(id).orElseThrow(ResourceNotFoundException::new));
+        return Mapper.toLockFullDTO(getEntityById(id));
     }
 
     public LockFullDTO create(LockDTO dto) {
