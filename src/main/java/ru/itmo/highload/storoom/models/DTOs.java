@@ -3,10 +3,7 @@ package ru.itmo.highload.storoom.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.itmo.highload.storoom.consts.OrderStatus;
-import ru.itmo.highload.storoom.consts.UnitStatus;
-import ru.itmo.highload.storoom.consts.UnitType;
-import ru.itmo.highload.storoom.consts.UserType;
+import ru.itmo.highload.storoom.consts.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,7 +47,19 @@ public  class DTOs {
         public UUID companyId;
         public List<UUID> locationIds;
     }
-
+    @Data
+    public static class LocationReadDTO {
+        public UUID id;
+        public String address;
+        public LocationType locationType;
+        public List<UUID> ownerIds;
+    }
+    @Data
+    public static class LocationDTO {
+        public String address;
+        public LocationType locationType;
+        public List<UUID> ownerIds;
+    }
 
 
     @Data
