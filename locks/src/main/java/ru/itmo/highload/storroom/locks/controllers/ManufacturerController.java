@@ -2,6 +2,7 @@ package ru.itmo.highload.storroom.locks.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,7 +29,7 @@ public class ManufacturerController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Flux<ManufacturerDTO> getAll(Pageable pageable) {
+    public Flux<ManufacturerDTO> getAll(@ParameterObject Pageable pageable) {
         return service.getAll(pageable);
     }
 

@@ -2,6 +2,7 @@ package ru.itmo.highload.storroom.users.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +26,13 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('superuser')")
-    public Page<UserReadDTO> getAll(Pageable pageable) {
+    public Page<UserReadDTO> getAll(@ParameterObject Pageable pageable) {
         return userService.getAll(pageable);
     }
 
     @GetMapping(params = "userType")
     @PreAuthorize("hasAuthority('superuser')")
-    public Page<UserReadDTO> getAllByType(@RequestParam String userType, Pageable pageable) {
+    public Page<UserReadDTO> getAllByType(@RequestParam String userType, @ParameterObject Pageable pageable) {
         return userService.getAllByType(userType, pageable);
     }
 
