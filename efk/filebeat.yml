@@ -1,0 +1,92 @@
+#filebeat.inputs:
+#  - type: container
+#    paths:
+#      - '/var/lib/docker/containers/*/*.log'
+#
+#processors:
+#  - add_docker_metadata:
+#      host: "unix:///var/run/docker.sock"
+#
+#  - decode_json_fields:
+#      fields: ["message"]
+#      target: "json"
+#      overwrite_keys: true
+#
+#filebeat.autodiscover:
+#  providers:
+#    - type: docker
+#      templates:
+#        - condition:
+#            equals:
+#              docker.container.labels.collect_logs_with_filebeat: true
+#          config:
+#            - type: container
+#              paths:
+#                - "/var/lib/docker/containers/${data.docker.container.id}/*.log"
+#              exclude_lines: ["^\\s+[\\-`('.|_]"]
+#
+#output.elasticsearch:
+#  hosts: ["elk:9200"]
+#  indices:
+#    - index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+#
+#logging.json: true
+#logging.metrics.enabled: false
+
+#filebeat.config:
+#  modules:
+#    path: ${path.config}/modules.d/*.yml
+#    reload.enabled: false
+#
+#filebeat.inputs:
+#  - type: container
+#    paths:
+#      - '/var/lib/docker/containers/*/*.log'
+#
+#processors:
+#  - add_docker_metadata:
+#      host: "unix:///var/run/docker.sock"
+#
+#  - decode_json_fields:
+#      fields: ["message"]
+#      target: "json"
+#      overwrite_keys: true
+#
+#output:
+#  logstash:
+#    enabled: true
+#    hosts:
+#      - elk:5044
+#
+#logging.json: true
+#logging.metrics.enabled: false
+
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+      hints.default_config.enabled: false
+
+processors:
+#  - add_cloud_metadata: ~
+#  - add_docker_metadata:
+#      host: "unix:///var/run/docker.sock"
+
+  - decode_json_fields:
+      fields: ["message"]
+      target: "json"
+      overwrite_keys: true
+
+output.elasticsearch:
+  hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
+  protocol: "https"
+  ssl.certificate_authorities: ["${path.config}/certs/ca/ca.crt"]
+  username: '${ELASTICSEARCH_USERNAME:elastic}'
+  password: '${ELASTICSEARCH_PASSWORD:elastic}'
+  indices:
+    - index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
