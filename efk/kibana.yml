@@ -1,9 +1,8 @@
 server.name: kibana
 server.host: 0.0.0.0
 server.publicBaseUrl: "http://localhost:5601"
-monitoring.ui.container.elasticsearch.enabled: true # Для корректного сбора метрик с elastic search, запущенного в контейнере
-#
+monitoring.ui.container.elasticsearch.enabled: true
+
 elasticsearch.hosts: [ '${ELASTICSEARCH_HOSTS:"http://elasticsearch:9200"}' ]
 elasticsearch.username: '${ELASTICSEARCH_USERNAME:kibana_system}'
 elasticsearch.password: '${ELASTICSEARCH_PASSWORD:kibana}'
-#QDonvsOjxykRjoyCgHrO
