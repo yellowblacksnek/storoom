@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.itmo.highload.storroom.token.clients.UserClient;
 import ru.itmo.highload.storroom.token.dtos.UserDTO;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private String adminPassword;
 
     @Autowired
-    private UserClient userClient;
+    private UserService userService;
 
     @Autowired
     private BCryptPasswordEncoder encoder;
@@ -41,7 +40,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             password = encoder.encode(adminPassword);
             authorities = getAuthorities(UserDTO.UserType.admin);
         } else {
-            UserDTO userDTO = userClient.getUser(username);
+            UserDTO userDTO = userService.getUser(username);
             if (userDTO == null) {
                 throw new UsernameNotFoundException("No user found with username: " + username);
             }

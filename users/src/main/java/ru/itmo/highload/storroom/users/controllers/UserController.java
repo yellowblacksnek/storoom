@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.itmo.highload.storroom.users.dtos.UserPasswordDTO;
+import ru.itmo.highload.storroom.users.dtos.UserUserTypeDTO;
 import ru.itmo.highload.storroom.users.services.UserService;
 import ru.itmo.highload.storroom.users.models.UserType;
 import ru.itmo.highload.storroom.users.dtos.UserFullDTO;
@@ -45,14 +47,14 @@ public class UserController {
 
     @PutMapping("/{username}/password")
     @PreAuthorize("#username == authentication.name")
-    public ResponseEntity<Object> updatePassword(@PathVariable String username, @RequestBody UserFullDTO req) {
+    public ResponseEntity<Object> updatePassword(@PathVariable String username, @RequestBody UserPasswordDTO req) {
         userService.updatePassword(username, req.getPassword());
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{username}/type")
     @PreAuthorize("hasAuthority('admin') and #username != authentication.name")
-    public ResponseEntity<Object> updateUserType(@PathVariable String username, @RequestBody UserFullDTO req) {
+    public ResponseEntity<Object> updateUserType(@PathVariable String username, @RequestBody UserUserTypeDTO req) {
         userService.updateUserType(username, req.getUserType());
         return ResponseEntity.noContent().build();
     }

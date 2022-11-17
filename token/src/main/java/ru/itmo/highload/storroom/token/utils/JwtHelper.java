@@ -1,22 +1,17 @@
 package ru.itmo.highload.storroom.token.utils;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
@@ -41,6 +36,12 @@ public class JwtHelper {
         JwsHeader jwsHeader = JwsHeader.with(() -> "HS256").build();
         // @formatter:on
         return this.encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
+    public String generateServiceToken() {
+        var list = new ArrayList<SimpleGrantedAuthority>();
+        list.add(new SimpleGrantedAuthority("service"));
+        return generateToken("admin", list, 10L);
     }
 
 }

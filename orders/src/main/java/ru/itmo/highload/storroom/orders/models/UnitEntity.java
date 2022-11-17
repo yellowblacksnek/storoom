@@ -38,7 +38,7 @@ public class UnitEntity implements Serializable {
 
     @NonNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "unit_status")
     private UnitStatus status;
 
     @Column(name = "location_id", nullable = false)

@@ -11,7 +11,6 @@ import ru.itmo.highload.storroom.orders.dtos.UnitFullDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.models.UnitEntity;
 import ru.itmo.highload.storroom.orders.models.UnitStatus;
-import ru.itmo.highload.storroom.orders.models.UnitType;
 import ru.itmo.highload.storroom.orders.repositories.UnitRepo;
 import ru.itmo.highload.storroom.orders.utils.Mapper;
 
@@ -59,9 +58,8 @@ public class UnitService {
         entity.setLocationId(dto.getLocationId());
         entity.setLockId(dto.getLockId());
 
-        UnitType oldType = entity.getUnitType();
         entity.updateUnitType();
-        if(oldType != dto.getUnitType() && entity.getUnitType() != dto.getUnitType()) {
+        if(dto.getUnitType() != null && entity.getUnitType() != dto.getUnitType()) {
             throw new IllegalArgumentException("target unit type doesn't match with computed");
         }
 

@@ -3,11 +3,11 @@ package ru.itmo.highload.storroom.locks.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.itmo.highload.storroom.locks.dtos.ManufacturerDTO;
 import ru.itmo.highload.storroom.locks.services.ManufacturerService;
@@ -29,7 +29,7 @@ public class ManufacturerController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Flux<ManufacturerDTO> getAll(@ParameterObject Pageable pageable) {
+    public Mono<Page<ManufacturerDTO>> getAll(@ParameterObject Pageable pageable) {
         return service.getAll(pageable);
     }
 

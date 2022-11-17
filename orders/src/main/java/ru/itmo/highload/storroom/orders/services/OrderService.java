@@ -48,6 +48,8 @@ public class OrderService {
         LockDTO lock = lockService.getLock(unitEntity.getLockId());
         LocationDTO location = locationService.getLocationAlways(unitEntity.getLocationId());
 
+        if(dto.getStartTime() == null) dto.setStartTime(LocalDateTime.now());
+        if(dto.getStatus() == null) dto.setStatus(OrderStatus.active);
         OrderEntity orderEntity = Mapper.toOrderEntity(dto);
         orderEntity.setUnit(unitEntity);
         orderEntity = repo.save(orderEntity);

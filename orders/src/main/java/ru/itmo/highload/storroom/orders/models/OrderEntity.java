@@ -28,7 +28,7 @@ public class OrderEntity implements Serializable {
 
     @NonNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "order_status")
     private OrderStatus status;
 
     @ManyToOne
