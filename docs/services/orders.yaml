@@ -1,0 +1,502 @@
+openapi: 3.0.1
+info:
+  title: Orders definition
+  version: v2
+servers:
+  - url: http://localhost:8084
+    description: Generated server url
+paths:
+  /units/{id}:
+    put:
+      tags:
+        - units
+      operationId: updateInfo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnitDTO'
+        required: true
+      responses:
+        "503":
+          description: Service Unavailable
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitFullDTO'
+    delete:
+      tags:
+        - units
+      operationId: delete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "503":
+          description: Service Unavailable
+        "204":
+          description: No Content
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitFullDTO'
+  /units/{id}/status:
+    put:
+      tags:
+        - units
+      operationId: updateStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnitDTO'
+        required: true
+      responses:
+        "503":
+          description: Service Unavailable
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitFullDTO'
+  /orders/{id}:
+    put:
+      tags:
+        - orders
+      operationId: updateOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDTO'
+        required: true
+      responses:
+        "503":
+          description: Service Unavailable
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderFullDTO'
+  /units:
+    get:
+      tags:
+        - units
+      operationId: getAll
+      parameters:
+        - name: pageable
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        "503":
+          description: Service Unavailable
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageUnitDTO'
+    post:
+      tags:
+        - units
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnitDTO'
+        required: true
+      responses:
+        "503":
+          description: Service Unavailable
+        "201":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitFullDTO'
+  /orders:
+    get:
+      tags:
+        - orders
+      operationId: getAllOrders_1
+      parameters:
+        - name: pageable
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Pageable'
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "503":
+          description: Service Unavailable
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageOrderDTO'
+    post:
+      tags:
+        - orders
+      operationId: addOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDTO'
+        required: true
+      responses:
+        "503":
+          description: Service Unavailable
+        "201":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderFullDTO'
+  /orders/{id}/finish:
+    post:
+      tags:
+        - orders
+      operationId: finishOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "503":
+          description: Service Unavailable
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderFullDTO'
+components:
+  schemas:
+    UnitDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sizeX:
+          type: integer
+          format: int32
+        sizeY:
+          type: integer
+          format: int32
+        sizeZ:
+          type: integer
+          format: int32
+        unitType:
+          type: string
+          enum:
+            - S
+            - M
+            - L
+            - XL
+        status:
+          type: string
+          enum:
+            - dead
+            - available
+            - occupied
+            - pending
+        locationId:
+          type: string
+          format: uuid
+        lockId:
+          type: string
+          format: uuid
+    CompanyDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    LocationDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        address:
+          type: string
+        locationType:
+          type: string
+          enum:
+            - stand
+            - warehouse
+            - main_office
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnerDTO'
+    LockDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        manufacturer:
+          $ref: '#/components/schemas/ManufacturerDTO'
+    ManufacturerDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    OwnerDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        company:
+          $ref: '#/components/schemas/CompanyDTO'
+    UnitFullDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sizeX:
+          type: integer
+          format: int32
+        sizeY:
+          type: integer
+          format: int32
+        sizeZ:
+          type: integer
+          format: int32
+        unitType:
+          type: string
+          enum:
+            - S
+            - M
+            - L
+            - XL
+        status:
+          type: string
+          enum:
+            - dead
+            - available
+            - occupied
+            - pending
+        location:
+          $ref: '#/components/schemas/LocationDTO'
+        lock:
+          $ref: '#/components/schemas/LockDTO'
+    OrderDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        finishedTime:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - active
+            - finished
+        unitId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+    OrderFullDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        finishedTime:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - active
+            - finished
+        unit:
+          $ref: '#/components/schemas/UnitFullDTO'
+        user:
+          $ref: '#/components/schemas/UserDTO'
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+    Pageable:
+      type: object
+      properties:
+        page:
+          minimum: 0
+          type: integer
+          format: int32
+        size:
+          minimum: 1
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            type: string
+    PageUnitDTO:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnitDTO'
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        last:
+          type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        unsorted:
+          type: boolean
+        sorted:
+          type: boolean
+    PageOrderDTO:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderDTO'
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        last:
+          type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        empty:
+          type: boolean

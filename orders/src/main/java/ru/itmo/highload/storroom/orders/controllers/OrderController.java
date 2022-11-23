@@ -1,6 +1,7 @@
 package ru.itmo.highload.storroom.orders.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,7 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('superuser')")
     @GetMapping
-    public Page<OrderDTO> getAllOrders(Pageable pageable) {
+    public Page<OrderDTO> getAllOrders(@ParameterObject Pageable pageable) {
         return service.getAll(pageable);
     }
 

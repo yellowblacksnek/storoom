@@ -22,7 +22,7 @@ public class SecurityConfig {
         // @formatter:off
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                        .mvcMatchers("/internal/**").permitAll()
+                        .mvcMatchers("/v3/api-docs.*","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)

@@ -1,0 +1,25 @@
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+      hints.default_config.enabled: false
+
+processors:
+  - decode_json_fields:
+      fields: ["message"]
+      target: "json"
+      overwrite_keys: true
+
+output.elasticsearch:
+  hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
+  protocol: "https"
+  ssl.certificate_authorities: ["${path.config}/certs/ca/ca.crt"]
+  username: '${ELASTICSEARCH_USERNAME:elastic}'
+  password: '${ELASTICSEARCH_PASSWORD:elastic}'
+  indices:
+    - index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"

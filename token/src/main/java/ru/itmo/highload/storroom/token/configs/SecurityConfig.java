@@ -18,7 +18,10 @@ public class SecurityConfig {
         http
                 .antMatcher("/token")
                 .csrf((csrf) -> csrf.ignoringAntMatchers("/token"))
-                .authorizeRequests().anyRequest().authenticated().and()
+                .authorizeHttpRequests((authorize) -> authorize
+                        .mvcMatchers("/v3/api-docs.*","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         // @formatter:on

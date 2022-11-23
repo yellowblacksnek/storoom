@@ -9,6 +9,7 @@ import ru.itmo.highload.storroom.orders.dtos.UserDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.exceptions.UnavailableException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 @Component
@@ -16,15 +17,16 @@ import java.util.UUID;
 @Slf4j
 public class UserService {
     private final UserClient client;
+    private final HttpServletRequest request;
     public Boolean canViewOrders(UUID userId, String username) {
-        UserDTO user = client.getUser(userId);
+        UserDTO user = client.getUser(request.getHeader("Authorization"), userId);
         return user.getUsername().equals(username);
     }
 
     public UserDTO getUser(UUID id) {
         UserDTO user;
         try {
-            user = client.getUser(id);
+            user = client.getUser(request.getHeader("Authorization"), id);
         } catch (FeignException e) {
             if(e.status() == 409) {
                 throw new ResourceNotFoundException("user", id.toString());
@@ -38,7 +40,7 @@ public class UserService {
     public UserDTO getUserAlways(UUID id) {
         UserDTO user;
         try {
-            user = client.getUser(id);
+            user = client.getUser(request.getHeader("Authorization"), id);
         } catch (FeignException e) {
             user = new UserDTO();
             user.setId(id);

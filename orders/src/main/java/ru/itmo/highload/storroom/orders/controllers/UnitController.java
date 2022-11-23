@@ -1,5 +1,6 @@
 package ru.itmo.highload.storroom.orders.controllers;
 
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,7 @@ public class UnitController {
     private UnitService service;
 
     @GetMapping
-    public Page<UnitDTO> getAll(Pageable pageable) {
+    public Page<UnitDTO> getAll(@ParameterObject Pageable pageable) {
         return service.getAll(pageable);
     }
 

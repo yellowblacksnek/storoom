@@ -1,0 +1,7 @@
+inputs:
+  - inputFile: "./services/gateway.yaml"
+  - inputFile: "./services/users.yaml"
+  - inputFile: "./services/token.yaml"
+  - inputFile: "./services/orders.yaml"
+  - inputFile: "./services/locks.yaml"
+output: "./output.yaml"

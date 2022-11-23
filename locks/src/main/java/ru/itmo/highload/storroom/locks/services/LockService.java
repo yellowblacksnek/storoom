@@ -1,9 +1,9 @@
 package ru.itmo.highload.storroom.locks.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import ru.itmo.highload.storroom.locks.dtos.LockDTO;
@@ -22,8 +22,9 @@ public class LockService {
     private final LockRepo repo;
     private final ManufacturerService manufacturerService;
 
-    public Flux<LockFullDTO> getAll(Pageable pageable) {
-        return Flux.fromIterable(repo.findAll(pageable).map(Mapper::toLockFullDTO));
+    public Mono<Page<LockFullDTO>> getAll(Pageable pageable) {
+        return Mono.fromCallable(() -> repo.findAll(pageable).map(Mapper::toLockFullDTO))
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     public Mono<LockFullDTO> getById(UUID id) {
