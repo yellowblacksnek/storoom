@@ -15,7 +15,6 @@ import ru.itmo.highload.storroom.users.exceptions.ResourceAlreadyExistsException
 import ru.itmo.highload.storroom.users.models.UserEntity;
 import ru.itmo.highload.storroom.users.repositories.UserRepository;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -94,7 +93,7 @@ public class UserService {
         userRepo.save(user);
     }
 
-    public void deleteByUsername(String username, List<UserType> callerAuthorities) {
+    public void deleteByUsername(String username, UserType callerAuthority) {
         if (username.equals(adminUsername)) {
             throw new IllegalArgumentException("cant mess with the admin");
         }
@@ -104,9 +103,7 @@ public class UserService {
             throw new IllegalArgumentException("username not found");
         }
 
-        UserType highestType = UserType.getHighestOf(callerAuthorities);
-
-        if(highestType.getHierarchy() >= user.getUserType().getHierarchy()) {
+        if(callerAuthority.getHierarchy() >= user.getUserType().getHierarchy()) {
             throw new IllegalArgumentException("cant delete a more privileged user");
         }
 

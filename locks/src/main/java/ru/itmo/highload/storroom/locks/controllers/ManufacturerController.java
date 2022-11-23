@@ -6,7 +6,6 @@ import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import ru.itmo.highload.storroom.locks.dtos.ManufacturerDTO;
@@ -35,21 +34,21 @@ public class ManufacturerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('superuser')")
+//    @PreAuthorize("hasAuthority('superuser')")
     public Mono<ManufacturerDTO> create(@RequestBody ManufacturerDTO dto) {
         return service.create(dto);
     }
 
     @PutMapping("/{id}/name")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('superuser')")
+//    @PreAuthorize("hasAuthority('superuser')")
     public Mono<ManufacturerDTO> updateName(@PathVariable UUID id, @RequestBody ManufacturerDTO dto) {
         return service.updateName(id, dto.getName());
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('superuser')")
+//    @PreAuthorize("hasAuthority('superuser')")
     public Mono<ManufacturerDTO> deleteById(@PathVariable UUID id) {
         return service.deleteById(id);
     }

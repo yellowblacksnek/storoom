@@ -9,7 +9,7 @@ import java.util.UUID;
 @Component
 public class LocationClientFallback implements LocationClient{
     @Override
-    public LocationDTO getLocation(String authHeader, UUID id) {
+    public LocationDTO getLocation(UUID id) {
         LocationDTO location = new LocationDTO();
         location.setId(id);
         location.setOwners(new ArrayList<>());

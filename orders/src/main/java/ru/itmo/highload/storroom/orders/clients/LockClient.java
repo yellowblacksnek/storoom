@@ -4,7 +4,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Primary;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import ru.itmo.highload.storroom.orders.dtos.LockDTO;
 
 import java.util.UUID;
@@ -13,6 +12,5 @@ import java.util.UUID;
 @Primary
 public interface LockClient {
     @GetMapping(value = "/locks/{id}")
-    LockDTO getLock(@RequestHeader(value = "Authorization") String authorizationHeader,
-                    @PathVariable(value="id") UUID id);
+    LockDTO getLock(@PathVariable(value="id") UUID id);
 }

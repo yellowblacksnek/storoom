@@ -5,6 +5,7 @@ WORKDIR $HOME
 ADD pom.xml $HOME
 RUN mvn verify --fail-never
 ADD . $HOME
+RUN mvn clean
 RUN mvn package -DskipTests
 
 FROM bellsoft/liberica-openjre-alpine:17

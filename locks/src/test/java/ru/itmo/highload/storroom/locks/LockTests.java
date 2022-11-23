@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
-import reactor.core.publisher.Flux;
 import ru.itmo.highload.storroom.locks.dtos.LockDTO;
 import ru.itmo.highload.storroom.locks.dtos.LockFullDTO;
 import ru.itmo.highload.storroom.locks.models.LockEntity;
@@ -12,8 +11,6 @@ import ru.itmo.highload.storroom.locks.models.ManufacturerEntity;
 import ru.itmo.highload.storroom.locks.repositories.LockRepo;
 import ru.itmo.highload.storroom.locks.repositories.ManufacturerRepo;
 import ru.itmo.highload.storroom.locks.utils.Mapper;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -27,20 +24,14 @@ public class LockTests extends BaseTests{
 
     @Test
     public void testGetAll(){
-        String token = superuserToken();
-
-        Flux<LockFullDTO> flux = webTestClient.get()
+        webTestClient.get()
                 .uri("/locks")
-                .header("Authorization", token)
                 .exchange()
                 .expectStatus().isOk()
-                .returnResult(LockFullDTO.class)
-                .getResponseBody();
+                .expectBody()
+                .jsonPath("$.numberOfElements").isEqualTo(1)
+                .jsonPath("$.content[0].name").isEqualTo("lock");
 
-        List<LockFullDTO> res = flux.collectList().block();
-
-        assertEquals(1, res.size());
-        assertEquals("lock", res.get(0).getName());
     }
 
     @Test
@@ -50,10 +41,8 @@ public class LockTests extends BaseTests{
         dto.setName("lock1");
         dto.setManufacturer(entity.getId());
 
-        String token = superuserToken();
         LockFullDTO res = webTestClient.post()
                 .uri("/locks")
-                .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
                 .body(BodyInserters.fromValue(toJson(dto)))
                 .accept(APPLICATION_JSON)
@@ -74,11 +63,8 @@ public class LockTests extends BaseTests{
         LockDTO dto = Mapper.toLockDTO(entity);
         dto.setName("new name");
 
-        String token = superuserToken();
-
         LockFullDTO res = webTestClient.put()
                 .uri("/locks/"+dto.getId())
-                .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
                 .body(BodyInserters.fromValue(toJson(dto)))
                 .accept(APPLICATION_JSON)
@@ -102,10 +88,8 @@ public class LockTests extends BaseTests{
         lock.setManufacturer(manufacturer);
         lock = repo.save(lock);
 
-        String token = superuserToken();
         LockFullDTO res = webTestClient.delete()
                 .uri("/locks/"+lock.getId())
-                .header("Authorization", token)
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()

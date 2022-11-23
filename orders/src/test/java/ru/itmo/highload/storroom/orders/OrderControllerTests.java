@@ -53,7 +53,7 @@ public class OrderControllerTests extends BaseTests{
         UserDTO user = new UserDTO();
         LockDTO lock = new LockDTO();
         lock.setManufacturer(new ManufacturerDTO());
-        USERS_SERVICE.stubFor(WireMock.get("/internal/users/" + UUID_ID)
+        USERS_SERVICE.stubFor(WireMock.get("/users/" + UUID_ID)
                 .willReturn(WireMock.okJson(toJson(user))));
         USERS_SERVICE.stubFor(WireMock.get("/locks/" + UUID_ID)
                 .willReturn(WireMock.okJson(toJson(lock))));
@@ -78,9 +78,7 @@ public class OrderControllerTests extends BaseTests{
         OrderDTO orderDTO = new OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), UUID_ID);
         orderService.create(orderDTO);
 
-        String token = superuserToken();
         ResultActions response = mockMvc.perform(get("/orders")
-                .header("Authorization", token)
                 .contentType(APPLICATION_JSON));
 
         response.andExpect(status().isOk());
@@ -89,14 +87,54 @@ public class OrderControllerTests extends BaseTests{
     }
 
     @Test
+    public void testGetByUserId() throws Exception {
+        UserDTO user = new UserDTO();
+        user.setUsername("testUser");
+        USERS_SERVICE.stubFor(WireMock.get("/users/" + UUID_ID)
+                .willReturn(WireMock.okJson(toJson(user))));
+        UnitEntity unit = unitRepo.findAll().iterator().next();
+
+        OrderDTO orderDTO = new OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), UUID_ID);
+        orderService.create(orderDTO);
+
+        ResultActions response = mockMvc.perform(get("/orders")
+                        .param("userId", String.valueOf(UUID_ID))
+                        .param("authUsername", "testUser")
+                        .param("isSuperuser", "false")
+                .contentType(APPLICATION_JSON));
+
+        response.andExpect(status().isOk());
+        response.andExpect(jsonPath("$.totalElements").value(1));
+        response.andExpect(jsonPath("$.content.size()").value(1));
+    }
+
+    @Test
+    public void testGetByUserIdForbidden() throws Exception {
+        UserDTO user = new UserDTO();
+        user.setUsername("testUser");
+        USERS_SERVICE.stubFor(WireMock.get("/users/" + UUID_ID)
+                .willReturn(WireMock.okJson(toJson(user))));
+        UnitEntity unit = unitRepo.findAll().iterator().next();
+
+        OrderDTO orderDTO = new OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), UUID_ID);
+        orderService.create(orderDTO);
+
+        ResultActions response = mockMvc.perform(get("/orders")
+                .param("userId", String.valueOf(UUID_ID))
+                .param("authUsername", "differentUsername")
+                .param("isSuperuser", "false")
+                .contentType(APPLICATION_JSON));
+
+        response.andExpect(status().isForbidden());
+    }
+
+    @Test
     public void testCreateOrder() throws Exception {
         UnitEntity unit = unitRepo.findAll().iterator().next();
 
         OrderDTO orderDTO = new OrderDTO(null, LocalDateTime.now(), LocalDateTime.now().plusDays(20L), null, OrderStatus.active, unit.getId(), UUID_ID);
 
-        String token = clientToken();
         ResultActions response = mockMvc.perform(post("/orders")
-                .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
                 .content(toJson(orderDTO)));
 
@@ -119,9 +157,7 @@ public class OrderControllerTests extends BaseTests{
         orderDTO.setId(orderFullDTO.getId());
         orderDTO.setEndTime(endTimePlusDay);
 
-        String token = superuserToken();
         ResultActions response = mockMvc.perform(put("/orders/" + orderDTO.getId())
-                .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
                 .content(toJson(orderDTO)));
 
@@ -140,9 +176,7 @@ public class OrderControllerTests extends BaseTests{
 
         orderDTO.setId(orderFullDTO.getId());
 
-        String token = superuserToken();
         ResultActions response = mockMvc.perform(post("/orders/" + orderDTO.getId() + "/finish")
-                .header("Authorization", token)
                 .contentType(APPLICATION_JSON));
 
         response.andExpect(status().isOk());

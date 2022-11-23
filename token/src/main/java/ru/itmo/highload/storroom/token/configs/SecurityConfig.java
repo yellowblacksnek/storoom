@@ -16,8 +16,7 @@ public class SecurityConfig {
     public SecurityFilterChain specialSecurityFilterChain(HttpSecurity http) throws Exception {
         // @formatter:off
         http
-                .antMatcher("/token")
-                .csrf((csrf) -> csrf.ignoringAntMatchers("/token"))
+                .csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize
                         .mvcMatchers("/v3/api-docs.*","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()

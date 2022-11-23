@@ -9,7 +9,6 @@ import ru.itmo.highload.storroom.orders.dtos.ManufacturerDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.exceptions.UnavailableException;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 @Service
@@ -17,13 +16,11 @@ public class LockService {
     @Autowired
     private LockClient lockClient;
 
-    @Autowired private HttpServletRequest request;
-
     public LockDTO getLock(UUID id) {
         LockDTO lock;
         try {
 
-            lock = lockClient.getLock(request.getHeader("Authorization"), id);
+            lock = lockClient.getLock(id);
         } catch (FeignException e) {
             if(e.status() == 409) {
                 throw new ResourceNotFoundException("lock", id.toString());
@@ -37,7 +34,7 @@ public class LockService {
     public LockDTO getLockAlways(UUID id) {
         LockDTO lock;
         try {
-            lock = lockClient.getLock(request.getHeader("Authorization"), id);
+            lock = lockClient.getLock(id);
         } catch (FeignException e) {
             lock = new LockDTO();
             lock.setId(id);

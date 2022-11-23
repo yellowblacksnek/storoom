@@ -41,6 +41,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             authorities = getAuthorities(UserDTO.UserType.admin);
         } else {
             UserDTO userDTO = userService.getUser(username);
+            log.info("got user " + userDTO.getUsername());
             if (userDTO == null) {
                 throw new UsernameNotFoundException("No user found with username: " + username);
             }

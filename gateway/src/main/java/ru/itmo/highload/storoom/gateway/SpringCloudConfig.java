@@ -11,18 +11,8 @@ public class SpringCloudConfig {
     @Bean
     public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route(r -> r.path("/token/**")
-                        .uri("lb://TOKEN-SERVICE"))
-                .route(r -> r.path("/users/**")
-                        .uri("lb://USERS-SERVICE"))
-                .route(r -> r.path("/locks/**")
-                        .uri("lb://LOCKS-SERVICE"))
-                .route(r -> r.path("/manufacturers/**")
-                        .uri("lb://LOCKS-SERVICE"))
-                .route(r -> r.path("/orders/**")
-                        .uri("lb://ORDERS-SERVICE"))
-                .route(r -> r.path("/units/**")
-                        .uri("lb://ORDERS-SERVICE"))
+                .route(r -> r.path("/**")
+                        .uri("lb://AGGREGATOR"))
                 .build();
     }
 

@@ -76,8 +76,7 @@ public class UnitControllerTests extends BaseTests{
 
     @Test
     public void testGetUnits() throws Exception {
-        String token = superuserToken();
-        ResultActions response = mockMvc.perform(get("/units").header("Authorization", token));
+        ResultActions response = mockMvc.perform(get("/units"));
 
         response.andExpect(status().isOk());
         response.andExpect(jsonPath("$.totalElements").value(1));
@@ -89,9 +88,7 @@ public class UnitControllerTests extends BaseTests{
         unitEntity.setId(UUID.randomUUID());
         UnitDTO dto = Mapper.toUnitDTO(unitEntity);
 
-        String token = superuserToken();
         ResultActions response = mockMvc.perform(post("/units")
-                .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
                 .content(toJson(dto)));
 
@@ -107,9 +104,7 @@ public class UnitControllerTests extends BaseTests{
         UnitDTO dto = Mapper.toUnitDTO(unitEntity);
         dto.setSizeX(20);
 
-        String token = superuserToken();
         ResultActions response = mockMvc.perform(put("/units/" + unitEntity.getId().toString())
-                .header("Authorization", token)
                 .contentType(APPLICATION_JSON)
                 .content(toJson(dto)));
 
@@ -123,9 +118,7 @@ public class UnitControllerTests extends BaseTests{
     public void testDeleteUnit() throws Exception {
         UnitEntity unitEntity = createUnit();
         unitEntity = unitRepo.save(unitEntity);
-        String token = superuserToken();
-        ResultActions response = mockMvc.perform(delete("/units/" + unitEntity.getId().toString())
-                .header("Authorization", token));
+        ResultActions response = mockMvc.perform(delete("/units/" + unitEntity.getId().toString()));
 
         response.andExpect(status().isNoContent());
         assertEquals(1, unitRepo.count());

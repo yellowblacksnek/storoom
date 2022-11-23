@@ -8,7 +8,6 @@ import ru.itmo.highload.storroom.orders.dtos.LocationDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.exceptions.UnavailableException;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -17,12 +16,10 @@ public class LocationService {
     @Autowired
     private LocationClient locationClient;
 
-    @Autowired private HttpServletRequest request;
-
     public LocationDTO getLocation(UUID id) {
         LocationDTO location;
         try {
-            location = locationClient.getLocation(request.getHeader("Authorization"), id);
+            location = locationClient.getLocation(id);
         } catch (FeignException e) {
             if(e.status() == 409) {
                 throw new ResourceNotFoundException("location", id.toString());
@@ -36,7 +33,7 @@ public class LocationService {
     public LocationDTO getLocationAlways(UUID id) {
         LocationDTO location;
         try {
-            location = locationClient.getLocation(request.getHeader("Authorization"), id);
+            location = locationClient.getLocation(id);
         } catch (FeignException e) {
             location = new LocationDTO();
             location.setId(id);
