@@ -55,10 +55,6 @@ public class CompanyService {
                 })
                 .flatMap(companyRepo::save)
                 .map(Mapper::toCompanyDTO);
-
-//        CompanyEntity companyEntity = companyRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("company " + id + " not found"));
-//        companyEntity.setName(dto.getName());
-//        return companyRepo.save(companyEntity);
     }
 
     public Mono<CompanyReadDTO> delete(UUID id) {

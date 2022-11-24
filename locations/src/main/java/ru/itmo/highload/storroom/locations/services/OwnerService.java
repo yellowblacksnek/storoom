@@ -42,13 +42,6 @@ public class OwnerService {
                 })
                 .then(ownerRepo.save(Mapper.toOwnerEntity(dto)))
                 .map(i -> Mapper.toOwnerReadDTO(i, new ArrayList<>()));
-
-//        if (ownerRepo.existsByName(dto.getName())) {
-//            throw new ResourceAlreadyExistsException();
-//        }
-//        CompanyEntity company = companyRepo.findById(dto.getCompanyId()).orElseThrow(() -> new ResourceNotFoundException("Company", dto.getCompanyId()));
-//        List<LocationEntity> locations = locationRepo.findByIdIn(dto.getLocationIds());
-//        return Mapper.toOwnerDTO(ownerRepo.save(Mapper.toOwnerEntity(dto, company, locations)));
     }
 
     public Mono<OwnerReadDTO> addLocation(UUID id, UUID locationId) {
@@ -82,14 +75,6 @@ public class OwnerService {
 
         return Mono.zip(entity, ownerLocationService.getLocationsCompact(id),
                 Mapper::toOwnerReadDTO);
-
-//        OwnerEntity ownerEntity = ownerRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Owner", id));
-//        ownerEntity.setName(dto.getName());
-//        CompanyEntity company = companyRepo.findById(dto.getCompanyId()).orElseThrow(() -> new ResourceNotFoundException("Company", dto.getCompanyId()));
-//        ownerEntity.setCompany(company);
-//        List<LocationEntity> locations = locationRepo.findByIdIn(dto.getLocationIds());
-//        ownerEntity.setLocations(locations);
-//        return Mapper.toOwnerDTO(ownerRepo.save(ownerEntity));
     }
 
     public Mono<OwnerReadDTO> delete(UUID id) {
@@ -99,9 +84,6 @@ public class OwnerService {
 
         return Mono.zip(entity, ownerLocationService.getLocationsCompact(id),
                 Mapper::toOwnerReadDTO);
-
-//        OwnerEntity ownerEntity = ownerRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Owner", id));
-//        ownerRepo.delete(ownerEntity);
     }
 
 

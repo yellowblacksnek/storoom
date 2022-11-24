@@ -74,12 +74,6 @@ public class LocationService {
 
         return Mono.zip(entity, ownerLocationService.getOwnersCompact(id),
                 Mapper::toLocationReadDTO);
-
-//                .map(Mapper::toLocationDTO);
-
-//        List<OwnerEntity> owners = getOwnersEntities(dto.getOwnerIds());
-//        locationEntity.setOwners(owners);
-//        return Mapper.toLocationDTO(locationRepo.save(locationEntity));
     }
 
     public Mono<LocationReadDTO> delete(UUID id) {
@@ -89,23 +83,5 @@ public class LocationService {
 
         return Mono.zip(entity, ownerLocationService.getOwnersCompact(id),
                 Mapper::toLocationReadDTO);
-
-//        return locationRepo.findById(id)
-//                .switchIfEmpty(Mono.error(new ResourceNotFoundException("location ", String.valueOf(id))))
-//                .flatMap(i -> locationRepo.delete(i).thenReturn(i));
-
-//        LocationEntity locationEntity = getEntityById(id);
-//        List<UnitEntity> units = unitRepo.getAllByLocation(locationEntity);
-//        if (units.stream().anyMatch(u -> u.getStatus().equals(UnitStatus.occupied))) {
-//            throw new IllegalArgumentException("Close all units orders before deleting the location");
-//        }
-//        locationRepo.delete(locationEntity);
     }
-
-//    public Mono<List<LocationCompactDTO>> getLocationsCompact(UUID ownerId) {
-//        return ownerLocationService
-//                .getLocationsIds(ownerId).collectList()
-//                .flatMap(i -> locationRepo.findAllByIdIn(i)
-//                        .map(Mapper::toLocationCompactDTO).collectList());
-//    }
 }
