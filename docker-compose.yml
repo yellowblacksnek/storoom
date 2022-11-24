@@ -143,7 +143,9 @@ services:
     environment:
       SERVER_PORT: 8085
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
-      SPRING_DATASOURCE_URL: jdbc:postgresql://orders_db:5432/locations_db
+      spring.liquibase.url: jdbc:postgresql://locations_db:5432/locations_db
+      spring.r2dbc.url: r2dbc:postgresql://locations_db:5432/locations_db
+      spring.r2dbc.name: locations_db
       spring.config.import: configserver:http://config:8888
     command: sh wait-for.sh config:8888 -- java -jar application.jar
 
