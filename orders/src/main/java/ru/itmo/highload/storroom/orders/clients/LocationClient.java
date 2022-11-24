@@ -8,7 +8,7 @@ import ru.itmo.highload.storroom.orders.dtos.LocationDTO;
 
 import java.util.UUID;
 
-@FeignClient(value = "LOCATIONS-SERVICE", fallback = LocationClientFallback.class)
+@FeignClient(value = "LOCATIONS-SERVICE") //, fallback = LocationClientFallback.class
 @Primary
 public interface LocationClient {
     @GetMapping(value = "/locations/{id}")

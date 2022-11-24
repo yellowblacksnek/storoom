@@ -128,6 +128,24 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://orders_db:5432/orders_db
       spring.config.import: configserver:http://config:8888
     command: sh wait-for.sh config:8888 -- java -jar application.jar
+    
+  locations:
+    image: 'storoom_locations:latest'
+    build:
+      context: locations
+    container_name: locations
+    depends_on:
+      - eureka-service
+      - config
+      - locations_db
+    ports:
+      - "8085:8085"
+    environment:
+      SERVER_PORT: 8085
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://orders_db:5432/locations_db
+      spring.config.import: configserver:http://config:8888
+    command: sh wait-for.sh config:8888 -- java -jar application.jar
 
 
   aggregator:
