@@ -4,11 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
-import ru.itmo.highload.storroom.locations.dtos.CompanyDTO;
-import ru.itmo.highload.storroom.locations.dtos.CompanyReadDTO;
+import ru.itmo.highload.storroom.locations.dtos.companies.CompanyDTO;
+import ru.itmo.highload.storroom.locations.dtos.companies.CompanyReadDTO;
 import ru.itmo.highload.storroom.locations.models.CompanyEntity;
 import ru.itmo.highload.storroom.locations.repositories.CompanyRepository;
 import ru.itmo.highload.storroom.locations.utils.Mapper;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -19,17 +21,18 @@ public class CompanyTests extends BaseTests{
 
     @Test
     public void testGetAll(){
-        CompanyReadDTO company = webTestClient.get()
+        CompanyEntity entity = new CompanyEntity();
+        entity.setName("company1");
+        companyRepository.save(entity).block();
+
+        List<CompanyReadDTO> companies = webTestClient.get()
                 .uri("/companies")
                 .exchange()
                 .expectStatus().isOk()
                 .returnResult(CompanyReadDTO.class)
-                .getResponseBody().blockFirst();
+                .getResponseBody().collectList().block();
 
-        System.out.println(company.getId());
-        System.out.println(company.getName());
-
-        assertEquals("company", company.getName());
+        assertEquals(2, companies.size());
 
     }
 

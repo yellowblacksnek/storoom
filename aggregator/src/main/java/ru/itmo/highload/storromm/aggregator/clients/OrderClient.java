@@ -1,46 +1,53 @@
 package ru.itmo.highload.storromm.aggregator.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.itmo.highload.storromm.aggregator.dtos.orders.OrderDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.orders.OrderFullDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.orders.OrderInfoDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.units.UnitDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.units.UnitFullDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.units.UnitInfoDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.units.UnitStatusDTO;
 
-import java.util.Map;
 import java.util.UUID;
 
 @FeignClient("ORDERS-SERVICE")
 public interface OrderClient {
 
         @GetMapping("/orders")
-        ResponseEntity<Object> getAllOrders(Pageable pageable);
+        ResponseEntity<Page<OrderDTO>> getAllOrders(Pageable pageable);
 
         @GetMapping("/orders")
-        ResponseEntity<Object> getAllOrdersByUserId(@RequestParam UUID userId,
+        ResponseEntity<Page<OrderDTO>> getAllOrdersByUserId(@RequestParam UUID userId,
                                                      @RequestParam String authUsername,
                                                      @RequestParam Boolean isSuperuser,
                                                      Pageable pageable);
 
         @PostMapping("/orders")
-        ResponseEntity<Object> createOrder(@RequestBody Map<String, String> dto);
+        ResponseEntity<OrderFullDTO> createOrder(@RequestBody OrderDTO dto);
 
         @PutMapping("/orders/{id}")
-        ResponseEntity<Object> updateOrder(@PathVariable UUID id, @RequestBody Map<String, String> dto);
+        ResponseEntity<OrderFullDTO> updateOrder(@PathVariable UUID id, @RequestBody OrderInfoDTO dto);
 
         @PostMapping("/orders/{id}/finish")
-        ResponseEntity<Object> finishOrder(@PathVariable UUID id);
+        ResponseEntity<OrderFullDTO> finishOrder(@PathVariable UUID id);
 
         @GetMapping("/units")
-        ResponseEntity<Object> getAllUnits(Pageable pageable);
+        ResponseEntity<Page<UnitDTO>> getAllUnits(Pageable pageable);
 
         @PostMapping("/units")
-        ResponseEntity<Object> createUnit(@RequestBody Map<String, String> dto);
+        ResponseEntity<UnitFullDTO> createUnit(@RequestBody UnitDTO dto);
 
         @PutMapping("/units/{id}")
-        ResponseEntity<Object> updateUnitInfo(@PathVariable UUID id, @RequestBody Map<String, String> dto);
+        ResponseEntity<UnitFullDTO> updateUnitInfo(@PathVariable UUID id, @RequestBody UnitInfoDTO dto);
 
         @PutMapping("/units/{id}/status")
-        ResponseEntity<Object> updateUnitStatus(@PathVariable UUID id, @RequestBody Map<String, String> dto);
+        ResponseEntity<UnitFullDTO> updateUnitStatus(@PathVariable UUID id, @RequestBody UnitStatusDTO dto);
 
         @DeleteMapping("/units/{id}")
-        ResponseEntity<Object> deleteUnit(@PathVariable UUID id);
+        ResponseEntity<UnitFullDTO> deleteUnit(@PathVariable UUID id);
 }

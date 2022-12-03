@@ -1,6 +1,12 @@
 package ru.itmo.highload.storroom.orders.utils;
 
-import ru.itmo.highload.storroom.orders.dtos.*;
+import ru.itmo.highload.storroom.orders.dtos.external.locations.LocationDTO;
+import ru.itmo.highload.storroom.orders.dtos.external.locks.LockDTO;
+import ru.itmo.highload.storroom.orders.dtos.orders.OrderDTO;
+import ru.itmo.highload.storroom.orders.dtos.orders.OrderFullDTO;
+import ru.itmo.highload.storroom.orders.dtos.units.UnitDTO;
+import ru.itmo.highload.storroom.orders.dtos.units.UnitFullDTO;
+import ru.itmo.highload.storroom.orders.dtos.external.users.UserDTO;
 import ru.itmo.highload.storroom.orders.models.OrderEntity;
 import ru.itmo.highload.storroom.orders.models.UnitEntity;
 

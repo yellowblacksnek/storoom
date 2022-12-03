@@ -1,8 +1,8 @@
 package ru.itmo.highload.storroom.locks.utils;
 
-import ru.itmo.highload.storroom.locks.dtos.LockDTO;
-import ru.itmo.highload.storroom.locks.dtos.LockFullDTO;
-import ru.itmo.highload.storroom.locks.dtos.ManufacturerDTO;
+import ru.itmo.highload.storroom.locks.dtos.locks.LockDTO;
+import ru.itmo.highload.storroom.locks.dtos.locks.LockFullDTO;
+import ru.itmo.highload.storroom.locks.dtos.manufacturers.ManufacturerDTO;
 import ru.itmo.highload.storroom.locks.models.LockEntity;
 import ru.itmo.highload.storroom.locks.models.ManufacturerEntity;
 

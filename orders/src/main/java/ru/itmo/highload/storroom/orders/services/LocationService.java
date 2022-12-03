@@ -4,7 +4,7 @@ import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.itmo.highload.storroom.orders.clients.LocationClient;
-import ru.itmo.highload.storroom.orders.dtos.LocationDTO;
+import ru.itmo.highload.storroom.orders.dtos.external.locations.LocationDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.exceptions.UnavailableException;
 

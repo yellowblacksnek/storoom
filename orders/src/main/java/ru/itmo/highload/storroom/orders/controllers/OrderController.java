@@ -7,8 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.itmo.highload.storroom.orders.dtos.OrderDTO;
-import ru.itmo.highload.storroom.orders.dtos.OrderFullDTO;
+import ru.itmo.highload.storroom.orders.dtos.orders.OrderDTO;
+import ru.itmo.highload.storroom.orders.dtos.orders.OrderFullDTO;
+import ru.itmo.highload.storroom.orders.dtos.orders.OrderInfoDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ForbiddenException;
 import ru.itmo.highload.storroom.orders.services.OrderService;
 import ru.itmo.highload.storroom.orders.services.UserService;
@@ -50,7 +51,7 @@ public class OrderController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public OrderFullDTO updateOrder(@PathVariable UUID id, @RequestBody OrderDTO dto) {
+    public OrderFullDTO updateOrder(@PathVariable UUID id, @RequestBody OrderInfoDTO dto) {
         return service.updateOrderInfo(id, dto);
     }
 

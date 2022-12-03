@@ -4,8 +4,8 @@ import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.itmo.highload.storroom.orders.clients.LockClient;
-import ru.itmo.highload.storroom.orders.dtos.LockDTO;
-import ru.itmo.highload.storroom.orders.dtos.ManufacturerDTO;
+import ru.itmo.highload.storroom.orders.dtos.external.locks.LockDTO;
+import ru.itmo.highload.storroom.orders.dtos.external.locks.ManufacturerDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.exceptions.UnavailableException;
 

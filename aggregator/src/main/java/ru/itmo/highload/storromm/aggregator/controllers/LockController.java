@@ -2,13 +2,16 @@ package ru.itmo.highload.storromm.aggregator.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import ru.itmo.highload.storromm.aggregator.clients.LockClient;
+import ru.itmo.highload.storromm.aggregator.dtos.locks.LockDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.locks.LockFullDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.locks.LockInfoDTO;
 
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -20,31 +23,31 @@ public class LockController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<Object> getById(@PathVariable UUID id) {
+    public Mono<LockFullDTO> getById(@PathVariable UUID id) {
         return lockClient.getLockById(id);
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<Object> getAll(Pageable pageable) {
+    public Mono<Page<LockFullDTO>> getAll(Pageable pageable) {
         return lockClient.getAllLocks(pageable);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<Object> create(@RequestBody Map<String, String> dto) {
+    public Mono<LockFullDTO> create(@RequestBody LockDTO dto) {
         return lockClient.createLock(dto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<Object> update(@PathVariable UUID id, @RequestBody Map<String, String> dto) {
+    public Mono<LockFullDTO> update(@PathVariable UUID id, @RequestBody LockInfoDTO dto) {
         return lockClient.updateLock(id, dto);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<Object> deleteById(@PathVariable UUID id) {
+    public Mono<LockFullDTO> deleteById(@PathVariable UUID id) {
         return lockClient.deleteLock(id);
     }
 }

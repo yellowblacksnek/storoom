@@ -3,10 +3,9 @@ package ru.itmo.highload.storroom.locks;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.reactive.function.BodyInserters;
 import ru.itmo.highload.storroom.locks.models.ManufacturerEntity;
-import ru.itmo.highload.storroom.locks.dtos.ManufacturerDTO;
+import ru.itmo.highload.storroom.locks.dtos.manufacturers.ManufacturerDTO;
 import ru.itmo.highload.storroom.locks.repositories.ManufacturerRepo;
 
 

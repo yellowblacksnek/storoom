@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.itmo.highload.storromm.aggregator.clients.LocationClient;
+import ru.itmo.highload.storromm.aggregator.dtos.locations.LocationCompactDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.locations.LocationDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.locations.LocationReadDTO;
 
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -21,35 +23,35 @@ public class LocationController {
     private final LocationClient locationClient;
 
     @GetMapping("{id}")
-    public Mono<Object> getLocation(@PathVariable UUID id) { return locationClient.getLocation(id); }
+    public Mono<LocationReadDTO> getLocation(@PathVariable UUID id) { return locationClient.getLocation(id); }
 
     @GetMapping
-    public Flux<Object> getAllLocations(Pageable pageable) {
+    public Flux<LocationCompactDTO> getAllLocations(Pageable pageable) {
         return locationClient.getAllLocations(pageable);
     }
 
     @PostMapping
-    public Mono<Object> addLocation(@RequestBody Map<String,String> req) {
+    public Mono<LocationReadDTO> addLocation(@RequestBody LocationDTO req) {
         return locationClient.addLocation(req);
     }
 
     @PutMapping("{locationId}/owners/{ownerId}")
-    public Mono<Object> addOwnerToLocation(@PathVariable UUID locationId, @PathVariable UUID ownerId) {
+    public Mono<LocationReadDTO> addOwnerToLocation(@PathVariable UUID locationId, @PathVariable UUID ownerId) {
         return locationClient.addOwnerToLocation(locationId, ownerId);
     }
 
     @DeleteMapping("{locationId}/owners/{ownerId}")
-    public Mono<Object> deleteOwnerFromLocation(@PathVariable UUID locationId,@PathVariable UUID ownerId) {
+    public Mono<LocationReadDTO> deleteOwnerFromLocation(@PathVariable UUID locationId, @PathVariable UUID ownerId) {
         return locationClient.deleteOwnerFromLocation(locationId, ownerId);
     }
 
     @PutMapping("{id}")
-    public Mono<Object> updateLocation(@PathVariable String id, @RequestBody Map<String,String> dto) {
+    public Mono<LocationReadDTO> updateLocation(@PathVariable String id, @RequestBody LocationDTO dto) {
         return locationClient.updateLocation(id, dto);
     }
 
     @DeleteMapping("{id}")
-    public Mono<Object> deleteLocation(@PathVariable("id") String id) {
+    public Mono<LocationReadDTO> deleteLocation(@PathVariable("id") String id) {
         return locationClient.deleteLocation(id);
     }
 }

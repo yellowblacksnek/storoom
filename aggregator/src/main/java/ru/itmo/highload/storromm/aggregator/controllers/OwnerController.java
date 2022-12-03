@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.itmo.highload.storromm.aggregator.clients.LocationClient;
+import ru.itmo.highload.storromm.aggregator.dtos.owners.OwnerCompactDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.owners.OwnerDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.owners.OwnerInfoDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.owners.OwnerReadDTO;
 
-import java.util.Map;
 import java.util.UUID;
 
 
@@ -22,32 +25,32 @@ public class OwnerController {
     private final LocationClient ownerClient;
 
     @GetMapping
-    public Flux<Object> getAllOwners(Pageable pageable) {
+    public Flux<OwnerCompactDTO> getAllOwners(Pageable pageable) {
         return ownerClient.getAllOwners(pageable);
     }
 
     @PostMapping
-    public Mono<Object> addOwner(@RequestBody Map<String,String> req) {
+    public Mono<OwnerReadDTO> addOwner(@RequestBody OwnerDTO req) {
         return ownerClient.addOwner(req);
     }
 
     @PostMapping("{ownerId}/locations/{locationId}")
-    public Mono<Object> addLocationToOwner(@PathVariable UUID ownerId, @PathVariable UUID locationId) {
+    public Mono<OwnerReadDTO> addLocationToOwner(@PathVariable UUID ownerId, @PathVariable UUID locationId) {
         return ownerClient.addLocationToOwner(ownerId, locationId);
     }
 
     @DeleteMapping("{ownerId}/locations/{locationId}")
-    public Mono<Object> deleteLocationFromOwner(@PathVariable UUID ownerId, @PathVariable UUID locationId) {
+    public Mono<OwnerReadDTO> deleteLocationFromOwner(@PathVariable UUID ownerId, @PathVariable UUID locationId) {
         return ownerClient.deleteLocationFromOwner(ownerId, locationId);
     }
 
     @PutMapping("{id}")
-    public Mono<Object> updateOwner(@PathVariable String id, @RequestBody Map<String,String> dto) {
+    public Mono<OwnerReadDTO> updateOwner(@PathVariable String id, @RequestBody OwnerInfoDTO dto) {
         return ownerClient.updateOwner(id, dto);
     }
 
     @DeleteMapping("{id}")
-    public Mono<Object> deleteOwner(@PathVariable("id") String id) {
+    public Mono<OwnerReadDTO> deleteOwner(@PathVariable("id") String id) {
         return ownerClient.deleteOwner(id);
     }
 }

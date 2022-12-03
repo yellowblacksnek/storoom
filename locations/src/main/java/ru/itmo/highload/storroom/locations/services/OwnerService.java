@@ -5,9 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.itmo.highload.storroom.locations.dtos.OwnerCompactDTO;
-import ru.itmo.highload.storroom.locations.dtos.OwnerDTO;
-import ru.itmo.highload.storroom.locations.dtos.OwnerReadDTO;
+import ru.itmo.highload.storroom.locations.dtos.owners.OwnerCompactDTO;
+import ru.itmo.highload.storroom.locations.dtos.owners.OwnerDTO;
+import ru.itmo.highload.storroom.locations.dtos.owners.OwnerInfoDTO;
+import ru.itmo.highload.storroom.locations.dtos.owners.OwnerReadDTO;
 import ru.itmo.highload.storroom.locations.exceptions.ResourceAlreadyExistsException;
 import ru.itmo.highload.storroom.locations.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.locations.models.OwnerEntity;
@@ -60,7 +61,7 @@ public class OwnerService {
                         Mapper::toOwnerReadDTO));
     }
 
-    public Mono<OwnerReadDTO> update(UUID id, OwnerDTO dto) {
+    public Mono<OwnerReadDTO> update(UUID id, OwnerInfoDTO dto) {
         if (dto.getName() == null || dto.getName().isEmpty()) {
             throw new IllegalStateException("no name provided");
         }

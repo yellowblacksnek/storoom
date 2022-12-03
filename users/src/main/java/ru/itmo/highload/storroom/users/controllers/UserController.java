@@ -38,36 +38,39 @@ public class UserController {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Page<UserReadDTO> getAll(@ParameterObject Pageable pageable) {
         return userService.getAll(pageable);
     }
 
     @GetMapping(params = "userType")
+    @ResponseStatus(HttpStatus.OK)
     public Page<UserReadDTO> getAllByType(@RequestParam String userType, @ParameterObject Pageable pageable) {
         return userService.getAllByType(userType, pageable);
     }
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody UserFullDTO req) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UserReadDTO> create(@RequestBody UserFullDTO req) {
         UserReadDTO res = userService.create(req);
         return ResponseEntity.ok(res);
     }
 
     @PutMapping("/{username}/password")
-    public ResponseEntity<Object> updatePassword(@PathVariable String username, @RequestBody UserPasswordDTO req) {
-        userService.updatePassword(username, req.getPassword());
-        return ResponseEntity.noContent().build();
+    @ResponseStatus(HttpStatus.OK)
+    public UserReadDTO updatePassword(@PathVariable String username, @RequestBody UserPasswordDTO req) {
+        return userService.updatePassword(username, req.getPassword());
     }
 
     @PutMapping("/{username}/type")
-    public ResponseEntity<Object> updateUserType(@PathVariable String username, @RequestBody UserUserTypeDTO req) {
-        userService.updateUserType(username, req.getUserType());
-        return ResponseEntity.noContent().build();
+    @ResponseStatus(HttpStatus.OK)
+    public UserReadDTO updateUserType(@PathVariable String username, @RequestBody UserUserTypeDTO req) {
+        return userService.updateUserType(username, req.getUserType());
     }
 
     @DeleteMapping("/{username}")
-    public ResponseEntity<Object> deleteByUsername(@PathVariable String username, @RequestParam UserType callerAuthority) {
-        userService.deleteByUsername(username, callerAuthority);
-        return ResponseEntity.noContent().build();
+    @ResponseStatus(HttpStatus.OK)
+    public UserReadDTO deleteByUsername(@PathVariable String username, @RequestParam UserType callerAuthority) {
+        return userService.deleteByUsername(username, callerAuthority);
     }
 }

@@ -6,8 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.itmo.highload.storroom.locations.dtos.CompanyDTO;
-import ru.itmo.highload.storroom.locations.dtos.CompanyReadDTO;
+import ru.itmo.highload.storroom.locations.dtos.companies.CompanyDTO;
+import ru.itmo.highload.storroom.locations.dtos.companies.CompanyReadDTO;
 import ru.itmo.highload.storroom.locations.services.CompanyService;
 
 import java.util.UUID;

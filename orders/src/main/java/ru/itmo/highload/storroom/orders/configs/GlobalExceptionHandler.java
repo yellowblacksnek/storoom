@@ -1,5 +1,6 @@
 package ru.itmo.highload.storroom.orders.configs;
 
+import feign.FeignException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import ru.itmo.highload.storroom.orders.exceptions.ForbiddenException;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceAlreadyExistsException;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.exceptions.UnavailableException;
+
+import javax.servlet.http.HttpServletResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -34,5 +37,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({UnavailableException.class})
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     public void handleCallNotPermittedException() {
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<Object> handleFeignStatusException(FeignException e, HttpServletResponse response) {
+        return new ResponseEntity<>(e.contentUTF8(), HttpStatus.valueOf(e.status()));
     }
 }

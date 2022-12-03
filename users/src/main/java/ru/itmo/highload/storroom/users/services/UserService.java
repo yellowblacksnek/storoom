@@ -59,7 +59,7 @@ public class UserService {
         return Mapper.toUserReadDTO(entity);
     }
 
-    public void updatePassword(String username, String password) {
+    public UserReadDTO updatePassword(String username, String password) {
         if (username.equals(adminUsername)) {
             throw new IllegalArgumentException("cant mess with the admin");
         }
@@ -73,10 +73,11 @@ public class UserService {
             throw new IllegalArgumentException("username not found");
         }
         user.setPassword(encoder.encode(password));
-        userRepo.save(user);
+        user = userRepo.save(user);
+        return Mapper.toUserReadDTO(user);
     }
 
-    public void updateUserType(String username, UserType type) {
+    public UserReadDTO updateUserType(String username, UserType type) {
         if (username.equals(adminUsername)) {
             throw new IllegalArgumentException("cant mess with the admin");
         }
@@ -90,10 +91,11 @@ public class UserService {
             throw new IllegalArgumentException("username not found");
         }
         user.setUserType(type);
-        userRepo.save(user);
+        user = userRepo.save(user);
+        return Mapper.toUserReadDTO(user);
     }
 
-    public void deleteByUsername(String username, UserType callerAuthority) {
+    public UserReadDTO deleteByUsername(String username, UserType callerAuthority) {
         if (username.equals(adminUsername)) {
             throw new IllegalArgumentException("cant mess with the admin");
         }
@@ -108,6 +110,7 @@ public class UserService {
         }
 
         userRepo.delete(user);
+        return Mapper.toUserReadDTO(user);
     }
 }
 

@@ -5,7 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.itmo.highload.storroom.orders.dtos.*;
+import ru.itmo.highload.storroom.orders.dtos.external.locations.LocationDTO;
+import ru.itmo.highload.storroom.orders.dtos.external.locks.LockDTO;
+import ru.itmo.highload.storroom.orders.dtos.orders.OrderDTO;
+import ru.itmo.highload.storroom.orders.dtos.orders.OrderFullDTO;
+import ru.itmo.highload.storroom.orders.dtos.orders.OrderInfoDTO;
+import ru.itmo.highload.storroom.orders.dtos.external.users.UserDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.models.OrderEntity;
 import ru.itmo.highload.storroom.orders.models.OrderStatus;
@@ -58,11 +63,9 @@ public class OrderService {
         return Mapper.toOrderFullDTO(orderEntity, user,  lock, location);
     }
 
-    public OrderFullDTO updateOrderInfo(UUID id, OrderDTO dto) {
+    public OrderFullDTO updateOrderInfo(UUID id, OrderInfoDTO dto) {
         OrderEntity order = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("order", id.toString()));
-        if(order.getStatus() != dto.getStatus()) {
-            throw new IllegalArgumentException("status updates via info updates not supported");
-        }
+
         UnitEntity unitEntity = unitService.getById(dto.getUnitId());
         UserDTO user = userService.getUser(dto.getUserId());
         LocationDTO location = locationService.getLocationAlways(unitEntity.getLocationId());

@@ -16,6 +16,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<Object> handleFeignStatusException(FeignException e, HttpServletResponse response) {
+        e.printStackTrace();
+        log.info(e.getMessage());
         log.info("FEIGN EXCEPTION[" + e.status() + "]: " + e.contentUTF8());
         return new ResponseEntity<>(e.contentUTF8(), HttpStatus.valueOf(e.status()));
     }

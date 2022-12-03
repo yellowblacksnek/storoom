@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-import ru.itmo.highload.storroom.locks.dtos.ManufacturerDTO;
+import ru.itmo.highload.storroom.locks.dtos.manufacturers.ManufacturerDTO;
 import ru.itmo.highload.storroom.locks.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.locks.repositories.ManufacturerRepo;
 import ru.itmo.highload.storroom.locks.utils.Mapper;

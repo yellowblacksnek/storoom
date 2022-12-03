@@ -1,6 +1,13 @@
 package ru.itmo.highload.storroom.locations.utils;
 
-import ru.itmo.highload.storroom.locations.dtos.*;
+import ru.itmo.highload.storroom.locations.dtos.companies.CompanyDTO;
+import ru.itmo.highload.storroom.locations.dtos.companies.CompanyReadDTO;
+import ru.itmo.highload.storroom.locations.dtos.locations.LocationCompactDTO;
+import ru.itmo.highload.storroom.locations.dtos.locations.LocationDTO;
+import ru.itmo.highload.storroom.locations.dtos.locations.LocationReadDTO;
+import ru.itmo.highload.storroom.locations.dtos.owners.OwnerCompactDTO;
+import ru.itmo.highload.storroom.locations.dtos.owners.OwnerDTO;
+import ru.itmo.highload.storroom.locations.dtos.owners.OwnerReadDTO;
 import ru.itmo.highload.storroom.locations.models.CompanyEntity;
 import ru.itmo.highload.storroom.locations.models.LocationEntity;
 import ru.itmo.highload.storroom.locations.models.OwnerEntity;

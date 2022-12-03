@@ -8,8 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import ru.itmo.highload.storroom.locks.dtos.LockDTO;
-import ru.itmo.highload.storroom.locks.dtos.LockFullDTO;
+import ru.itmo.highload.storroom.locks.dtos.locks.LockDTO;
+import ru.itmo.highload.storroom.locks.dtos.locks.LockFullDTO;
+import ru.itmo.highload.storroom.locks.dtos.locks.LockInfoDTO;
 import ru.itmo.highload.storroom.locks.services.LockService;
 
 import java.util.UUID;
@@ -45,7 +46,7 @@ public class LockController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
 //    @PreAuthorize("hasAuthority('superuser')")
-    public Mono<LockFullDTO> update(@PathVariable UUID id, @RequestBody LockDTO dto) {
+    public Mono<LockFullDTO> update(@PathVariable UUID id, @RequestBody LockInfoDTO dto) {
         return service.update(id, dto);
     }
 

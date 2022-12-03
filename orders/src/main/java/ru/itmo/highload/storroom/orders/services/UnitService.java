@@ -4,10 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.itmo.highload.storroom.orders.dtos.LocationDTO;
-import ru.itmo.highload.storroom.orders.dtos.LockDTO;
-import ru.itmo.highload.storroom.orders.dtos.UnitDTO;
-import ru.itmo.highload.storroom.orders.dtos.UnitFullDTO;
+import ru.itmo.highload.storroom.orders.dtos.units.UnitInfoDTO;
+import ru.itmo.highload.storroom.orders.dtos.external.locations.LocationDTO;
+import ru.itmo.highload.storroom.orders.dtos.external.locks.LockDTO;
+import ru.itmo.highload.storroom.orders.dtos.units.UnitDTO;
+import ru.itmo.highload.storroom.orders.dtos.units.UnitFullDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.models.UnitEntity;
 import ru.itmo.highload.storroom.orders.models.UnitStatus;
@@ -42,12 +43,9 @@ public class UnitService {
         return Mapper.toUnitFullDTO(entity, lock, location);
     }
 
-    public UnitFullDTO updateInfo(UUID id, UnitDTO dto) {
+    public UnitFullDTO updateInfo(UUID id, UnitInfoDTO dto) {
         UnitEntity entity = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("unit", id.toString()));
 
-        if(entity.getStatus() != dto.getStatus()) {
-            throw new IllegalArgumentException("status updates via info updates not supported");
-        }
         LockDTO lock = lockService.getLock(dto.getLockId());
         LocationDTO location = locationService.getLocation(dto.getLocationId());
 

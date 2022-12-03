@@ -8,9 +8,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.highload.storromm.aggregator.clients.UserClient;
-import static ru.itmo.highload.storromm.aggregator.utils.Utils.*;
+import ru.itmo.highload.storromm.aggregator.dtos.users.UserFullDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.users.UserPasswordDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.users.UserReadDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.users.UserUserTypeDTO;
 
-import java.util.Map;
+import static ru.itmo.highload.storromm.aggregator.utils.Utils.*;
 
 @Slf4j
 @RestController
@@ -21,37 +24,37 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('superuser')")
-    public ResponseEntity<Object> getAll(Pageable pageable) {
+    public ResponseEntity<UserReadDTO> getAll(Pageable pageable) {
         return userClient.getAll(pageable);
     }
 
     @GetMapping(params = "userType")
     @PreAuthorize("hasAuthority('superuser')")
-    public ResponseEntity<Object> getAllByType(@RequestParam String userType, Pageable pageable) {
+    public ResponseEntity<UserReadDTO> getAllByType(@RequestParam String userType, Pageable pageable) {
         return userClient.getAllByType(userType, pageable);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('superuser')")
-    public ResponseEntity<Object> create(@RequestBody Map<String, String> req) {
+    public ResponseEntity<UserReadDTO> create(@RequestBody UserFullDTO req) {
         return userClient.create(req);
     }
 
     @PutMapping("/{username}/password")
     @PreAuthorize("#username == authentication.name")
-    public ResponseEntity<Object> updatePassword(@PathVariable String username, @RequestBody Map<String, String> req) {
+    public ResponseEntity<UserReadDTO> updatePassword(@PathVariable String username, @RequestBody UserPasswordDTO req) {
         return userClient.updatePassword(username, req);
     }
 
     @PutMapping("/{username}/type")
     @PreAuthorize("hasAuthority('admin') and #username != authentication.name")
-    public ResponseEntity<Object> updateUserType(@PathVariable String username, @RequestBody Map<String, String> req) {
+    public ResponseEntity<UserReadDTO> updateUserType(@PathVariable String username, @RequestBody UserUserTypeDTO req) {
         return userClient.updateUserType(username, req);
     }
 
     @DeleteMapping("/{username}")
     @PreAuthorize("hasAuthority('superuser')")
-    public ResponseEntity<Object> deleteByUsername(Authentication auth, @PathVariable String username) {
+    public ResponseEntity<UserReadDTO> deleteByUsername(Authentication auth, @PathVariable String username) {
         return userClient.deleteByUsername(username, getHighestAuthority(auth));
     }
 }

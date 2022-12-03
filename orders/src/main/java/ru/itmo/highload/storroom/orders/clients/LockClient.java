@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Primary;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import ru.itmo.highload.storroom.orders.dtos.LockDTO;
+import ru.itmo.highload.storroom.orders.dtos.external.locks.LockDTO;
 
 import java.util.UUID;
 

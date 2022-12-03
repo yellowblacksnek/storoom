@@ -6,9 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.itmo.highload.storroom.locations.dtos.OwnerCompactDTO;
-import ru.itmo.highload.storroom.locations.dtos.OwnerDTO;
-import ru.itmo.highload.storroom.locations.dtos.OwnerReadDTO;
+import ru.itmo.highload.storroom.locations.dtos.owners.OwnerCompactDTO;
+import ru.itmo.highload.storroom.locations.dtos.owners.OwnerDTO;
+import ru.itmo.highload.storroom.locations.dtos.owners.OwnerInfoDTO;
+import ru.itmo.highload.storroom.locations.dtos.owners.OwnerReadDTO;
 import ru.itmo.highload.storroom.locations.services.OwnerService;
 
 import java.util.UUID;
@@ -47,7 +48,7 @@ public class OwnerController {
     }
 
     @PutMapping("{id}")
-    public Mono<OwnerReadDTO> updateOwner(@PathVariable UUID id, @RequestBody OwnerDTO dto) {
+    public Mono<OwnerReadDTO> updateOwner(@PathVariable UUID id, @RequestBody OwnerInfoDTO dto) {
         return ownerService.update(id, dto);
     }
 

@@ -8,7 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import ru.itmo.highload.storroom.locks.dtos.ManufacturerDTO;
+import ru.itmo.highload.storroom.locks.dtos.manufacturers.ManufacturerDTO;
+import ru.itmo.highload.storroom.locks.dtos.manufacturers.ManufacturerNameDTO;
 import ru.itmo.highload.storroom.locks.services.ManufacturerService;
 
 import java.util.UUID;
@@ -42,7 +43,7 @@ public class ManufacturerController {
     @PutMapping("/{id}/name")
     @ResponseStatus(HttpStatus.OK)
 //    @PreAuthorize("hasAuthority('superuser')")
-    public Mono<ManufacturerDTO> updateName(@PathVariable UUID id, @RequestBody ManufacturerDTO dto) {
+    public Mono<ManufacturerDTO> updateName(@PathVariable UUID id, @RequestBody ManufacturerNameDTO dto) {
         return service.updateName(id, dto.getName());
     }
 

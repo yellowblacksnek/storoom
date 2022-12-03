@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.itmo.highload.storroom.locations.dtos.CompanyDTO;
-import ru.itmo.highload.storroom.locations.dtos.CompanyReadDTO;
+import ru.itmo.highload.storroom.locations.dtos.companies.CompanyDTO;
+import ru.itmo.highload.storroom.locations.dtos.companies.CompanyReadDTO;
 import ru.itmo.highload.storroom.locations.exceptions.ResourceAlreadyExistsException;
 import ru.itmo.highload.storroom.locations.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.locations.models.CompanyEntity;
@@ -28,7 +28,7 @@ public class CompanyService {
     }
 
     public Flux<CompanyReadDTO> getAll(Pageable pageable) {
-        Flux<CompanyEntity> res = companyRepo.findAll();
+        Flux<CompanyEntity> res = companyRepo.findAllBy(pageable);
         return res.map(Mapper::toCompanyDTO);
     }
 

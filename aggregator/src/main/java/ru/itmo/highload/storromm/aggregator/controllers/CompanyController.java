@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.itmo.highload.storromm.aggregator.clients.LocationClient;
-
-import java.util.Map;
+import ru.itmo.highload.storromm.aggregator.dtos.companies.CompanyDTO;
+import ru.itmo.highload.storromm.aggregator.dtos.companies.CompanyReadDTO;
 
 @Slf4j
 @RestController
@@ -20,22 +20,22 @@ public class CompanyController {
     private final LocationClient companyClient;
 
     @GetMapping
-    public Flux<Object> getAllCompanies(Pageable pageable) {
+    public Flux<CompanyReadDTO> getAllCompanies(Pageable pageable) {
         return companyClient.getAllCompanies(pageable);
     }
 
     @PostMapping
-    public Mono<Object> addCompany(@RequestBody Map<String,String> req) {
+    public Mono<CompanyReadDTO> addCompany(@RequestBody CompanyDTO req) {
         return companyClient.addCompany(req);
     }
 
     @PutMapping("{id}")
-    public Mono<Object> updateCompany(@PathVariable String id, @RequestBody Map<String,String> dto) {
+    public Mono<CompanyReadDTO> updateCompany(@PathVariable String id, @RequestBody CompanyDTO dto) {
         return companyClient.updateCompany(id, dto);
     }
 
     @DeleteMapping("{id}")
-    public Mono<Object> deleteCompany(@PathVariable("id") String id) {
+    public Mono<CompanyReadDTO> deleteCompany(@PathVariable("id") String id) {
         return companyClient.deleteCompany(id);
     }
 }

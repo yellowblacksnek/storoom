@@ -6,9 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-import ru.itmo.highload.storroom.locks.dtos.LockDTO;
-import ru.itmo.highload.storroom.locks.dtos.LockFullDTO;
-import ru.itmo.highload.storroom.locks.dtos.ManufacturerDTO;
+import ru.itmo.highload.storroom.locks.dtos.locks.LockDTO;
+import ru.itmo.highload.storroom.locks.dtos.locks.LockFullDTO;
+import ru.itmo.highload.storroom.locks.dtos.locks.LockInfoDTO;
+import ru.itmo.highload.storroom.locks.dtos.manufacturers.ManufacturerDTO;
 import ru.itmo.highload.storroom.locks.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.locks.models.LockEntity;
 import ru.itmo.highload.storroom.locks.repositories.LockRepo;
@@ -54,7 +55,7 @@ public class LockService {
 //        return Mapper.toLockFullDTO(repo.save(entity));
     }
 
-    public Mono<LockFullDTO> update(UUID id, LockDTO dto) {
+    public Mono<LockFullDTO> update(UUID id, LockInfoDTO dto) {
         if (dto.getName() == null || dto.getName().isEmpty()) throw new IllegalArgumentException("name is empty");
         if (dto.getManufacturer() == null) throw new IllegalArgumentException("manufacturer is empty");
         return

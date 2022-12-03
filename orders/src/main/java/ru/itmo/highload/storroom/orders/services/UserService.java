@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.itmo.highload.storroom.orders.clients.UserClient;
-import ru.itmo.highload.storroom.orders.dtos.UserDTO;
+import ru.itmo.highload.storroom.orders.dtos.external.users.UserDTO;
 import ru.itmo.highload.storroom.orders.exceptions.ResourceNotFoundException;
 import ru.itmo.highload.storroom.orders.exceptions.UnavailableException;
 
