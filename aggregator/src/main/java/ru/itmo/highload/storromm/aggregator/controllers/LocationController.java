@@ -1,5 +1,6 @@
 package ru.itmo.highload.storromm.aggregator.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @RequestMapping("/locations")
 @PreAuthorize("hasAuthority('superuser')")
 @RequiredArgsConstructor
+@Tag(name = "Locations")
 public class LocationController {
     private final LocationClient locationClient;
 

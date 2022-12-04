@@ -1,5 +1,6 @@
 package ru.itmo.highload.storromm.aggregator.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/units")
 @RequiredArgsConstructor
+@Tag(name = "Units")
 public class UnitController {
     private final OrderClient unitClient;
 

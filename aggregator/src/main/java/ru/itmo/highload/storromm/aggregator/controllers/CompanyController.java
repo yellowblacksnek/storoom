@@ -1,5 +1,6 @@
 package ru.itmo.highload.storromm.aggregator.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import ru.itmo.highload.storromm.aggregator.dtos.companies.CompanyReadDTO;
 @RequestMapping("/companies")
 @PreAuthorize("hasAuthority('superuser')")
 @RequiredArgsConstructor
+@Tag(name = "Companies")
 public class CompanyController {
     private final LocationClient companyClient;
 

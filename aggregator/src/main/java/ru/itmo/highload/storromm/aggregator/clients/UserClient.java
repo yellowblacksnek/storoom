@@ -1,6 +1,7 @@
 package ru.itmo.highload.storromm.aggregator.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +21,10 @@ public interface UserClient {
     ResponseEntity<UserFullDTO> getByUsername(@RequestParam(value="username") String username);
 
     @GetMapping(value = "/users")
-    ResponseEntity<UserReadDTO> getAll(Pageable pageable);
+    ResponseEntity<Page<UserReadDTO>> getAll(Pageable pageable);
 
     @GetMapping(value = "/users")
-    ResponseEntity<UserReadDTO> getAllByType(@RequestParam String userType, Pageable pageable);
+    ResponseEntity<Page<UserReadDTO>> getAllByType(@RequestParam String userType, Pageable pageable);
 
     @PostMapping(value = "/users")
     ResponseEntity<UserReadDTO> create(@RequestBody UserFullDTO body);
