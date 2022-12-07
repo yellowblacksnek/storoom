@@ -1,7 +1,6 @@
 package ru.itmo.highload.stroroom.notificationsws.configs;
 
-import org.springframework.amqp.core.Queue;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.HandlerAdapter;
@@ -13,9 +12,9 @@ import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAd
 import java.util.Map;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebSocketConfig {
-    @Autowired
-    private WebSocketHandler webSocketHandler;
+    final WebSocketHandler webSocketHandler;
 
     @Bean
     public HandlerAdapter wsHandlerAdapter() {
@@ -24,18 +23,8 @@ public class WebSocketConfig {
 
     @Bean
     public HandlerMapping handlerMapping() {
-        // url
-        String path = "/push";
-
-        // here webSocketHandler not defined yet
+        String path = "/ws";
         Map<String, WebSocketHandler> map = Map.of(path, webSocketHandler);
-
-        // -1 is order
         return new SimpleUrlHandlerMapping(map, -1);
-    }
-
-    @Bean
-    public Queue myQueue() {
-        return new Queue("myQueue", false);
     }
 }

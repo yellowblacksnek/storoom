@@ -12,6 +12,7 @@ import reactor.rabbitmq.Receiver;
 import reactor.rabbitmq.Sender;
 import ru.itmo.highload.stroroom.notificationsws.dtos.NotificationMessage;
 
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,18 +23,26 @@ public class RabbitService {
 
     public Flux<String> listenQueue(String queueName) {
         return sender.declareQueue(QueueSpecification.queue(queueName).autoDelete(true))
-            .thenMany(receiver.consumeAutoAck(queueName))
-            .flatMap(m -> {
-                    String msgString = new String(m.getBody());
-                    log.info("for {} : {}", queueName, msgString);
-                    try {
-                        NotificationMessage message = objectMapper.readValue(msgString, NotificationMessage.class);
-                        return Mono.just(objectMapper.writeValueAsString(message));
-                    } catch (JsonProcessingException e) {
-                        log.error(e.getMessage());
-                        return Mono.just(msgString);
-                    }
-                }
-            );
+                .onErrorMap(i -> {
+                    i.printStackTrace();
+                    return i;
+                })
+                .thenMany(receiver.consumeAutoAck(queueName))
+                .onErrorMap(i -> {
+                    i.printStackTrace();
+                    return i;
+                })
+                .flatMap(m -> {
+                            String msgString = new String(m.getBody());
+                            log.info("for {} : {}", queueName, msgString);
+                            try {
+                                NotificationMessage message = objectMapper.readValue(msgString, NotificationMessage.class);
+                                return Mono.just(objectMapper.writeValueAsString(message));
+                            } catch (JsonProcessingException e) {
+                                log.error(e.getMessage());
+                                return Mono.just(msgString);
+                            }
+                        }
+                );
     }
 }

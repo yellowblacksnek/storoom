@@ -11,6 +11,10 @@ public class SpringCloudConfig {
     @Bean
     public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
+                .route(r -> r.path("/ws")
+                        .uri("lb://NOTIFICATIONS-WS"))
+                .route(r -> r.path("/files/**")
+                        .uri("lb://AGGREGATOR-REACTIVE"))
                 .route(r -> r.path("/**")
                         .uri("lb://AGGREGATOR"))
                 .build();

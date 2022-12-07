@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import ru.itmo.highload.storroom.files.dtos.FileDTO;
@@ -20,7 +21,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/")
+@RequestMapping("/files")
 public class FileController {
     private final MinioService minioService;
     private final NotificationService notificationService;
@@ -45,9 +46,12 @@ public class FileController {
                 .body(minioService.download(username, filename));
     }
 
-    @PostMapping(value = "/upload")
+    @PostMapping("/{username}/{filename}")
     @ResponseStatus(HttpStatus.OK)
-    public Mono<FileDTO> upload(@ModelAttribute FileDTO file) {
+    public Mono<FileDTO> upload(@PathVariable String username,
+                                @PathVariable String filename,
+                                @RequestPart(name = "file") FilePart filePart) {
+        FileDTO file = new FileDTO(username, filename, filePart);
         return minioService.uploadFile(file)
                 .flatMap(resDto -> {
                     boolean isOk = resDto.getObjectName() != null | !resDto.getObjectName().isEmpty();
@@ -65,9 +69,9 @@ public class FileController {
                 });
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{username}/{filename}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Boolean> deleteFile(@RequestParam String username, @RequestParam String filename) {
+    public Mono<Boolean> deleteFile(@PathVariable String username, @PathVariable String filename) {
         String objectName = username + "/" + filename;
         return minioService.deleteObject(objectName)
                 .flatMap(isDeleted -> {

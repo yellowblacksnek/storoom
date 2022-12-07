@@ -24,6 +24,7 @@ public class MinioService {
 
     @SneakyThrows
     public Mono<FileDTO> uploadFile(FileDTO file) {
+        if(file.getUsername() == null) throw new IllegalArgumentException();
         return  minioAdapter.uploadFile(file);
     }
 
