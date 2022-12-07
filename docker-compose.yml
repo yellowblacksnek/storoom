@@ -155,12 +155,52 @@ services:
       - eureka-service
       - config
     ports:
+      - "8999:8999"
+    environment:
+      SERVER_PORT: 8999
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
+      spring.config.import: configserver:http://config:8888
+      pushgateway.base-url: 172.17.0.1:9092
+    command: sh wait-for.sh config:8888 -- java -jar application.jar
+
+  files:
+    image: 'storoom_files:latest'
+    build:
+      context: files
+    container_name: files
+    depends_on:
+      - eureka-service
+      - config
+      - minio
+    ports:
       - "8086:8086"
     environment:
       SERVER_PORT: 8086
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
       spring.config.import: configserver:http://config:8888
       pushgateway.base-url: 172.17.0.1:9092
+      minio.access.name: minio
+      minio.access.secret: minio123
+      minio.url: http://minio:9000
+      minio.bucket.name: buck
+    command: sh wait-for.sh config:8888 -- java -jar application.jar
+
+  notifications-ws:
+    image: 'storoom_notifications-ws:latest'
+    build:
+      context: notifications-ws
+    container_name: notifications-ws
+    depends_on:
+      - eureka-service
+      - config
+    ports:
+      - "8087:8087"
+    environment:
+      SERVER_PORT: 8087
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
+      spring.config.import: configserver:http://config:8888
+      pushgateway.base-url: 172.17.0.1:9092
+      spring.rabbitmq.addresses: rabbitmq
     command: sh wait-for.sh config:8888 -- java -jar application.jar
 
 
@@ -203,3 +243,25 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: locations_db
+
+  minio:
+    image: minio/minio:latest
+    command: server --console-address ":9001" /data/
+    ports:
+      - "9500:9000"
+      - "9501:9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    volumes:
+      - minio-storage:/data
+
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+volumes:
+  minio-storage:
