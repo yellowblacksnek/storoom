@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/v3/api-docs.*","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .pathMatchers("/actuator/**","/v3/api-docs.*","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerSpec::jwt);
