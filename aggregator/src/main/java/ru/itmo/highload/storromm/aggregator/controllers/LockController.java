@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import ru.itmo.highload.storromm.aggregator.annotations.CustomizedOperation;
 import ru.itmo.highload.storromm.aggregator.clients.LockClient;
 import ru.itmo.highload.storromm.aggregator.dtos.locks.LockDTO;
 import ru.itmo.highload.storromm.aggregator.dtos.locks.LockFullDTO;
@@ -25,31 +26,36 @@ public class LockController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<LockFullDTO> getById(@PathVariable UUID id) {
+    @CustomizedOperation(description = "Get lock by id.", responseCodes = {400, 401, 403, 404})
+    public Mono<LockFullDTO> getLock(@PathVariable UUID id) {
         return lockClient.getLockById(id);
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<Page<LockFullDTO>> getAll(Pageable pageable) {
+    @CustomizedOperation(description = "Get all locks.", pageable = true, responseCodes = {401, 403})
+    public Mono<Page<LockFullDTO>> getLocks(Pageable pageable) {
         return lockClient.getAllLocks(pageable);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<LockFullDTO> create(@RequestBody LockDTO dto) {
+    @CustomizedOperation(description = "Add lock.", responseCodes = {400, 401, 403})
+    public Mono<LockFullDTO> createLock(@RequestBody LockDTO dto) {
         return lockClient.createLock(dto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<LockFullDTO> update(@PathVariable UUID id, @RequestBody LockInfoDTO dto) {
+    @CustomizedOperation(description = "Update lock's info.", responseCodes = {400, 401, 403, 404, 409})
+    public Mono<LockFullDTO> updateLock(@PathVariable UUID id, @RequestBody LockInfoDTO dto) {
         return lockClient.updateLock(id, dto);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<LockFullDTO> deleteById(@PathVariable UUID id) {
+    @CustomizedOperation(description = "Delete lock.", responseCodes = {400, 401, 403, 404, 409})
+    public Mono<LockFullDTO> deleteLockById(@PathVariable UUID id) {
         return lockClient.deleteLock(id);
     }
 }

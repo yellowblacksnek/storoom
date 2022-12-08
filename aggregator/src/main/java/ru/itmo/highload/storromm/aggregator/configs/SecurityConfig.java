@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
 
 import java.time.Duration;
 
@@ -29,6 +30,7 @@ public class SecurityConfig {
         // @formatter:off
         http
                 .csrf().disable()
+                .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()).and()
                 .authorizeHttpRequests((authorize) -> authorize
                         .mvcMatchers("/actuator/**","/v3/api-docs.*","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html","/token").permitAll()
                         .anyRequest().authenticated()

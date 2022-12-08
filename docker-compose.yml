@@ -1,10 +1,10 @@
 version: '3.x'
 services:
   redoc:
-    image: 'storoom_redoc:latest'
-    build:
-      context: docs
+    image: 'redocly/redoc'
     container_name: redoc
+    environment:
+      SPEC_URL: http://localhost:8100/v3/api-docs.yaml
     ports:
       - "8998:80"
 

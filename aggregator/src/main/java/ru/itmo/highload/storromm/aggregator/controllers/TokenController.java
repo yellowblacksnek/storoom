@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.itmo.highload.storromm.aggregator.annotations.CustomizedOperation;
 import ru.itmo.highload.storromm.aggregator.clients.TokenClient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 public class TokenController {
     private final TokenClient tokenClient;
     @PostMapping
+    @CustomizedOperation(description = "Get JWT token by providing credentials via Basic auth.", responseCodes = {400, 401})
     public String token(HttpServletRequest req) {
         return tokenClient.token(req.getHeader("Authorization"));
     }

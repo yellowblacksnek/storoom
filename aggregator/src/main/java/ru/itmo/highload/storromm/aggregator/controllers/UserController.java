@@ -27,26 +27,20 @@ import static ru.itmo.highload.storromm.aggregator.utils.Utils.*;
 public class UserController {
     private final UserClient userClient;
 
-    @GetMapping
-    @PreAuthorize("hasAuthority('superuser')")
-    @CustomizedOperation(description = "Get users", pageable = true, responseCodes = {401, 403})
-    public ResponseEntity<Page<UserReadDTO>> getAll(Pageable pageable) {
-        return userClient.getAll(pageable);
-    }
-
     @GetMapping(params = "userType")
     @PreAuthorize("hasAuthority('superuser')")
-    @CustomizedOperation(pageable = true, responseCodes = {401, 403})
+    @CustomizedOperation(description = "Get users", pageable = true, responseCodes = {400, 401, 403})
     @Parameter(name = "userType", description = "(optional) userType to search for")
-    public ResponseEntity<Page<UserReadDTO>> getAllByType(@RequestParam(required = false) String userType,
+    public ResponseEntity<Page<UserReadDTO>> getUsers(@RequestParam(required = false) String userType,
                                                     Pageable pageable) {
-        return userClient.getAllByType(userType, pageable);
+        if(userType == null) return userClient.getAll(pageable);
+        else return userClient.getAllByType(userType, pageable);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('superuser')")
     @CustomizedOperation(description = "Create user.", responseCodes = {400, 401, 403, 409})
-    public ResponseEntity<UserReadDTO> create(@RequestBody UserFullDTO req) {
+    public ResponseEntity<UserReadDTO> createUser(@RequestBody UserFullDTO req) {
         return userClient.create(req);
     }
 

@@ -1,0 +1,1898 @@
+openapi: 3.0.1
+info:
+  title: storoom
+  version: v1
+servers:
+- url: https://localhost:8080/
+security:
+- Bearer Authentication: []
+paths:
+  /users/{username}/type:
+    put:
+      tags:
+      - Users
+      description: Update userType by user's username.
+      operationId: updateUserType
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUserTypeDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /users/{username}/password:
+    put:
+      tags:
+      - Users
+      description: Update password by user's username.
+      operationId: updatePassword
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPasswordDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /units/{id}:
+    put:
+      tags:
+      - Units
+      description: Update unit info.
+      operationId: updateUnitInfo
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnitInfoDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitFullDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+    delete:
+      tags:
+      - Units
+      description: Delete unit.
+      operationId: deleteUnit
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitFullDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /units/{id}/status:
+    put:
+      tags:
+      - Units
+      description: Update unit status.
+      operationId: updateUnitStatus
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnitStatusDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitFullDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /owners/{id}:
+    put:
+      tags:
+      - Owners
+      description: Update owner.
+      operationId: updateOwner
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerInfoDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OwnerReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+    delete:
+      tags:
+      - Owners
+      description: Delete owner.
+      operationId: deleteOwner
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OwnerReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /orders/{id}:
+    put:
+      tags:
+      - Orders
+      description: Update order
+      operationId: updateOrder
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInfoDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderFullDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /manufacturers/{id}:
+    get:
+      tags:
+      - Manufacturers
+      description: Get manufacturer by id.
+      operationId: getManufacturer
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ManufacturerDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+    put:
+      tags:
+      - Manufacturers
+      description: Update manufacturer's name.
+      operationId: updateManufacturerName
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManufacturerNameDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ManufacturerDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+    delete:
+      tags:
+      - Manufacturers
+      description: Delete manufacturer.
+      operationId: deleteManufacturer
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ManufacturerDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /locks/{id}:
+    get:
+      tags:
+      - Locks
+      description: Get lock by id.
+      operationId: getLock
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LockFullDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+    put:
+      tags:
+      - Locks
+      description: Update lock's info.
+      operationId: updateLock
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockInfoDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LockFullDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+    delete:
+      tags:
+      - Locks
+      description: Delete lock.
+      operationId: deleteLockById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LockFullDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /locations/{locationId}/owners/{ownerId}:
+    put:
+      tags:
+      - Locations
+      description: Add owner to location.
+      operationId: addOwnerToLocation
+      parameters:
+      - name: locationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: ownerId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LocationReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+    delete:
+      tags:
+      - Locations
+      description: Delete owner from location.
+      operationId: deleteOwnerFromLocation
+      parameters:
+      - name: locationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: ownerId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LocationReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /locations/{id}:
+    get:
+      tags:
+      - Locations
+      description: Get location by id.
+      operationId: getLocation
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LocationReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+    put:
+      tags:
+      - Locations
+      description: Update location's info.
+      operationId: updateLocation
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LocationReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+    delete:
+      tags:
+      - Locations
+      description: Delete location.
+      operationId: deleteLocation
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LocationReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /companies/{id}:
+    put:
+      tags:
+      - Companies
+      description: Update company's info.
+      operationId: updateCompany
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompanyReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+    delete:
+      tags:
+      - Companies
+      description: Delete company.
+      operationId: deleteCompany
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompanyReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /users:
+    get:
+      tags:
+      - Users
+      description: Get users
+      operationId: getUsers
+      parameters:
+      - name: userType
+        in: query
+        description: (optional) userType to search for
+        required: false
+        schema:
+          type: string
+      - name: page
+        description: number of page
+      - name: size
+        description: size of page
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageUserReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+    post:
+      tags:
+      - Users
+      description: Create user.
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserFullDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /units:
+    get:
+      tags:
+      - Units
+      description: Get all units.
+      operationId: getUnits
+      parameters:
+      - name: page
+        description: number of page
+      - name: size
+        description: size of page
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageUnitDTO'
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+    post:
+      tags:
+      - Units
+      description: Create unit.
+      operationId: createUnit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnitDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitFullDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /token:
+    post:
+      tags:
+      - token
+      description: Get JWT token by providing credentials via Basic auth.
+      operationId: token
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+      security:
+      - Basic Authentication: []
+  /owners:
+    get:
+      tags:
+      - Owners
+      description: Get all owners.
+      operationId: getOwners
+      parameters:
+      - name: page
+        description: number of page
+      - name: size
+        description: size of page
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OwnerCompactDTO'
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+    post:
+      tags:
+      - Owners
+      description: Add owner.
+      operationId: addOwner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OwnerReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /owners/{ownerId}/locations/{locationId}:
+    post:
+      tags:
+      - Owners
+      description: Add location to owner.
+      operationId: addLocationToOwner
+      parameters:
+      - name: ownerId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: locationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OwnerReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+    delete:
+      tags:
+      - Owners
+      description: Delete location from owner.
+      operationId: deleteLocationFromOwner
+      parameters:
+      - name: ownerId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: locationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OwnerReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /orders:
+    get:
+      tags:
+      - Orders
+      description: Get orders
+      operationId: getOrders
+      parameters:
+      - name: userId
+        in: query
+        description: (optional) userId to search for
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        description: number of page
+      - name: size
+        description: size of page
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageOrderDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+    post:
+      tags:
+      - Orders
+      description: Create order
+      operationId: createOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderFullDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /orders/{id}/finish:
+    post:
+      tags:
+      - Orders
+      description: Finish order
+      operationId: finishOrder
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderFullDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+  /manufacturers:
+    get:
+      tags:
+      - Manufacturers
+      description: Get all manufacturers.
+      operationId: getManufacturers
+      parameters:
+      - name: page
+        description: number of page
+      - name: size
+        description: size of page
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ManufacturerDTO'
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+    post:
+      tags:
+      - Manufacturers
+      description: Add manufacturer.
+      operationId: createManufacturer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManufacturerDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ManufacturerDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+  /locks:
+    get:
+      tags:
+      - Locks
+      description: Get all locks.
+      operationId: getLocks
+      parameters:
+      - name: page
+        description: number of page
+      - name: size
+        description: size of page
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageLockFullDTO'
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+    post:
+      tags:
+      - Locks
+      description: Add lock.
+      operationId: createLock
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LockFullDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+  /locations:
+    get:
+      tags:
+      - Locations
+      description: Get all locations.
+      operationId: getLocations
+      parameters:
+      - name: page
+        description: number of page
+      - name: size
+        description: size of page
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocationCompactDTO'
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+    post:
+      tags:
+      - Locations
+      description: Add location.
+      operationId: addLocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LocationReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+  /files/{username}/{filename}:
+    get:
+      tags:
+      - file-controller
+      operationId: getFile
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: filename
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+    post:
+      tags:
+      - file-controller
+      operationId: upload
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: filename
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - file
+              type: object
+              properties:
+                file:
+                  $ref: '#/components/schemas/FilePart'
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FileDTO'
+    delete:
+      tags:
+      - file-controller
+      operationId: deleteFile
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: filename
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: boolean
+  /companies:
+    get:
+      tags:
+      - Companies
+      description: Get all companies.
+      operationId: getAllCompanies
+      parameters:
+      - name: page
+        description: number of page
+      - name: size
+        description: size of page
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CompanyReadDTO'
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+    post:
+      tags:
+      - Companies
+      description: Add company.
+      operationId: addCompany
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompanyReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+  /files:
+    get:
+      tags:
+      - file-controller
+      operationId: getFiles
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FileDTO'
+  /files/{username}:
+    get:
+      tags:
+      - file-controller
+      operationId: getFilesByUser
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FileDTO'
+  /users/{username}:
+    delete:
+      tags:
+      - Users
+      description: Delete user by username.
+      operationId: deleteByUsername
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserReadDTO'
+        "400":
+          description: Request is incorrect.
+        "401":
+          description: You are not authorized to access the resource.
+        "403":
+          description: You are forbidden to access the resource.
+        "404":
+          description: Resource not found.
+        "409":
+          description: Request action conflicts with the current state of things.
+components:
+  schemas:
+    UserUserTypeDTO:
+      type: object
+      properties:
+        userType:
+          type: string
+          enum:
+          - admin
+          - superuser
+          - client
+    UserReadDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        userType:
+          type: string
+          enum:
+          - admin
+          - superuser
+          - client
+    UserPasswordDTO:
+      type: object
+      properties:
+        password:
+          type: string
+    UnitInfoDTO:
+      type: object
+      properties:
+        sizeX:
+          type: integer
+          format: int32
+        sizeY:
+          type: integer
+          format: int32
+        sizeZ:
+          type: integer
+          format: int32
+        unitType:
+          type: string
+          enum:
+          - S
+          - M
+          - L
+          - XL
+        locationId:
+          type: string
+          format: uuid
+        lockId:
+          type: string
+          format: uuid
+    LocationDTO:
+      type: object
+      properties:
+        address:
+          type: string
+        locationType:
+          type: string
+          enum:
+          - stand
+          - warehouse
+          - main_office
+        ownerIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+    LockDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        manufacturer:
+          type: string
+          format: uuid
+    UnitFullDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sizeX:
+          type: integer
+          format: int32
+        sizeY:
+          type: integer
+          format: int32
+        sizeZ:
+          type: integer
+          format: int32
+        unitType:
+          type: string
+          enum:
+          - S
+          - M
+          - L
+          - XL
+        status:
+          type: string
+          enum:
+          - dead
+          - available
+          - occupied
+          - pending
+        location:
+          $ref: '#/components/schemas/LocationDTO'
+        lock:
+          $ref: '#/components/schemas/LockDTO'
+    UnitStatusDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - dead
+          - available
+          - occupied
+          - pending
+    OwnerInfoDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        companyId:
+          type: string
+          format: uuid
+    LocationCompactDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        address:
+          type: string
+        locationType:
+          type: string
+          enum:
+          - stand
+          - warehouse
+          - main_office
+    OwnerReadDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        companyId:
+          type: string
+          format: uuid
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationCompactDTO'
+    OrderInfoDTO:
+      type: object
+      properties:
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        finishedTime:
+          type: string
+          format: date-time
+        unitId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+    OrderFullDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        finishedTime:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - active
+          - finished
+        unit:
+          $ref: '#/components/schemas/UnitFullDTO'
+        user:
+          $ref: '#/components/schemas/UserDTO'
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+    ManufacturerNameDTO:
+      type: object
+      properties:
+        name:
+          type: string
+    ManufacturerDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    LockInfoDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        manufacturer:
+          type: string
+          format: uuid
+    LockFullDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        manufacturer:
+          $ref: '#/components/schemas/ManufacturerDTO'
+    LocationReadDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        address:
+          type: string
+        locationType:
+          type: string
+          enum:
+          - stand
+          - warehouse
+          - main_office
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnerCompactDTO'
+    OwnerCompactDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        companyId:
+          type: string
+          format: uuid
+    CompanyDTO:
+      type: object
+      properties:
+        name:
+          type: string
+    CompanyReadDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    UserFullDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        password:
+          type: string
+        userType:
+          type: string
+          enum:
+          - admin
+          - superuser
+          - client
+    UnitDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sizeX:
+          type: integer
+          format: int32
+        sizeY:
+          type: integer
+          format: int32
+        sizeZ:
+          type: integer
+          format: int32
+        unitType:
+          type: string
+          enum:
+          - S
+          - M
+          - L
+          - XL
+        status:
+          type: string
+          enum:
+          - dead
+          - available
+          - occupied
+          - pending
+        locationId:
+          type: string
+          format: uuid
+        lockId:
+          type: string
+          format: uuid
+    OwnerDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        companyId:
+          type: string
+          format: uuid
+        locationIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+    OrderDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        finishedTime:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - active
+          - finished
+        unitId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+    FilePart:
+      type: object
+    FileDTO:
+      type: object
+      properties:
+        username:
+          type: string
+        filename:
+          type: string
+    PageUserReadDTO:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserReadDTO'
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    PageUnitDTO:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnitDTO'
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    PageOrderDTO:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderDTO'
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    PageLockFullDTO:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/LockFullDTO'
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+  securitySchemes:
+    Bearer Authentication:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Basic Authentication:
+      type: http
+      scheme: basic

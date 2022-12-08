@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import ru.itmo.highload.storromm.aggregator.annotations.CustomizedOperation;
 import ru.itmo.highload.storromm.aggregator.clients.LockClient;
 import ru.itmo.highload.storromm.aggregator.dtos.manufacturers.ManufacturerDTO;
 import ru.itmo.highload.storromm.aggregator.dtos.manufacturers.ManufacturerNameDTO;
@@ -23,31 +24,36 @@ public class ManufacturerController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<ManufacturerDTO> getById(@PathVariable UUID id) {
+    @CustomizedOperation(description = "Get manufacturer by id.", responseCodes = {400, 401, 403, 404})
+    public Mono<ManufacturerDTO> getManufacturer(@PathVariable UUID id) {
         return manufacturerClient.getManufacturerById(id);
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<ManufacturerDTO> getAll(Pageable pageable) {
+    @CustomizedOperation(description = "Get all manufacturers.", pageable = true, responseCodes = {401, 403})
+    public Mono<ManufacturerDTO> getManufacturers(Pageable pageable) {
         return manufacturerClient.getAllManufacturers(pageable);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<ManufacturerDTO> create(@RequestBody ManufacturerDTO dto) {
+    @CustomizedOperation(description = "Add manufacturer.", responseCodes = {400, 401, 403})
+    public Mono<ManufacturerDTO> createManufacturer(@RequestBody ManufacturerDTO dto) {
         return manufacturerClient.createManufacturer(dto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<ManufacturerDTO> updateName(@PathVariable UUID id, @RequestBody ManufacturerNameDTO dto) {
+    @CustomizedOperation(description = "Update manufacturer's name.", responseCodes = {400, 401, 403, 404, 409})
+    public Mono<ManufacturerDTO> updateManufacturerName(@PathVariable UUID id, @RequestBody ManufacturerNameDTO dto) {
         return manufacturerClient.updateManufacturerName(id, dto);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('superuser')")
-    public Mono<ManufacturerDTO> deleteById(@PathVariable UUID id) {
+    @CustomizedOperation(description = "Delete manufacturer.", responseCodes = {400, 401, 403, 404, 409})
+    public Mono<ManufacturerDTO> deleteManufacturer(@PathVariable UUID id) {
         return manufacturerClient.deleteManufacturer(id);
     }
 }
