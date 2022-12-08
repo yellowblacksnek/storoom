@@ -16,14 +16,7 @@ import reactor.netty.http.client.HttpClient;
 
 @Configuration
 @EnableWebFlux
-//@EnableWebFluxSecurity
 public class WebConfig implements WebFluxConfigurer {
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http.authorizeRequests().anyRequest().permitAll().and().httpBasic().and().csrf().disable();
-//        return http.build();
-//    }
 
     @Override
     public void configureHttpMessageCodecs(ServerCodecConfigurer configurer) {

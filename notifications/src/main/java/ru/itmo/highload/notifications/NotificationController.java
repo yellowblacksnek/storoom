@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
-@RestController("/")
+@RestController
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationController {

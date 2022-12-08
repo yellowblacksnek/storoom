@@ -11,11 +11,8 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import ru.itmo.highload.storroom.files.dtos.FileDTO;
-import ru.itmo.highload.storroom.files.dtos.NotificationMessage;
-import ru.itmo.highload.storroom.files.services.MinioService;
-import ru.itmo.highload.storroom.files.services.NotificationService;
+import ru.itmo.highload.storroom.files.services.FileService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -23,18 +20,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/files")
 public class FileController {
-    private final MinioService minioService;
-    private final NotificationService notificationService;
+    private final FileService fileService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Mono<List<FileDTO>> getFiles() {
-        return minioService.getListObjects("");
+        return fileService.getFiles();
     }
     @GetMapping("/{username}")
     @ResponseStatus(HttpStatus.OK)
     public Mono<List<FileDTO>> getFilesByUser(@PathVariable String username) {
-        return minioService.getListObjects(username);
+        return fileService.getFilesByUser(username);
     }
 
     @GetMapping("/{username}/{filename}")
@@ -43,7 +39,7 @@ public class FileController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
-                .body(minioService.download(username, filename));
+                .body(fileService.getFile(username, filename));
     }
 
     @PostMapping("/{username}/{filename}")
@@ -51,42 +47,13 @@ public class FileController {
     public Mono<FileDTO> upload(@PathVariable String username,
                                 @PathVariable String filename,
                                 @RequestPart(name = "file") FilePart filePart) {
-        FileDTO file = new FileDTO(username, filename, filePart);
-        return minioService.uploadFile(file)
-                .flatMap(resDto -> {
-                    boolean isOk = resDto.getObjectName() != null | !resDto.getObjectName().isEmpty();
-                    String okMsg = String.format("File %s was uploaded", file.getRealFilename());
-                    String errMsg = String.format("Err: File %s was NOT uploaded", file.getRealFilename());
-
-                    NotificationMessage message =
-                            NotificationMessage.builder()
-                                    .username(file.getUsername())
-                                    .timestamp(LocalDateTime.now())
-                                    .message(isOk ? okMsg : errMsg)
-                                    .build();
-                    return notificationService.sendNotification(message)
-                            .thenReturn(resDto);
-                });
+        return fileService.upload(username, filename, filePart);
     }
 
     @DeleteMapping("/{username}/{filename}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Boolean> deleteFile(@PathVariable String username, @PathVariable String filename) {
-        String objectName = username + "/" + filename;
-        return minioService.deleteObject(objectName)
-                .flatMap(isDeleted -> {
-                    String okMsg = String.format("File %s was deleted", filename);
-                    String errMsg = String.format("Err: File %s was NOT deleted", filename);
-
-                    NotificationMessage message =
-                            NotificationMessage.builder()
-                                .username(username)
-                                .timestamp(LocalDateTime.now())
-                                .message(isDeleted ? okMsg : errMsg)
-                            .build();
-                    return notificationService.sendNotification(message)
-                            .thenReturn(isDeleted);
-                });
+        return fileService.deleteFile(username, filename);
     }
 
 }

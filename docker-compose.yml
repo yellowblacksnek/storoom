@@ -30,6 +30,8 @@ services:
     environment:
       server.port: 8080
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
+      spring.config.import: configserver:http://config:8888
+    command: sh wait-for.sh config:8888 -- java -jar application.jar
 
   config:
     image: 'storoom_config:latest'
@@ -65,6 +67,7 @@ services:
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
       spring.config.import: configserver:http://config:8888
       pushgateway.base-url: 172.17.0.1:9092
+      spring.zipkin.baseUrl: http://172.17.0.1:9411
     command: sh wait-for.sh config:8888 -- java -jar application.jar
 
 
@@ -85,6 +88,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://users_db:5432/users_db
       spring.config.import: configserver:http://config:8888
       pushgateway.base-url: 172.17.0.1:9092
+      spring.zipkin.baseUrl: http://172.17.0.1:9411
     command: sh wait-for.sh config:8888 -- java -jar application.jar
 
   locks:
@@ -104,6 +108,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://locks_db:5432/locks_db
       spring.config.import: configserver:http://config:8888
       pushgateway.base-url: 172.17.0.1:9092
+      spring.zipkin.baseUrl: http://172.17.0.1:9411
     command: sh wait-for.sh config:8888 -- java -jar application.jar
 
   orders:
@@ -123,6 +128,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://orders_db:5432/orders_db
       spring.config.import: configserver:http://config:8888
       pushgateway.base-url: 172.17.0.1:9092
+      spring.zipkin.baseUrl: http://172.17.0.1:9411
     command: sh wait-for.sh config:8888 -- java -jar application.jar
     
   locations:
@@ -143,6 +149,7 @@ services:
       spring.r2dbc.url: r2dbc:postgresql://locations_db/locations_db
       spring.config.import: configserver:http://config:8888
       pushgateway.base-url: 172.17.0.1:9092
+      spring.zipkin.baseUrl: http://172.17.0.1:9411
     command: sh wait-for.sh config:8888 -- java -jar application.jar
 
 
@@ -160,7 +167,9 @@ services:
       SERVER_PORT: 8100
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
       spring.config.import: configserver:http://config:8888
-      pushgateway.base-url: 172.17.0.1:9092
+      pushgateway.base-url: http://172.17.0.1:9092
+      spring.zipkin.baseUrl: http://172.17.0.1:9411
+
     command: sh wait-for.sh config:8888 -- java -jar application.jar
 
   aggregator-reactive:
@@ -178,6 +187,7 @@ services:
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
       spring.config.import: configserver:http://config:8888
       pushgateway.base-url: 172.17.0.1:9092
+      spring.zipkin.baseUrl: http://172.17.0.1:9411
     command: sh wait-for.sh config:8888 -- java -jar application.jar
 
   files:
@@ -196,6 +206,7 @@ services:
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
       spring.config.import: configserver:http://config:8888
       pushgateway.base-url: 172.17.0.1:9092
+      spring.zipkin.baseUrl: http://172.17.0.1:9411
       minio.access.name: minio
       minio.access.secret: minio123
       minio.url: http://minio:9000
@@ -240,6 +251,7 @@ services:
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
       spring.config.import: configserver:http://config:8888
       pushgateway.base-url: 172.17.0.1:9092
+      spring.zipkin.baseUrl: http://172.17.0.1:9411
       spring.rabbitmq.host: rabbitmq
       spring.rabbitmq.port: 5672
       spring.rabbitmq.username: guest

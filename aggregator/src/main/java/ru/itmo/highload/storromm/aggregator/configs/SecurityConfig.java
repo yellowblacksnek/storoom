@@ -30,9 +30,8 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize
-//                        .mvcMatchers("/v3/api-docs.*","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                                .mvcMatchers("/actuator/**","/v3/api-docs.*","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html","/token").permitAll()
-                                .anyRequest().authenticated()
+                        .mvcMatchers("/actuator/**","/v3/api-docs.*","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html","/token").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
