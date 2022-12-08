@@ -1,0 +1,228 @@
+git_clone_url = "https://github.com/yellowblacksnek/jenkins-test"
+filesSinceLastBuild = []
+
+def listFilesForBuild(build) {
+    def files = []
+    currentBuild.changeSets.each {
+        it.items.each {
+            it.affectedFiles.each {
+                files << it.path
+            }
+        }
+    }
+    files
+}
+
+def filesSinceLastPass() {
+    def files = []
+    def build = currentBuild
+    while (build.result != 'SUCCESS') {
+        files += listFilesForBuild(build)
+        build = build.getPreviousBuild()
+    }
+    return files.unique()
+}
+
+def containsDir(files, dirName) {
+    def result = false
+    files.each {
+        if (it.startsWith(dirName + "/")) {
+            result = true
+        }
+    }
+    return result
+}
+
+def dirChanged(dirname) {
+    // if(filesSinceLastBuild.isEmpty()) return true
+    return containsDir(filesSinceLastBuild, dirname)
+}
+
+def build(dir, image_tag) {
+    image = docker.build("mewantno/hl_storoom:${image_tag}", "-f ./${dir}/Dockerfile ./${dir}")
+    return image
+}
+
+def build_eureka() {
+    return build("eureka", "eureka")
+}
+def build_config() {
+    return build("config", "config")
+}
+def build_gateway() {
+    return build("gateway", "gateway")
+}
+def build_token() {
+    return build("token", "token")
+}
+def build_users() {
+    return build("users", "users")
+}
+def build_docs() {
+    return build("docs", "docs")
+}
+def build_locks() {
+    return build("locks", "locks")
+}
+def build_orders() {
+    return build("orders", "orders")
+}
+def build_locations() {
+    return build("locations", "locations")
+}
+def build_aggregator() {
+    return build("aggregator", "aggregator")
+}
+
+def test(dir) {
+    if (!dirChanged(dir)) return
+    docker.image("maven:3.8.6-openjdk-18-slim").inside("-v /root/.m2:/root/.m2") {
+        sh "cd ${dir} && mvn test"
+    }
+}
+
+def pushImage(image) {
+    docker.withRegistry('', "dockerhub-mewantno") {
+        image.push()
+    }
+}
+
+// def push_eureka() {
+//     if (dirChanged("eureka")) pushImage(eureka)
+// }
+// def push_docs() {
+//     if (dirChanged("docs")) pushImage(docs)
+// }
+// def push_config() {
+//     if (dirChanged("config")) pushImage(config)
+// }
+// def push_gateway() {
+//     if (dirChanged("gateway")) pushImage(gateway)
+// }
+// def push_token() {
+//     if (dirChanged("token")) pushImage(token)
+// }
+// def push_users() {
+//     if (dirChanged("users")) pushImage(users)
+// }
+// def push_locks() {
+//     if (dirChanged("locks")) pushImage(locks)
+// }
+// def push_orders() {
+//     if (dirChanged("orders")) pushImage(orders)
+// }
+// def push_locations() {
+//     if (dirChanged("locations")) pushImage(locations)
+// }
+// def push_aggregator() {
+//     if (dirChanged("aggregator")) pushImage(aggregator)
+// }
+
+node {
+    git credentialsId: 'yellowblacksnek-github', url: "${git_clone_url}", branch: 'jenkins-test'
+
+    filesSinceLastBuild = filesSinceLastPass()
+    echo "changeLog ${filesSinceLastBuild}"
+
+    def eureka
+    // def docs
+    def config
+    def gateway
+    def token
+    def users
+    def locks
+    def orders
+    def locations
+    def aggregator
+
+    stage('Build') {
+        def stages = [: ]
+
+        stages["eureka"] = {
+            eureka = build_eureka()
+        }
+        // stages["docs"] = {docs = build_docs()}
+        stages["config"] = {
+            config = build_config()
+        }
+        stages["gateway"] = {
+            gateway = build_gateway()
+        }
+        stages["token"] = {
+            token = build_token()
+        }
+        stages["users"] = {
+            users = build_users()
+        }
+        stages["locks"] = {
+            locks = build_locks()
+        }
+        stages["orders"] = {
+            orders = build_orders()
+        }
+        stages["locations"] = {
+            locations = build_locations()
+        }
+        stages["aggregator"] = {
+            aggregator = build_aggregator()
+        }
+
+        parallel(stages)
+    }
+
+    stage('Test') {
+        def stages = [: ]
+
+        stages["users"] = {
+            test("users")
+        }
+        stages["locks"] = {
+            test("locks")
+        }
+        stages["orders"] = {
+            test("orders")
+        }
+        stages["locations"] = {
+            test("locations")
+        }
+
+        parallel(stages)
+    }
+
+    stage('Push') {
+        def stages = [: ]
+
+        stages["eureka"] = {
+            if (dirChanged("eureka")) pushImage(eureka)
+        }
+//        stages["docs"] = {
+//            if (dirChanged("docs")) pushImage(docs)
+//        }
+        stages["config"] = {
+            if (dirChanged("config")) pushImage(config)
+        }
+        stages["gateway"] = {
+            if (dirChanged("gateway")) pushImage(gateway)
+        }
+        stages["token"] = {
+            if (dirChanged("token")) pushImage(token)
+        }
+        stages["users"] = {
+            if (dirChanged("users")) pushImage(users)
+        }
+        stages["locks"] = {
+            if (dirChanged("locks")) pushImage(locks)
+        }
+        stages["orders"] = {
+            if (dirChanged("orders")) pushImage(orders)
+        }
+        stages["locations"] = {
+            if (dirChanged("locations")) pushImage(locations)
+        }
+        stages["aggregator"] = {
+            if (dirChanged("aggregator")) pushImage(aggregator)
+        }
+
+        parallel(stages)
+    }
+}
